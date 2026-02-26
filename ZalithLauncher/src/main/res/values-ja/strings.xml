@@ -1127,4 +1127,12 @@
     <string name="versions_export_task_finished">モッドパックが正常にエクスポートされました！</string>
     <string name="version_summary_fools_2_0">アップデートはしません！バグを見つけたら、運が悪いだけです！XD</string>
     <string name="versions_overview_cant_share_folder_message">このデバイスではこのフォルダを開くためのサードパーティ製アプリは利用できません！</string>
+    <string name="settings_gamepad_config_title">コントローラーのマッピング設定</string>
+    <string name="settings_gamepad_config_summary">使用するコントローラーのマッピング設定を選択してください</string>
+    <string name="settings_gamepad_config_delete">現在の設定を削除</string>
+    <string name="settings_gamepad_config_delete_message">この設定を削除してもよろしいですか？</string>
+    <string name="settings_gamepad_config_create">コントローラーのマッピング設定を作成</string>
+    <string name="settings_gamepad_config_create_name">設定名</string>
+    <string name="settings_gamepad_config_create_contains">同じ名前の設定がすでに存在します</string>
+    <string name="settings_gamepad_config_no_items">設定が作成されていないため、切り替えできません</string>
 </resources>
