@@ -184,7 +184,7 @@
     <string name="download_install_input_version_name_title">Digite o nome da versão pré-instalada</string>
     <string name="download_assets_filter_search_name">Nome da Pesquisa</string>
     <string name="download_assets_filter_search_platform">Plataforma Alvo</string>
-    <string name="download_assets_filter_game_version">Versão do jogo</string>
+    <string name="download_assets_filter_game_version">Nome da versão</string>
     <string name="download_assets_filter_category">Categoria</string>
     <string name="download_assets_filter_modloader">Carregador De Mod</string>
     <string name="download_assets_filter_none">Nenhum Selecionado</string>
@@ -374,7 +374,7 @@
     <string name="game_dialog_force_close_message">Tem certeza de que deseja fechar de maneira forçada e voltar para à tela principal?</string>
     <string name="game_loading">O jogo está em execução, aguardando a tela do jogo aparecer</string>
     <string name="game_loading_version_name">Versão do jogo: %s</string>
-    <string name="game_loading_version_info">Info do jogo: %s</string>
+    <string name="game_loading_version_info">Info da versão: %s</string>
     <string name="game_menu_title">Menu do jogo</string>
     <string name="game_menu_option_force_close_text">Forçar o fechamento do jogo em execução pode corromper os dados salvos ou impedir que as configurações sejam salvas. Evite esta ação, a menos que seja necessário.</string>
     <string name="game_menu_option_switch_log">Saída de log</string>
@@ -424,8 +424,8 @@
     <string name="account_logging_blocked_ip">O endereço IP atual foi bloqueado para login.</string>
     <string name="account_logging_profile_not_exists">Crie um perfil de jogador do Minecraft primeiro e tente fazer login novamente!</string>
     <string name="account_logging_not_purchased_minecraft">Propriedade do Minecraft não verificada. Compre no site oficial da Mojang.</string>
-    <string name="account_type_microsoft">Conta Microsoft (Requer Java ORG)</string>
-    <string name="account_type_local">Nickname Offline</string>
+    <string name="account_type_microsoft">Conta Microsoft (Requer Java Original)</string>
+    <string name="account_type_local">Criar Nickname Offline</string>
     <string name="account_add_new_server">Adicionar servidor de autenticação</string>
     <string name="account_add_new_server_button">Adicionar Autenticação</string>
     <string name="account_add_new_account">Adicionar Conta</string>
@@ -816,9 +816,9 @@
     <string name="settings_control_mouse_enable_click_title">Modo TouchScreen</string>
     <string name="settings_control_mouse_enable_click_summary">Tocar na tela é tratado como um clique esquerdo do mouse, pressionar e segurar como um clique esquerdo contínuo; esta configuração não afeta o controle físico do mouse ou o controle por toque</string>
     <string name="settings_control_mouse_pointer_arrow_title">Setinha do Mouse Virtual (Padrão)</string>
-    <string name="settings_control_mouse_pointer_arrow_summary">Personalize o mouse virtual padrão imagem do ponteiro para corresponder às preferências pessoais</string>
+    <string name="settings_control_mouse_pointer_arrow_summary">Personalize a setinha do Mouse de acordo com suas preferências use Imagens ou Gifs animados (funciona em qualquer versão)</string>
     <string name="settings_control_mouse_pointer_link_title">Setinha do Mouse Virtual (Mão)</string>
-    <string name="settings_control_mouse_pointer_link_summary">Apenas MC 1.21.9+ suporta a troca do Setinha do mouse para o formato de uma mão ao passar o mouse sobre componentes interativos no jogo.</string>
+    <string name="settings_control_mouse_pointer_link_summary">Apenas MC 1.21.9+ suporta a troca da Setinha do mouse para o formato de uma mão ao passar a seta do mouse sobre componentes interativos no jogo.</string>
     <string name="settings_control_mouse_pointer_ibeam_title">Setinha do Mouse Virtual (Áreas de Digitar)</string>
     <string name="settings_control_mouse_pointer_ibeam_summary">Apenas MC 1.21.9+ suporta a troca da Setinha do mouse para um cursor de texto ao passar o mouse sobre campos de digitação</string>
     <string name="settings_control_mouse_pointer_crosshair_title">Setinha do Mouse Virtual (Mira)</string>
@@ -829,7 +829,7 @@
     <string name="settings_control_mouse_pointer_resize_all_title">Setinha do Mouse Virtual (Mover)</string>
     <string name="settings_control_mouse_pointer_not_allowed_title">Setinha do Mouse Virtual (Sem Permissão)</string>
     <string name="settings_control_mouse_pointer_not_allowed_summary">Apenas MC 1.21.9+ suporta a troca da Setinha do mouse para opções nas quais estão bloqueadas ou sem suporte a interações</string>
-    <string name="settings_control_mouse_pointer_common_summary">Apenas MC 1.21.9+ suporta este ponteiro do mouse</string>
+    <string name="settings_control_mouse_pointer_common_summary">Apenas MC 1.21.9+ suporta este tipo de setinha</string>
     <string name="settings_control_mouse_pointer_reset_message">Redefinir a Setinha do Mouse para a padrão? :(..</string>
     <string name="settings_control_mouse_pointer_hotspot">Definir Hotspot</string>
     <string name="settings_control_mouse_pointer_hotspot_x_percent">Coordenada X</string>
@@ -935,8 +935,8 @@
     <string name="control_manage_info_unsupport">Este arquivo não é compatível</string>
     <string name="control_manage_info_description_empty">Sem descrição</string>
     <string name="control_editor_menu_title">Menu de Edição</string>
-    <string name="control_editor_menu_new_widget_button">Add botão</string>
-    <string name="control_editor_menu_new_widget_text">Add Texto</string>
+    <string name="control_editor_menu_new_widget_button">Adicionar botão</string>
+    <string name="control_editor_menu_new_widget_text">Adicionar texto</string>
     <string name="control_editor_menu_no_layers_title">Sem camadas de controle</string>
     <string name="control_editor_menu_no_selected_layer_title">Nenhuma camada de controle selecionada</string>
     <string name="control_editor_menu_no_selected_layer_message">Selecione uma camada de controle como destino primeiro.</string>
@@ -952,7 +952,7 @@
     <string name="control_editor_menu_widget_snap_mode_local">Ajuste local</string>
     <string name="control_editor_menu_save_and_exit">Salvar e sair</string>
     <string name="control_editor_layers_title">Camadas do controle</string>
-    <string name="control_editor_layers_create">Criar novo</string>
+    <string name="control_editor_layers_create">Criar nova camada</string>
     <string name="control_editor_layers_attribute">Atributos da camada de controle</string>
     <string name="control_editor_layers_attribute_name">Nome da camada de controle</string>
     <string name="control_editor_layers_attribute_hide">Ocultar camada de controle por padrão</string>
@@ -972,7 +972,7 @@
     <string name="control_editor_edit_text_default">Texto</string>
     <string name="control_editor_edit_text">Editar texto</string>
     <string name="control_editor_edit_translatable_default">Texto padrão</string>
-    <string name="control_editor_edit_translatable_other_add">Add Texto</string>
+    <string name="control_editor_edit_translatable_other_add">Adicionar texto</string>
     <string name="control_editor_edit_translatable_other_tip">Rótulo para o idioma atual do sistema: %s</string>
     <string name="control_editor_edit_translatable_other_tag">Tag do idioma</string>
     <string name="control_editor_edit_translatable_other_value">Conteúdo do texto</string>
