@@ -148,16 +148,17 @@ private data class NewVersion(val version: NewMinecraftVersion) : ComparableVers
  * @param snapshotVer 若判断该版本为快照版，则与它比较
  */
 fun String.isBiggerVer(releaseVer: String, snapshotVer: String): Boolean {
-    val versionType = this.determineVersionType()
+    val ver = mapRealVer()
+    val versionType = ver.determineVersionType()
     val targetVer = when (versionType) {
         VersionType.LEGACY_SNAPSHOT, VersionType.NEW_SNAPSHOT -> snapshotVer
         VersionType.LEGACY_RELEASE, VersionType.NEW_RELEASE -> releaseVer
         else -> {
-            if (this.isSnapshotVer()) snapshotVer else releaseVer
+            if (ver.isSnapshotVer()) snapshotVer else releaseVer
         }
     }
 
-    return ComparableVersion.compareVersions(this, targetVer) > 0
+    return ComparableVersion.compareVersions(ver, targetVer) > 0
 }
 
 /**
@@ -166,16 +167,17 @@ fun String.isBiggerVer(releaseVer: String, snapshotVer: String): Boolean {
  * @param snapshotVer 若判断该版本为快照版，则与它比较
  */
 fun String.isBiggerOrEqualVer(releaseVer: String, snapshotVer: String): Boolean {
-    val versionType = this.determineVersionType()
+    val ver = mapRealVer()
+    val versionType = ver.determineVersionType()
     val targetVer = when (versionType) {
         VersionType.LEGACY_SNAPSHOT, VersionType.NEW_SNAPSHOT -> snapshotVer
         VersionType.LEGACY_RELEASE, VersionType.NEW_RELEASE -> releaseVer
         else -> {
-            if (this.isSnapshotVer()) snapshotVer else releaseVer
+            if (ver.isSnapshotVer()) snapshotVer else releaseVer
         }
     }
 
-    return ComparableVersion.compareVersions(this, targetVer) >= 0
+    return ComparableVersion.compareVersions(ver, targetVer) >= 0
 }
 
 /**
@@ -184,16 +186,17 @@ fun String.isBiggerOrEqualVer(releaseVer: String, snapshotVer: String): Boolean 
  * @param snapshotVer 若判断该版本为快照版，则与它比较
  */
 fun String.isLowerVer(releaseVer: String, snapshotVer: String): Boolean {
-    val versionType = this.determineVersionType()
+    val ver = mapRealVer()
+    val versionType = ver.determineVersionType()
     val targetVer = when (versionType) {
         VersionType.LEGACY_SNAPSHOT, VersionType.NEW_SNAPSHOT -> snapshotVer
         VersionType.LEGACY_RELEASE, VersionType.NEW_RELEASE -> releaseVer
         else -> {
-            if (this.isSnapshotVer()) snapshotVer else releaseVer
+            if (ver.isSnapshotVer()) snapshotVer else releaseVer
         }
     }
 
-    return ComparableVersion.compareVersions(this, targetVer) < 0
+    return ComparableVersion.compareVersions(ver, targetVer) < 0
 }
 
 /**
@@ -202,14 +205,21 @@ fun String.isLowerVer(releaseVer: String, snapshotVer: String): Boolean {
  * @param snapshotVer 若判断该版本为快照版，则与它比较
  */
 fun String.isLowerOrEqualVer(releaseVer: String, snapshotVer: String): Boolean {
-    val versionType = this.determineVersionType()
+    val ver = mapRealVer()
+    val versionType = ver.determineVersionType()
     val targetVer = when (versionType) {
         VersionType.LEGACY_SNAPSHOT, VersionType.NEW_SNAPSHOT -> snapshotVer
         VersionType.LEGACY_RELEASE, VersionType.NEW_RELEASE -> releaseVer
         else -> {
-            if (this.isSnapshotVer()) snapshotVer else releaseVer
+            if (ver.isSnapshotVer()) snapshotVer else releaseVer
         }
     }
 
-    return ComparableVersion.compareVersions(this, targetVer) <= 0
+    return ComparableVersion.compareVersions(ver, targetVer) <= 0
+}
+
+private fun String.mapRealVer(): String {
+    return if (this.startsWith("2.0_")) {
+        "1.5.1" //愚人节版本2.0，实际版本为1.5.1
+    } else this
 }
