@@ -54,6 +54,7 @@ import com.movtery.zalithlauncher.utils.logging.Logger.lDebug
 import com.movtery.zalithlauncher.utils.logging.Logger.lError
 import com.movtery.zalithlauncher.utils.logging.Logger.lInfo
 import com.movtery.zalithlauncher.utils.logging.Logger.lWarning
+import com.movtery.zalithlauncher.utils.string.isBiggerTo
 import com.movtery.zalithlauncher.utils.string.isEqualTo
 import org.lwjgl.glfw.CallbackBridge
 import java.io.File
@@ -262,11 +263,17 @@ class GameLauncher(
         val pickedRuntime = RuntimesManager.loadRuntime(runtime)
 
         if (AllSettings.autoPickJavaRuntime.getValue()) {
-            val modloader = version.getVersionInfo()?.loaderInfo?.loader
+            val loaderInfo = version.getVersionInfo()?.loaderInfo
             //开启了自动选择，根据游戏需求的版本做选择
-            val targetJavaVersion =when (modloader) {
+            val targetJavaVersion = when (loaderInfo?.loader) {
                 ModLoader.BABRIC -> 17 //Babric 推荐使用 17
-                ModLoader.CLEANROOM -> 21 //Cleanroom 要求使用 21
+                ModLoader.CLEANROOM -> {
+                    if (loaderInfo.version.isBiggerTo("0.4.4-alpha")) {
+                        25 //0.5.0-alpha 及以上要求使用 25
+                    } else {
+                        21 //0.4.4-alpha 及以下要求使用 21
+                    }
+                }
                 else -> gameManifest.javaVersion?.majorVersion ?: 8
             }
             if (pickedRuntime.javaVersion == 0 || pickedRuntime.javaVersion < targetJavaVersion) {
