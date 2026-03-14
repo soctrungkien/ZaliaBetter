@@ -128,9 +128,9 @@ private class AddonsViewModel(
         {
             addonList.fabricAPIList = it
             //检查用户是否已经选择了 Fabric Loader
-            if (currentAddon.fabricVersion != null) {
+            if (currentAddon.fabricVersion.value != null) {
                 //如果已经选择，这里将会自动选择 Fabric API
-                currentAddon.fabricAPIVersion = it?.firstOrNull()
+                currentAddon.fabricAPIVersion.value = it?.firstOrNull()
             }
         }
     )
@@ -147,9 +147,9 @@ private class AddonsViewModel(
         {
             addonList.quiltAPIList = it
             //检查用户是否已经选择了 Quilt Loader
-            if (currentAddon.quiltVersion != null) {
+            if (currentAddon.quiltVersion.value != null) {
                 //如果已经选择，这里将会自动选择 Quilted Fabric API
-                currentAddon.quiltAPIVersion = it?.firstOrNull()
+                currentAddon.quiltAPIVersion.value = it?.firstOrNull()
             }
         }
     )
@@ -250,19 +250,19 @@ fun DownloadGameWithAddonScreen(
                         GameDownloadInfo(
                             gameVersion = key.gameVersion,
                             customVersionName = customVersionName,
-                            optifine = viewModel.currentAddon.optifineVersion,
-                            forge = viewModel.currentAddon.forgeVersion,
-                            neoforge = viewModel.currentAddon.neoforgeVersion
+                            optifine = viewModel.currentAddon.optifineVersion.value,
+                            forge = viewModel.currentAddon.forgeVersion.value,
+                            neoforge = viewModel.currentAddon.neoforgeVersion.value
                                 .takeIf { loaderSupports.isNeoForgeSupports },
-                            fabric = viewModel.currentAddon.fabricVersion
+                            fabric = viewModel.currentAddon.fabricVersion.value
                                 .takeIf { loaderSupports.isFabricSupports },
-                            fabricAPI = viewModel.currentAddon.fabricAPIVersion
+                            fabricAPI = viewModel.currentAddon.fabricAPIVersion.value
                                 .takeIf { loaderSupports.isFabricSupports },
-                            quilt = viewModel.currentAddon.quiltVersion
+                            quilt = viewModel.currentAddon.quiltVersion.value
                                 .takeIf { loaderSupports.isQuiltSupports },
-                            quiltAPI = viewModel.currentAddon.quiltAPIVersion
+                            quiltAPI = viewModel.currentAddon.quiltAPIVersion.value
                                 .takeIf { loaderSupports.isQuiltSupports },
-                            cleanroom = viewModel.currentAddon.cleanroomVersion
+                            cleanroom = viewModel.currentAddon.cleanroomVersion.value
                                 .takeIf { loaderSupports.isCleanroomSupports }
                         )
                     )
@@ -335,10 +335,10 @@ fun DownloadGameWithAddonScreen(
                                 .offset { IntOffset(x = 0, y = yOffset.roundToPx()) },
                         ) {
                             val isFabricAPIWarning =
-                                viewModel.currentAddon.fabricVersion != null &&
+                                viewModel.currentAddon.fabricVersion.value != null &&
                                         viewModel.currentAddon.fabricAPIState == AddonState.None &&
                                         !viewModel.addonList.fabricAPIList.isNullOrEmpty() &&
-                                        viewModel.currentAddon.fabricAPIVersion == null
+                                        viewModel.currentAddon.fabricAPIVersion.value == null
 
                             AnimatedVisibility(
                                 visible = isFabricAPIWarning
@@ -362,7 +362,7 @@ fun DownloadGameWithAddonScreen(
                                         //这里将会自动选择最新的 Fabric API
                                         val lastAPIVersion =
                                             viewModel.addonList.fabricAPIList?.firstOrNull()
-                                        viewModel.currentAddon.fabricAPIVersion = lastAPIVersion
+                                        viewModel.currentAddon.fabricAPIVersion.value = lastAPIVersion
                                     }
                                 },
                                 addonList = viewModel.addonList
@@ -393,10 +393,10 @@ fun DownloadGameWithAddonScreen(
                                 .offset { IntOffset(x = 0, y = yOffset.roundToPx()) },
                         ) {
                             val isQuiltAPIWarning =
-                                viewModel.currentAddon.quiltVersion != null &&
+                                viewModel.currentAddon.quiltVersion.value != null &&
                                         viewModel.currentAddon.quiltAPIState == AddonState.None &&
                                         !viewModel.addonList.quiltAPIList.isNullOrEmpty() &&
-                                        viewModel.currentAddon.quiltAPIVersion == null
+                                        viewModel.currentAddon.quiltAPIVersion.value == null
 
                             AnimatedVisibility(
                                 visible = isQuiltAPIWarning
@@ -420,7 +420,7 @@ fun DownloadGameWithAddonScreen(
                                         //这里将会自动选择最新的 Quilted Fabric API
                                         val lastAPIVersion =
                                             viewModel.addonList.quiltAPIList?.firstOrNull()
-                                        viewModel.currentAddon.quiltAPIVersion = lastAPIVersion
+                                        viewModel.currentAddon.quiltAPIVersion.value = lastAPIVersion
                                     }
                                 },
                                 addonList = viewModel.addonList
@@ -567,13 +567,13 @@ private fun VersionIconPreview(
 ) {
     val iconRes = remember(refreshIcon) {
         when {
-            currentAddon.optifineVersion != null && currentAddon.forgeVersion != null -> R.drawable.img_anvil //OptiFine & Forge 同时选择
-            currentAddon.optifineVersion != null -> R.drawable.img_loader_optifine
-            currentAddon.forgeVersion != null -> R.drawable.img_anvil
-            currentAddon.neoforgeVersion != null -> R.drawable.img_loader_neoforge
-            currentAddon.fabricVersion != null -> R.drawable.img_loader_fabric
-            currentAddon.quiltVersion != null -> R.drawable.img_loader_quilt
-            currentAddon.cleanroomVersion != null -> R.drawable.img_loader_cleanroom
+            currentAddon.optifineVersion.value != null && currentAddon.forgeVersion.value != null -> R.drawable.img_anvil //OptiFine & Forge 同时选择
+            currentAddon.optifineVersion.value != null -> R.drawable.img_loader_optifine
+            currentAddon.forgeVersion.value != null -> R.drawable.img_anvil
+            currentAddon.neoforgeVersion.value != null -> R.drawable.img_loader_neoforge
+            currentAddon.fabricVersion.value != null -> R.drawable.img_loader_fabric
+            currentAddon.quiltVersion.value != null -> R.drawable.img_loader_quilt
+            currentAddon.cleanroomVersion.value != null -> R.drawable.img_loader_cleanroom
             else -> R.drawable.img_minecraft
         }
     }
@@ -610,18 +610,18 @@ private fun AutoChangeVersionName(
         if (editedByUser) return@LaunchedEffect //用户已修改，阻止自动更改
 
         val modloaderValue = when {
-            currentAddon.optifineVersion != null && currentAddon.forgeVersion != null -> {
+            currentAddon.optifineVersion.value != null && currentAddon.forgeVersion.value != null -> {
                 //OptiFine & Forge 同时选择
-                val forge = getForge(currentAddon.forgeVersion!!)
-                val optifine = getOptiFine(currentAddon.optifineVersion!!)
+                val forge = getForge(currentAddon.forgeVersion.value!!)
+                val optifine = getOptiFine(currentAddon.optifineVersion.value!!)
                 "$forge-$optifine"
             }
-            currentAddon.optifineVersion != null -> getOptiFine(currentAddon.optifineVersion!!)
-            currentAddon.forgeVersion != null -> getForge(currentAddon.forgeVersion!!)
-            currentAddon.neoforgeVersion != null -> "${ModLoader.NEOFORGE.displayName} ${currentAddon.neoforgeVersion!!.versionName}"
-            currentAddon.fabricVersion != null -> "${ModLoader.FABRIC.displayName} ${currentAddon.fabricVersion!!.version}"
-            currentAddon.quiltVersion != null -> "${ModLoader.QUILT.displayName} ${currentAddon.quiltVersion!!.version}"
-            currentAddon.cleanroomVersion != null -> "${ModLoader.CLEANROOM.displayName} ${currentAddon.cleanroomVersion!!.version}"
+            currentAddon.optifineVersion.value != null -> getOptiFine(currentAddon.optifineVersion.value!!)
+            currentAddon.forgeVersion.value != null -> getForge(currentAddon.forgeVersion.value!!)
+            currentAddon.neoforgeVersion.value != null -> "${ModLoader.NEOFORGE.displayName} ${currentAddon.neoforgeVersion.value!!.versionName}"
+            currentAddon.fabricVersion.value != null -> "${ModLoader.FABRIC.displayName} ${currentAddon.fabricVersion.value!!.version}"
+            currentAddon.quiltVersion.value != null -> "${ModLoader.QUILT.displayName} ${currentAddon.quiltVersion.value!!.version}"
+            currentAddon.cleanroomVersion.value != null -> "${ModLoader.CLEANROOM.displayName} ${currentAddon.cleanroomVersion.value!!.version}"
             else -> null
         }
 

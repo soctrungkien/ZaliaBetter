@@ -42,34 +42,6 @@ class VersionInfo(
         return infoList.joinToString(", ")
     }
 
-    /**
-     * [Reference PCL2](https://github.com/Hex-Dragon/PCL2/blob/dc611a982f8f97fab2c4275d1176db484f8549a4/Plain%20Craft%20Launcher%202/Modules/Minecraft/ModMinecraft.vb#L426-L438)
-     */
-    fun getMcVersionCode(): McVersionCode {
-        return when {
-            minecraftVersion.contains("w") || minecraftVersion.equals("pending", ignoreCase = true) -> {
-                //快照或未发布版本，特殊处理
-                McVersionCode(99, 99)
-            }
-
-            minecraftVersion.startsWith("1.") -> {
-                val parts = minecraftVersion.split(" ", "_", "-", ".")
-                val main = parts.getOrNull(1)?.takeIf { it.length <= 2 }?.toIntOrNull() ?: 0
-                val sub = parts.getOrNull(2)?.takeIf { it.length <= 2 }?.toIntOrNull() ?: 0
-                McVersionCode(main, sub)
-            }
-
-            else -> {
-                McVersionCode(0, 0)
-            }
-        }
-    }
-
-    data class McVersionCode(
-        val main: Int,
-        val sub: Int
-    )
-
     @Parcelize
     data class LoaderInfo(
         val loader: ModLoader,

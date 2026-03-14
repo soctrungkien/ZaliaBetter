@@ -121,11 +121,11 @@ private fun CurrentAddon.generateDiff(
     val currentVersion = loaderInfo.version
 
     val loaderVersions = mapOf(
-        ModLoader.FORGE to forgeVersion,
-        ModLoader.NEOFORGE to neoforgeVersion,
-        ModLoader.FABRIC to fabricVersion,
-        ModLoader.QUILT to quiltVersion,
-        ModLoader.CLEANROOM to cleanroomVersion
+        ModLoader.FORGE to forgeVersion.value,
+        ModLoader.NEOFORGE to neoforgeVersion.value,
+        ModLoader.FABRIC to fabricVersion.value,
+        ModLoader.QUILT to quiltVersion.value,
+        ModLoader.CLEANROOM to cleanroomVersion.value
     )
 
     val currentAddonVersion = if (loaderVersions.containsKey(currentLoader)) {
@@ -236,11 +236,11 @@ private class AddonsViewModel(
         }
 
         val version = when (loaderInfo.loader) {
-            ModLoader.FORGE -> currentAddon.forgeVersion
-            ModLoader.NEOFORGE -> currentAddon.neoforgeVersion
-            ModLoader.FABRIC -> currentAddon.fabricVersion
-            ModLoader.QUILT -> currentAddon.quiltVersion
-            ModLoader.CLEANROOM -> currentAddon.cleanroomVersion
+            ModLoader.FORGE -> currentAddon.forgeVersion.value
+            ModLoader.NEOFORGE -> currentAddon.neoforgeVersion.value
+            ModLoader.FABRIC -> currentAddon.fabricVersion.value
+            ModLoader.QUILT -> currentAddon.quiltVersion.value
+            ModLoader.CLEANROOM -> currentAddon.cleanroomVersion.value
             else -> null
         }
 
@@ -266,8 +266,8 @@ private class AddonsViewModel(
         { ForgeVersions.fetchForgeList(gameVersion) }
     ).also { versions ->
         addonList.forgeList = versions
-        if (loaderInfo.loader == ModLoader.FORGE && currentAddon.forgeVersion == null) {
-            currentAddon.forgeVersion = versions?.find {
+        if (loaderInfo.loader == ModLoader.FORGE && currentAddon.forgeVersion.value == null) {
+            currentAddon.forgeVersion.value = versions?.find {
                 it.isVersion(loaderInfo.version)
             }?.also { isLoaderVersionFound = true }
         }
@@ -284,8 +284,8 @@ private class AddonsViewModel(
         { NeoForgeVersions.fetchNeoForgeList(gameVersion = gameVersion) }
     ).also { versions ->
         addonList.neoforgeList = versions
-        if (loaderInfo.loader == ModLoader.NEOFORGE && currentAddon.neoforgeVersion == null) {
-            currentAddon.neoforgeVersion = versions?.find {
+        if (loaderInfo.loader == ModLoader.NEOFORGE && currentAddon.neoforgeVersion.value == null) {
+            currentAddon.neoforgeVersion.value = versions?.find {
                 it.isVersion(loaderInfo.version)
             }?.also { isLoaderVersionFound = true }
         }
@@ -302,8 +302,8 @@ private class AddonsViewModel(
         { FabricVersions.fetchFabricLoaderList(gameVersion) }
     ).also { versions ->
         addonList.fabricList = versions
-        if (loaderInfo.loader == ModLoader.FABRIC && currentAddon.fabricVersion == null) {
-            currentAddon.fabricVersion = versions?.find {
+        if (loaderInfo.loader == ModLoader.FABRIC && currentAddon.fabricVersion.value == null) {
+            currentAddon.fabricVersion.value = versions?.find {
                 it.isVersion(loaderInfo.version)
             }?.also { isLoaderVersionFound = true }
         }
@@ -320,8 +320,8 @@ private class AddonsViewModel(
         { QuiltVersions.fetchQuiltLoaderList(gameVersion) }
     ).also { versions ->
         addonList.quiltList = versions
-        if (loaderInfo.loader == ModLoader.QUILT && currentAddon.quiltVersion == null) {
-            currentAddon.quiltVersion = versions?.find {
+        if (loaderInfo.loader == ModLoader.QUILT && currentAddon.quiltVersion.value == null) {
+            currentAddon.quiltVersion.value = versions?.find {
                 it.isVersion(loaderInfo.version)
             }?.also { isLoaderVersionFound = true }
         }
@@ -339,8 +339,8 @@ private class AddonsViewModel(
         { CleanroomVersions.fetchLoaderList(gameVersion) }
     ).also { versions ->
         addonList.cleanroomList = versions
-        if (loaderInfo.loader == ModLoader.CLEANROOM && currentAddon.cleanroomVersion == null) {
-            currentAddon.cleanroomVersion = versions?.find {
+        if (loaderInfo.loader == ModLoader.CLEANROOM && currentAddon.cleanroomVersion.value == null) {
+            currentAddon.cleanroomVersion.value = versions?.find {
                 it.isVersion(loaderInfo.version)
             }?.also { isLoaderVersionFound = true }
         }
@@ -522,14 +522,14 @@ fun UpdateLoaderScreen(
                                 GameDownloadInfo(
                                     gameVersion = versionInfo.minecraftVersion,
                                     customVersionName = version.getVersionName(),
-                                    forge = viewModel.currentAddon.forgeVersion,
-                                    neoforge = viewModel.currentAddon.neoforgeVersion
+                                    forge = viewModel.currentAddon.forgeVersion.value,
+                                    neoforge = viewModel.currentAddon.neoforgeVersion.value
                                         .takeIf { loaderSupports.isNeoForgeSupports },
-                                    fabric = viewModel.currentAddon.fabricVersion
+                                    fabric = viewModel.currentAddon.fabricVersion.value
                                         .takeIf { loaderSupports.isFabricSupports },
-                                    quilt = viewModel.currentAddon.quiltVersion
+                                    quilt = viewModel.currentAddon.quiltVersion.value
                                         .takeIf { loaderSupports.isQuiltSupports },
-                                    cleanroom = viewModel.currentAddon.cleanroomVersion
+                                    cleanroom = viewModel.currentAddon.cleanroomVersion.value
                                         .takeIf { loaderSupports.isCleanroomSupports }
                                 )
                             )
