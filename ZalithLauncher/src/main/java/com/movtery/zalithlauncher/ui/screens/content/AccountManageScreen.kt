@@ -136,6 +136,7 @@ fun AccountManageScreen(
                 is AccountManageEffect.ShowError -> {
                     submitError(ErrorViewModel.ThrowableMessage(effect.title, effect.message))
                 }
+
                 is AccountManageEffect.ShowToast -> {
                     val message = if (effect.formatArgs.isEmpty()) {
                         context.getString(effect.messageRes)
@@ -243,7 +244,11 @@ private fun ServerTypeMenu(
                 serverName = stringResource(R.string.account_type_microsoft),
             ) {
                 if (!isMicrosoftLogging()) {
-                    actions.onIntent(AccountManageIntent.UpdateMicrosoftLoginOp(MicrosoftLoginOperation.Tip))
+                    actions.onIntent(
+                        AccountManageIntent.UpdateMicrosoftLoginOp(
+                            MicrosoftLoginOperation.Tip
+                        )
+                    )
                 }
             }
             LoginItem(
@@ -256,8 +261,20 @@ private fun ServerTypeMenu(
             authServers.forEach { server ->
                 ServerItem(
                     server = server,
-                    onClick = { actions.onIntent(AccountManageIntent.UpdateOtherLoginOp(OtherLoginOperation.OnLogin(server))) },
-                    onDeleteClick = { actions.onIntent(AccountManageIntent.UpdateServerOp(ServerOperation.Delete(server))) }
+                    onClick = {
+                        actions.onIntent(
+                            AccountManageIntent.UpdateOtherLoginOp(
+                                OtherLoginOperation.OnLogin(server)
+                            )
+                        )
+                    },
+                    onDeleteClick = {
+                        actions.onIntent(
+                            AccountManageIntent.UpdateServerOp(
+                                ServerOperation.Delete(server)
+                            )
+                        )
+                    }
                 )
             }
         }
@@ -283,19 +300,32 @@ private fun MicrosoftLoginOperation(
         is MicrosoftLoginOperation.None -> {}
         is MicrosoftLoginOperation.Tip -> {
             MicrosoftLoginTipDialog(
-                onDismissRequest = { actions.onIntent(AccountManageIntent.UpdateMicrosoftLoginOp(MicrosoftLoginOperation.None)) },
+                onDismissRequest = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateMicrosoftLoginOp(
+                            MicrosoftLoginOperation.None
+                        )
+                    )
+                },
                 onConfirm = {
-                    actions.onIntent(AccountManageIntent.UpdateMicrosoftLoginOp(MicrosoftLoginOperation.None))
-                    actions.onIntent(AccountManageIntent.PerformMicrosoftLogin(
-                        context = context,
-                        toWeb = actions.navigateToWeb,
-                        backToMain = actions.backToMainScreen,
-                        checkIfInWebScreen = actions.checkIfInWebScreen
-                    ))
+                    actions.onIntent(
+                        AccountManageIntent.UpdateMicrosoftLoginOp(
+                            MicrosoftLoginOperation.None
+                        )
+                    )
+                    actions.onIntent(
+                        AccountManageIntent.PerformMicrosoftLogin(
+                            context = context,
+                            toWeb = actions.navigateToWeb,
+                            backToMain = actions.backToMainScreen,
+                            checkIfInWebScreen = actions.checkIfInWebScreen
+                        )
+                    )
                 },
                 openLink = actions.openLink
             )
         }
+
         is MicrosoftLoginOperation.RunTask -> {}
     }
 }
@@ -310,17 +340,38 @@ private fun MicrosoftChangeSkinOperation(
         is MicrosoftChangeSkinOperation.None -> {}
         is MicrosoftChangeSkinOperation.ImportFile -> {
             LaunchedEffect(operation) {
-                actions.onIntent(AccountManageIntent.ImportSkinFile(context, operation.account, operation.uri))
+                actions.onIntent(
+                    AccountManageIntent.ImportSkinFile(
+                        context,
+                        operation.account,
+                        operation.uri
+                    )
+                )
             }
         }
+
         is MicrosoftChangeSkinOperation.SelectSkinModel -> {
             SelectSkinModelDialog(
-                onDismissRequest = { actions.onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None)) },
+                onDismissRequest = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateMicrosoftSkinOp(
+                            MicrosoftChangeSkinOperation.None
+                        )
+                    )
+                },
                 onSelected = { type ->
-                    actions.onIntent(AccountManageIntent.UploadMicrosoftSkin(context, operation.account, operation.file, type))
+                    actions.onIntent(
+                        AccountManageIntent.UploadMicrosoftSkin(
+                            context,
+                            operation.account,
+                            operation.file,
+                            type
+                        )
+                    )
                 }
             )
         }
+
         is MicrosoftChangeSkinOperation.RunTask -> {}
     }
 }
@@ -335,9 +386,15 @@ private fun MicrosoftChangeCapeOperation(
         is MicrosoftChangeCapeOperation.None -> {}
         is MicrosoftChangeCapeOperation.FetchProfiles -> {
             LaunchedEffect(operation) {
-                actions.onIntent(AccountManageIntent.FetchMicrosoftCapes(context, operation.account))
+                actions.onIntent(
+                    AccountManageIntent.FetchMicrosoftCapes(
+                        context,
+                        operation.account
+                    )
+                )
             }
         }
+
         is MicrosoftChangeCapeOperation.SelectCape -> {
             val account = operation.account
             val profile = operation.profile
@@ -345,15 +402,36 @@ private fun MicrosoftChangeCapeOperation(
 
             SelectCapeDialog(
                 capes = capes,
-                onSelected = { cape -> actions.onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.RunTask(account, cape))) },
-                onDismiss = { actions.onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None)) }
+                onSelected = { cape ->
+                    actions.onIntent(
+                        AccountManageIntent.UpdateMicrosoftCapeOp(
+                            MicrosoftChangeCapeOperation.RunTask(account, cape)
+                        )
+                    )
+                },
+                onDismiss = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateMicrosoftCapeOp(
+                            MicrosoftChangeCapeOperation.None
+                        )
+                    )
+                }
             )
         }
+
         is MicrosoftChangeCapeOperation.RunTask -> {
             val capeName = operation.cape.capeTranslatedName()
             LaunchedEffect(operation) {
                 val capeId: String? = operation.cape.takeIf { it != EmptyCape }?.id
-                actions.onIntent(AccountManageIntent.ApplyMicrosoftCape(context, operation.account, capeId, capeName, operation.cape == EmptyCape))
+                actions.onIntent(
+                    AccountManageIntent.ApplyMicrosoftCape(
+                        context,
+                        operation.account,
+                        capeId,
+                        capeName,
+                        operation.cape == EmptyCape
+                    )
+                )
             }
         }
     }
@@ -368,35 +446,70 @@ private fun LocalLoginOperation(
         is LocalLoginOperation.None -> {}
         is LocalLoginOperation.Edit -> {
             LocalLoginDialog(
-                onDismissRequest = { actions.onIntent(AccountManageIntent.UpdateLocalLoginOp(LocalLoginOperation.None)) },
+                onDismissRequest = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateLocalLoginOp(
+                            LocalLoginOperation.None
+                        )
+                    )
+                },
                 onConfirm = { isInvalid, name, uuid ->
-                    val nextOp = if (isInvalid) LocalLoginOperation.Alert(name, uuid) else LocalLoginOperation.Create(name, uuid)
+                    val nextOp = if (isInvalid) LocalLoginOperation.Alert(
+                        name,
+                        uuid
+                    ) else LocalLoginOperation.Create(name, uuid)
                     actions.onIntent(AccountManageIntent.UpdateLocalLoginOp(nextOp))
                 },
                 openLink = actions.openLink
             )
         }
+
         is LocalLoginOperation.Create -> {
             LaunchedEffect(operation) {
-                actions.onIntent(AccountManageIntent.CreateLocalAccount(operation.userName, operation.userUUID))
+                actions.onIntent(
+                    AccountManageIntent.CreateLocalAccount(
+                        operation.userName,
+                        operation.userUUID
+                    )
+                )
             }
         }
+
         is LocalLoginOperation.Alert -> {
             SimpleAlertDialog(
                 title = stringResource(R.string.account_supporting_username_invalid_title),
                 text = {
-                    Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint1))
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint2), fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint3))
-                    Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint4))
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint5), fontWeight = FontWeight.Bold)
+
+                        Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint1))
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = stringResource(R.string.account_supporting_username_invalid_local_message_hint2),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint3))
+                        Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint4))
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = stringResource(R.string.account_supporting_username_invalid_local_message_hint5),
+                            fontWeight = FontWeight.Bold
+                        )
                 },
                 confirmText = stringResource(R.string.account_supporting_username_invalid_still_use),
-                onConfirm = { actions.onIntent(AccountManageIntent.UpdateLocalLoginOp(LocalLoginOperation.Create(operation.userName, operation.userUUID))) },
-                onCancel = { actions.onIntent(AccountManageIntent.UpdateLocalLoginOp(LocalLoginOperation.None)) }
+                onConfirm = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateLocalLoginOp(
+                            LocalLoginOperation.Create(operation.userName, operation.userUUID)
+                        )
+                    )
+                },
+                onCancel = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateLocalLoginOp(
+                            LocalLoginOperation.None
+                        )
+                    )
+                }
             )
         }
     }
@@ -417,13 +530,27 @@ private fun OtherLoginOperation(
                     actions.openLink(url)
                     actions.onIntent(AccountManageIntent.UpdateOtherLoginOp(OtherLoginOperation.None))
                 },
-                onDismissRequest = { actions.onIntent(AccountManageIntent.UpdateOtherLoginOp(OtherLoginOperation.None)) },
+                onDismissRequest = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateOtherLoginOp(
+                            OtherLoginOperation.None
+                        )
+                    )
+                },
                 onConfirm = { email, password ->
                     actions.onIntent(AccountManageIntent.UpdateOtherLoginOp(OtherLoginOperation.None))
-                    actions.onIntent(AccountManageIntent.LoginWithOtherServer(context, operation.server, email, password))
+                    actions.onIntent(
+                        AccountManageIntent.LoginWithOtherServer(
+                            context,
+                            operation.server,
+                            email,
+                            password
+                        )
+                    )
                 }
             )
         }
+
         is OtherLoginOperation.OnFailed -> {
             val message = actions.formatError(context, operation.th)
             actions.onIntent(AccountManageIntent.UpdateOtherLoginOp(OtherLoginOperation.None))
@@ -434,13 +561,20 @@ private fun OtherLoginOperation(
                 )
             )
         }
+
         is OtherLoginOperation.SelectRole -> {
             SimpleListDialog(
                 title = stringResource(R.string.account_other_login_select_role),
                 items = operation.profiles,
                 itemTextProvider = { it.name },
                 onItemSelected = { operation.selected(it) },
-                onDismissRequest = { actions.onIntent(AccountManageIntent.UpdateOtherLoginOp(OtherLoginOperation.None)) }
+                onDismissRequest = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateOtherLoginOp(
+                            OtherLoginOperation.None
+                        )
+                    )
+                }
             )
         }
     }
@@ -460,32 +594,51 @@ private fun ServerTypeOperation(
                 onValueChange = { serverUrl = it.trim() },
                 label = { Text(text = stringResource(R.string.account_label_server_url)) },
                 singleLine = true,
-                onDismissRequest = { actions.onIntent(AccountManageIntent.UpdateServerOp(ServerOperation.None)) },
-                onConfirm = { if (serverUrl.isNotEmpty()) actions.onIntent(AccountManageIntent.UpdateServerOp(ServerOperation.Add(serverUrl))) }
+                onDismissRequest = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateServerOp(
+                            ServerOperation.None
+                        )
+                    )
+                },
+                onConfirm = {
+                    if (serverUrl.isNotEmpty()) actions.onIntent(
+                        AccountManageIntent.UpdateServerOp(
+                            ServerOperation.Add(serverUrl)
+                        )
+                    )
+                }
             )
         }
+
         is ServerOperation.Add -> {
             LaunchedEffect(operation) {
                 actions.onIntent(AccountManageIntent.AddServer(operation.serverUrl))
             }
         }
+
         is ServerOperation.Delete -> {
             SimpleAlertDialog(
                 title = stringResource(R.string.account_other_login_delete_server_title),
-                text = stringResource(R.string.account_other_login_delete_server_message, operation.server.serverName),
+                text = stringResource(
+                    R.string.account_other_login_delete_server_message,
+                    operation.server.serverName
+                ),
                 onDismiss = { actions.onIntent(AccountManageIntent.UpdateServerOp(ServerOperation.None)) },
                 onConfirm = { actions.onIntent(AccountManageIntent.DeleteServer(operation.server)) }
             )
         }
+
         is ServerOperation.OnThrowable -> {
             actions.submitError(
                 ErrorViewModel.ThrowableMessage(
                     title = stringResource(R.string.account_other_login_adding_failure),
-                    message = operation.throwable.getMessageOrToString()
-                )
+                    message =
+                    operation.throwable.getMessageOrToString())
             )
             actions.onIntent(AccountManageIntent.UpdateServerOp(ServerOperation.None))
         }
+
         is ServerOperation.None -> {}
     }
 }
@@ -511,49 +664,111 @@ private fun AccountsLayout(
     ) {
         if (accounts.isNotEmpty()) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.extraLarge),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(MaterialTheme.shapes.extraLarge),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 items(accounts, key = { it.uniqueUUID }) { account ->
                     var refreshAvatar by remember { mutableStateOf(false) }
-                    val skinOp = accountSkinOperationMap[account.uniqueUUID] ?: AccountSkinOperation.None
+                    val skinOp =
+                        accountSkinOperationMap[account.uniqueUUID] ?: AccountSkinOperation.None
 
                     AccountSkinOperation(
                         account = account,
                         accountSkinOperation = skinOp,
-                        updateOperation = { actions.onIntent(AccountManageIntent.UpdateAccountSkinOp(account.uniqueUUID, it)) },
+                        updateOperation = {
+                            actions.onIntent(
+                                AccountManageIntent.UpdateAccountSkinOp(
+                                    account.uniqueUUID,
+                                    it
+                                )
+                            )
+                        },
                         onRefreshAvatar = { refreshAvatar = !refreshAvatar },
                         actions = actions
                     )
 
-                    val skinPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                        uri?.let {
-                            if (account.isLocalAccount()) actions.onIntent(AccountManageIntent.UpdateAccountSkinOp(account.uniqueUUID, AccountSkinOperation.SelectSkinModel(it)))
-                            else if (account.isMicrosoftAccount()) actions.onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.ImportFile(account, it)))
+                    val skinPicker =
+                        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                            uri?.let {
+                                if (account.isLocalAccount()) actions.onIntent(
+                                    AccountManageIntent.UpdateAccountSkinOp(
+                                        account.uniqueUUID,
+                                        AccountSkinOperation.SelectSkinModel(it)
+                                    )
+                                )
+                                else if (account.isMicrosoftAccount()) actions.onIntent(
+                                    AccountManageIntent.UpdateMicrosoftSkinOp(
+                                        MicrosoftChangeSkinOperation.ImportFile(account, it)
+                                    )
+                                )
+                            }
                         }
-                    }
 
                     AccountItem(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
                         currentAccount = currentAccount,
                         account = account,
                         refreshKey = refreshAvatar,
                         onSelected = { AccountsManager.setCurrentAccount(it) },
-                        onChangeSkin = { if (!account.isAuthServerAccount()) skinPicker.launch(arrayOf("image/png")) },
-                        onChangeCape = { if (account.isMicrosoftAccount()) actions.onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.FetchProfiles(account))) },
-                        onResetSkin = { actions.onIntent(AccountManageIntent.UpdateAccountSkinOp(account.uniqueUUID, AccountSkinOperation.PreResetSkin)) },
-                        onRefreshClick = { actions.onIntent(AccountManageIntent.RefreshAccount(context, account)) },
+                        onChangeSkin = {
+                            if (!account.isAuthServerAccount()) skinPicker.launch(
+                                arrayOf("image/png")
+                            )
+                        },
+                        onChangeCape = {
+                            if (account.isMicrosoftAccount()) actions.onIntent(
+                                AccountManageIntent.UpdateMicrosoftCapeOp(
+                                    MicrosoftChangeCapeOperation.FetchProfiles(account)
+                                )
+                            )
+                        },
+                        onResetSkin = {
+                            actions.onIntent(
+                                AccountManageIntent.UpdateAccountSkinOp(
+                                    account.uniqueUUID,
+                                    AccountSkinOperation.PreResetSkin
+                                )
+                            )
+                        },
+                        onRefreshClick = {
+                            actions.onIntent(
+                                AccountManageIntent.RefreshAccount(
+                                    context,
+                                    account
+                                )
+                            )
+                        },
                         onCopyUUID = {
                             copyText(COPY_LABEL_ACCOUNT_UUID, account.profileId, context, false)
-                            Toast.makeText(context, context.getString(R.string.account_local_uuid_copied, account.username), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(
+                                    R.string.account_local_uuid_copied,
+                                    account.username
+                                ),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         },
-                        onDeleteClick = { actions.onIntent(AccountManageIntent.UpdateAccountOp(AccountOperation.Delete(account))) }
+                        onDeleteClick = {
+                            actions.onIntent(
+                                AccountManageIntent.UpdateAccountOp(
+                                    AccountOperation.Delete(account)
+                                )
+                            )
+                        }
                     )
                 }
             }
         } else {
             Box(modifier = Modifier.fillMaxSize()) {
-                ScalingLabel(modifier = Modifier.align(Alignment.Center), text = stringResource(R.string.account_no_account))
+                ScalingLabel(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = stringResource(R.string.account_no_account)
+                )
             }
         }
     }
@@ -572,19 +787,32 @@ private fun AccountSkinOperation(
         is AccountSkinOperation.None -> {}
         is AccountSkinOperation.SaveSkin -> {
             LaunchedEffect(accountSkinOperation.uri) {
-                actions.onIntent(AccountManageIntent.SaveLocalSkin(context, account, accountSkinOperation.uri, onRefreshAvatar))
+                actions.onIntent(
+                    AccountManageIntent.SaveLocalSkin(
+                        context,
+                        account,
+                        accountSkinOperation.uri,
+                        onRefreshAvatar
+                    )
+                )
             }
         }
+
         is AccountSkinOperation.SelectSkinModel -> {
             SelectSkinModelDialog(
                 onDismissRequest = { updateOperation(AccountSkinOperation.None) },
                 onSelected = { type ->
                     account.skinModelType = type
-                    account.profileId = com.movtery.zalithlauncher.game.account.wardrobe.getLocalUUIDWithSkinModel(account.username, type)
+                    account.profileId =
+                        com.movtery.zalithlauncher.game.account.wardrobe.getLocalUUIDWithSkinModel(
+                            account.username,
+                            type
+                        )
                     updateOperation(AccountSkinOperation.SaveSkin(accountSkinOperation.uri))
                 }
             )
         }
+
         is AccountSkinOperation.PreResetSkin -> {
             SimpleAlertDialog(
                 title = stringResource(R.string.generic_reset),
@@ -593,6 +821,7 @@ private fun AccountSkinOperation(
                 onConfirm = { updateOperation(AccountSkinOperation.ResetSkin) }
             )
         }
+
         is AccountSkinOperation.ResetSkin -> {
             LaunchedEffect(Unit) {
                 actions.onIntent(AccountManageIntent.ResetSkin(account, onRefreshAvatar))
@@ -616,6 +845,7 @@ private fun AccountOperation(
                 onDismiss = { actions.onIntent(AccountManageIntent.UpdateAccountOp(AccountOperation.None)) }
             )
         }
+
         is AccountOperation.OnFailed -> {
             val message = actions.formatError(context, operation.th)
             actions.submitError(
@@ -626,6 +856,7 @@ private fun AccountOperation(
             )
             actions.onIntent(AccountManageIntent.UpdateAccountOp(AccountOperation.None))
         }
+
         is AccountOperation.None -> {}
     }
 }

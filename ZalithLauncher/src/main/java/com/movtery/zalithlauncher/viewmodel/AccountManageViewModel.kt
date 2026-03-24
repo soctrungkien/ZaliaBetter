@@ -106,14 +106,21 @@ data class AccountManageUiState(
  * MVI Intent (User Actions)
  */
 sealed class AccountManageIntent {
-    data class UpdateMicrosoftLoginOp(val operation: MicrosoftLoginOperation) : AccountManageIntent()
-    data class UpdateMicrosoftSkinOp(val operation: MicrosoftChangeSkinOperation) : AccountManageIntent()
-    data class UpdateMicrosoftCapeOp(val operation: MicrosoftChangeCapeOperation) : AccountManageIntent()
+    data class UpdateMicrosoftLoginOp(val operation: MicrosoftLoginOperation) :
+        AccountManageIntent()
+
+    data class UpdateMicrosoftSkinOp(val operation: MicrosoftChangeSkinOperation) :
+        AccountManageIntent()
+
+    data class UpdateMicrosoftCapeOp(val operation: MicrosoftChangeCapeOperation) :
+        AccountManageIntent()
+
     data class UpdateLocalLoginOp(val operation: LocalLoginOperation) : AccountManageIntent()
     data class UpdateOtherLoginOp(val operation: OtherLoginOperation) : AccountManageIntent()
     data class UpdateServerOp(val operation: ServerOperation) : AccountManageIntent()
     data class UpdateAccountOp(val operation: AccountOperation) : AccountManageIntent()
-    data class UpdateAccountSkinOp(val accountUuid: String, val operation: AccountSkinOperation) : AccountManageIntent()
+    data class UpdateAccountSkinOp(val accountUuid: String, val operation: AccountSkinOperation) :
+        AccountManageIntent()
 
     data class PerformMicrosoftLogin(
         val context: Context,
@@ -122,17 +129,48 @@ sealed class AccountManageIntent {
         val checkIfInWebScreen: () -> Boolean
     ) : AccountManageIntent()
 
-    data class ImportSkinFile(val context: Context, val account: Account, val uri: Uri) : AccountManageIntent()
-    data class UploadMicrosoftSkin(val context: Context, val account: Account, val skinFile: File, val skinModel: SkinModelType) : AccountManageIntent()
-    data class FetchMicrosoftCapes(val context: Context, val account: Account) : AccountManageIntent()
-    data class ApplyMicrosoftCape(val context: Context, val account: Account, val capeId: String?, val capeName: String, val isReset: Boolean) : AccountManageIntent()
-    data class CreateLocalAccount(val userName: String, val userUUID: String?) : AccountManageIntent()
-    data class LoginWithOtherServer(val context: Context, val server: AuthServer, val email: String, val pass: String) : AccountManageIntent()
+    data class ImportSkinFile(val context: Context, val account: Account, val uri: Uri) :
+        AccountManageIntent()
+
+    data class UploadMicrosoftSkin(
+        val context: Context,
+        val account: Account,
+        val skinFile: File,
+        val skinModel: SkinModelType
+    ) : AccountManageIntent()
+
+    data class FetchMicrosoftCapes(val context: Context, val account: Account) :
+        AccountManageIntent()
+
+    data class ApplyMicrosoftCape(
+        val context: Context,
+        val account: Account,
+        val capeId: String?,
+        val capeName: String,
+        val isReset: Boolean
+    ) : AccountManageIntent()
+
+    data class CreateLocalAccount(val userName: String, val userUUID: String?) :
+        AccountManageIntent()
+
+    data class LoginWithOtherServer(
+        val context: Context,
+        val server: AuthServer,
+        val email: String,
+        val pass: String
+    ) : AccountManageIntent()
+
     data class AddServer(val url: String) : AccountManageIntent()
     data class DeleteServer(val server: AuthServer) : AccountManageIntent()
     data class DeleteAccount(val account: Account) : AccountManageIntent()
     data class RefreshAccount(val context: Context, val account: Account) : AccountManageIntent()
-    data class SaveLocalSkin(val context: Context, val account: Account, val uri: Uri, val onRefresh: () -> Unit) : AccountManageIntent()
+    data class SaveLocalSkin(
+        val context: Context,
+        val account: Account,
+        val uri: Uri,
+        val onRefresh: () -> Unit
+    ) : AccountManageIntent()
+
     data class ResetSkin(val account: Account, val onRefresh: () -> Unit) : AccountManageIntent()
 }
 
@@ -141,15 +179,19 @@ sealed class AccountManageIntent {
  */
 sealed class AccountManageEffect {
     data class ShowError(val title: String, val message: String) : AccountManageEffect()
-    data class ShowToast(val messageRes: Int, val formatArgs: List<Any> = emptyList(), val duration: Int = android.widget.Toast.LENGTH_SHORT) : AccountManageEffect()
+    data class ShowToast(val messageRes: Int, val formatArgs: List<Any> = emptyList(), val duration: Int = android.widget.Toast.LENGTH_SHORT) :
+        AccountManageEffect()
 }
 
 @HiltViewModel
 class AccountManageViewModel @Inject constructor() : ViewModel() {
 
-    private val _microsoftLoginOp = MutableStateFlow<MicrosoftLoginOperation>(MicrosoftLoginOperation.None)
-    private val _microsoftSkinOp = MutableStateFlow<MicrosoftChangeSkinOperation>(MicrosoftChangeSkinOperation.None)
-    private val _microsoftCapeOp = MutableStateFlow<MicrosoftChangeCapeOperation>(MicrosoftChangeCapeOperation.None)
+    private val _microsoftLoginOp =
+        MutableStateFlow<MicrosoftLoginOperation>(MicrosoftLoginOperation.None)
+    private val _microsoftSkinOp =
+        MutableStateFlow<MicrosoftChangeSkinOperation>(MicrosoftChangeSkinOperation.None)
+    private val _microsoftCapeOp =
+        MutableStateFlow<MicrosoftChangeCapeOperation>(MicrosoftChangeCapeOperation.None)
     private val _localLoginOp = MutableStateFlow<LocalLoginOperation>(LocalLoginOperation.None)
     private val _otherLoginOp = MutableStateFlow<OtherLoginOperation>(OtherLoginOperation.None)
     private val _serverOp = MutableStateFlow<ServerOperation>(ServerOperation.None)
@@ -193,9 +235,15 @@ class AccountManageViewModel @Inject constructor() : ViewModel() {
 
     fun onIntent(intent: AccountManageIntent) {
         when (intent) {
-            is AccountManageIntent.UpdateMicrosoftLoginOp -> _microsoftLoginOp.value = intent.operation
-            is AccountManageIntent.UpdateMicrosoftSkinOp -> _microsoftSkinOp.value = intent.operation
-            is AccountManageIntent.UpdateMicrosoftCapeOp -> _microsoftCapeOp.value = intent.operation
+            is AccountManageIntent.UpdateMicrosoftLoginOp -> _microsoftLoginOp.value =
+                intent.operation
+
+            is AccountManageIntent.UpdateMicrosoftSkinOp -> _microsoftSkinOp.value =
+                intent.operation
+
+            is AccountManageIntent.UpdateMicrosoftCapeOp -> _microsoftCapeOp.value =
+                intent.operation
+
             is AccountManageIntent.UpdateLocalLoginOp -> _localLoginOp.value = intent.operation
             is AccountManageIntent.UpdateOtherLoginOp -> _otherLoginOp.value = intent.operation
             is AccountManageIntent.UpdateServerOp -> _serverOp.value = intent.operation
@@ -203,12 +251,17 @@ class AccountManageViewModel @Inject constructor() : ViewModel() {
             is AccountManageIntent.UpdateAccountSkinOp -> {
                 _accountSkinOpMap.update { it + (intent.accountUuid to intent.operation) }
             }
+
             is AccountManageIntent.PerformMicrosoftLogin -> performMicrosoftLogin(intent)
             is AccountManageIntent.ImportSkinFile -> importSkinFile(intent)
             is AccountManageIntent.UploadMicrosoftSkin -> uploadMicrosoftSkin(intent)
             is AccountManageIntent.FetchMicrosoftCapes -> fetchMicrosoftCapes(intent)
             is AccountManageIntent.ApplyMicrosoftCape -> applyMicrosoftCape(intent)
-            is AccountManageIntent.CreateLocalAccount -> createLocalAccount(intent.userName, intent.userUUID)
+            is AccountManageIntent.CreateLocalAccount -> createLocalAccount(
+                intent.userName,
+                intent.userUUID
+            )
+
             is AccountManageIntent.LoginWithOtherServer -> loginWithOtherServer(intent)
             is AccountManageIntent.AddServer -> addServer(intent.url)
             is AccountManageIntent.DeleteServer -> deleteServer(intent.server)
@@ -251,17 +304,42 @@ class AccountManageViewModel @Inject constructor() : ViewModel() {
         val uri = intent.uri
         val fileName = context.getFileName(uri) ?: UUID.randomUUID().toString().replace("-", "")
         val cacheFile = File(PathManager.DIR_IMAGE_CACHE, fileName)
-        TaskSystem.submitTask(Task.runTask(id = account.uniqueUUID, dispatcher = Dispatchers.IO, task = {
-            context.copyLocalFile(uri, cacheFile)
-            if (validateSkinFile(cacheFile)) onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.SelectSkinModel(account, cacheFile)))
-            else {
-                emitError(context.getString(R.string.generic_warning), context.getString(R.string.account_change_skin_invalid))
-                onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None))
-            }
-        }, onError = { th ->
-            emitError(context.getString(R.string.generic_error), context.getString(R.string.account_change_skin_failed_to_import) + "\r\n" + th.getMessageOrToString())
-            onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None))
-        }, onCancel = { onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None)) }))
+        TaskSystem.submitTask(
+            Task.runTask(
+                id = account.uniqueUUID,
+                dispatcher = Dispatchers.IO,
+                task = {
+                    context.copyLocalFile(uri, cacheFile)
+                    if (validateSkinFile(cacheFile)) onIntent(
+                        AccountManageIntent.UpdateMicrosoftSkinOp(
+                            MicrosoftChangeSkinOperation.SelectSkinModel(account, cacheFile)
+                        )
+                    )
+                    else {
+                        emitError(
+                            context.getString(R.string.generic_warning),
+                            context.getString(R.string.account_change_skin_invalid)
+                        )
+                        onIntent(
+                            AccountManageIntent.UpdateMicrosoftSkinOp(
+                                MicrosoftChangeSkinOperation.None
+                            )
+                        )
+                    }
+                },
+                onError = { th ->
+                    emitError(
+                        context.getString(R.string.generic_error),
+                        context.getString(R.string.account_change_skin_failed_to_import) + "\r\n" + th.getMessageOrToString()
+                    )
+                    onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None))
+                },
+                onCancel = {
+                    onIntent(
+                        AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None)
+                    )
+                })
+        )
     }
 
     private fun uploadMicrosoftSkin(intent: AccountManageIntent.UploadMicrosoftSkin) {
@@ -269,48 +347,89 @@ class AccountManageViewModel @Inject constructor() : ViewModel() {
         val account = intent.account
         val skinFile = intent.skinFile
         val skinModel = intent.skinModel
-        TaskSystem.submitTask(Task.runTask(dispatcher = Dispatchers.IO, task = { task ->
-            executeWithAuthorization(block = {
-                task.updateProgress(-1f, R.string.account_change_skin_uploading)
-                uploadSkin(MINECRAFT_SERVICES_URL, account.accessToken, skinFile, skinModel)
-            }, onRefreshRequest = {
-                account.refreshMicrosoft(task = task, coroutineContext = coroutineContext)
-                AccountsManager.suspendSaveAccount(account)
-            })
-            task.updateMessage(R.string.account_change_skin_update_local)
-            runCatching { account.downloadSkin() }.onFailure { th ->
-                emitError(context.getString(R.string.account_logging_in_failed), formatAccountError(context, th))
-            }
-            emitToast(R.string.account_change_skin_update_toast, duration = android.widget.Toast.LENGTH_LONG)
-            onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None))
-        }, onError = { th ->
-            val (title, msg) = if (th is io.ktor.client.plugins.ResponseException) {
-                val body = th.response.safeBodyAsJson<JsonObject>()
-                context.getString(R.string.account_change_skin_failed_to_upload, th.response.status.value) to (body["errorMessage"]?.jsonPrimitive?.contentOrNull ?: th.getMessageOrToString())
-            } else context.getString(R.string.generic_error) to formatAccountError(context, th)
-            emitError(title, msg)
-            onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None))
-        }, onCancel = { onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None)) }))
+        TaskSystem.submitTask(
+            Task.runTask(
+                dispatcher = Dispatchers.IO,
+                task = { task ->
+                    executeWithAuthorization(block = {
+                        task.updateProgress(-1f, R.string.account_change_skin_uploading)
+                        uploadSkin(MINECRAFT_SERVICES_URL, account.accessToken, skinFile, skinModel)
+                    }, onRefreshRequest = {
+                        account.refreshMicrosoft(task = task, coroutineContext = coroutineContext)
+                        AccountsManager.suspendSaveAccount(account)
+                    })
+                    task.updateMessage(R.string.account_change_skin_update_local)
+                    runCatching { account.downloadSkin() }.onFailure { th ->
+                        emitError(
+                            context.getString(R.string.account_logging_in_failed),
+                            formatAccountError(context, th)
+                        )
+                    }
+                    emitToast(R.string.account_change_skin_update_toast, duration = android.widget.Toast.LENGTH_LONG)
+                    onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None))
+                },
+                onError = { th ->
+                    val (title, msg) = if (th is io.ktor.client.plugins.ResponseException) {
+                        val body = th.response.safeBodyAsJson<JsonObject>()
+                        context.getString(
+                            R.string.account_change_skin_failed_to_upload,
+                            th.response.status.value
+                        ) to (body["errorMessage"]?.jsonPrimitive?.contentOrNull
+                            ?: th.getMessageOrToString())
+                    } else context.getString(R.string.generic_error) to formatAccountError(
+                        context,
+                        th
+                    )
+                    emitError(title, msg)
+                    onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None))
+                },
+                onCancel = {
+                    onIntent(
+                        AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None)
+                    )
+                })
+        )
     }
 
     private fun fetchMicrosoftCapes(intent: AccountManageIntent.FetchMicrosoftCapes) {
         val context = intent.context
         val account = intent.account
-        TaskSystem.submitTask(Task.runTask(id = account.uniqueUUID, dispatcher = Dispatchers.IO, task = { task ->
-            executeWithAuthorization(block = {
-                task.updateProgress(-1f, R.string.account_change_cape_fetch_all)
-                val profile = getPlayerProfile(MINECRAFT_SERVICES_URL, account.accessToken)
-                task.updateProgress(-1f, R.string.account_change_cape_cache_all)
-                cacheAllCapes(profile)
-                onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.SelectCape(account, profile)))
-            }, onRefreshRequest = {
-                account.refreshMicrosoft(task = task, coroutineContext = coroutineContext)
-                AccountsManager.suspendSaveAccount(account)
-            })
-        }, onError = { th ->
-            emitError(context.getString(R.string.generic_error), context.getString(R.string.account_change_cape_fetch_all_failed) + "\r\n" + th.getMessageOrToString())
-            onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None))
-        }, onCancel = { onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None)) }))
+        TaskSystem.submitTask(
+            Task.runTask(
+                id = account.uniqueUUID,
+                dispatcher = Dispatchers.IO,
+                task = { task ->
+                    executeWithAuthorization(block = {
+                        task.updateProgress(-1f, R.string.account_change_cape_fetch_all)
+                        val profile = getPlayerProfile(MINECRAFT_SERVICES_URL, account.accessToken)
+                        task.updateProgress(-1f, R.string.account_change_cape_cache_all)
+                        cacheAllCapes(profile)
+                        onIntent(
+                            AccountManageIntent.UpdateMicrosoftCapeOp(
+                                MicrosoftChangeCapeOperation.SelectCape(
+                                    account,
+                                    profile
+                                )
+                            )
+                        )
+                    }, onRefreshRequest = {
+                        account.refreshMicrosoft(task = task, coroutineContext = coroutineContext)
+                        AccountsManager.suspendSaveAccount(account)
+                    })
+                },
+                onError = { th ->
+                    emitError(
+                        context.getString(R.string.generic_error),
+                        context.getString(R.string.account_change_cape_fetch_all_failed) + "\r\n" + th.getMessageOrToString()
+                    )
+                    onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None))
+                },
+                onCancel = {
+                    onIntent(
+                        AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None)
+                    )
+                })
+        )
     }
 
     private fun applyMicrosoftCape(intent: AccountManageIntent.ApplyMicrosoftCape) {
@@ -319,25 +438,43 @@ class AccountManageViewModel @Inject constructor() : ViewModel() {
         val capeId = intent.capeId
         val capeName = intent.capeName
         val isReset = intent.isReset
-        TaskSystem.submitTask(Task.runTask(id = account.uniqueUUID + "_cape", dispatcher = Dispatchers.IO, task = { task ->
-            executeWithAuthorization(block = {
-                task.updateMessage(R.string.account_change_cape_apply)
-                changeCape(MINECRAFT_SERVICES_URL, account.accessToken, capeId)
-            }, onRefreshRequest = {
-                account.refreshMicrosoft(task = task, coroutineContext = coroutineContext)
-                AccountsManager.suspendSaveAccount(account)
-            })
-            if (isReset) emitToast(R.string.account_change_cape_apply_reset)
-            else emitToast(R.string.account_change_cape_apply_success, capeName)
-            onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None))
-        }, onError = { th ->
-            val (title, msg) = if (th is io.ktor.client.plugins.ResponseException) {
-                val body = th.response.safeBodyAsJson<JsonObject>()
-                context.getString(R.string.account_change_cape_apply_failed, th.response.status.value) to (body["errorMessage"]?.jsonPrimitive?.contentOrNull ?: th.getMessageOrToString())
-            } else context.getString(R.string.generic_error) to formatAccountError(context, th)
-            emitError(title, msg)
-            onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None))
-        }, onCancel = { onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None)) }))
+        TaskSystem.submitTask(
+            Task.runTask(
+                id = account.uniqueUUID + "_cape",
+                dispatcher = Dispatchers.IO,
+                task = { task ->
+                    executeWithAuthorization(block = {
+                        task.updateMessage(R.string.account_change_cape_apply)
+                        changeCape(MINECRAFT_SERVICES_URL, account.accessToken, capeId)
+                    }, onRefreshRequest = {
+                        account.refreshMicrosoft(task = task, coroutineContext = coroutineContext)
+                        AccountsManager.suspendSaveAccount(account)
+                    })
+                    if (isReset) emitToast(R.string.account_change_cape_apply_reset)
+                    else emitToast(R.string.account_change_cape_apply_success, capeName)
+                    onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None))
+                },
+                onError = { th ->
+                    val (title, msg) = if (th is io.ktor.client.plugins.ResponseException) {
+                        val body = th.response.safeBodyAsJson<JsonObject>()
+                        context.getString(
+                            R.string.account_change_cape_apply_failed,
+                            th.response.status.value
+                        ) to (body["errorMessage"]?.jsonPrimitive?.contentOrNull
+                            ?: th.getMessageOrToString())
+                    } else context.getString(R.string.generic_error) to formatAccountError(
+                        context,
+                        th
+                    )
+                    emitError(title, msg)
+                    onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None))
+                },
+                onCancel = {
+                    onIntent(
+                        AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None)
+                    )
+                })
+        )
     }
 
     private fun createLocalAccount(userName: String, userUUID: String?) {
@@ -353,12 +490,27 @@ class AccountManageViewModel @Inject constructor() : ViewModel() {
         }, onFailed = {
             onIntent(AccountManageIntent.UpdateOtherLoginOp(OtherLoginOperation.OnFailed(it)))
         }).createNewAccount(intent.context) { profiles, select ->
-            onIntent(AccountManageIntent.UpdateOtherLoginOp(OtherLoginOperation.SelectRole(profiles, select)))
+            onIntent(
+                AccountManageIntent.UpdateOtherLoginOp(
+                    OtherLoginOperation.SelectRole(
+                        profiles,
+                        select
+                    )
+                )
+            )
         }
     }
 
     private fun addServer(url: String) {
-        addOtherServer(url) { onIntent(AccountManageIntent.UpdateServerOp(ServerOperation.OnThrowable(it))) }
+        addOtherServer(url) {
+            onIntent(
+                AccountManageIntent.UpdateServerOp(
+                    ServerOperation.OnThrowable(
+                        it
+                    )
+                )
+            )
+        }
         onIntent(AccountManageIntent.UpdateServerOp(ServerOperation.None))
     }
 
@@ -392,16 +544,34 @@ class AccountManageViewModel @Inject constructor() : ViewModel() {
                 FileUtils.deleteQuietly(cacheFile)
                 AccountsManager.suspendSaveAccount(account)
                 onRefresh()
-                onIntent(AccountManageIntent.UpdateAccountSkinOp(account.uniqueUUID, AccountSkinOperation.None))
+                onIntent(
+                    AccountManageIntent.UpdateAccountSkinOp(
+                        account.uniqueUUID,
+                        AccountSkinOperation.None
+                    )
+                )
             } else {
-                emitError(context.getString(R.string.generic_warning), context.getString(R.string.account_change_skin_invalid))
-                onIntent(AccountManageIntent.UpdateAccountSkinOp(account.uniqueUUID, AccountSkinOperation.None))
+                emitError(
+                    context.getString(R.string.generic_warning),
+                    context.getString(R.string.account_change_skin_invalid)
+                )
+                onIntent(
+                    AccountManageIntent.UpdateAccountSkinOp(
+                        account.uniqueUUID,
+                        AccountSkinOperation.None
+                    )
+                )
             }
         }, onError = { th ->
             FileUtils.deleteQuietly(cacheFile)
             emitError(context.getString(R.string.error_import_image), th.getMessageOrToString())
             onRefresh()
-            onIntent(AccountManageIntent.UpdateAccountSkinOp(account.uniqueUUID, AccountSkinOperation.None))
+            onIntent(
+                AccountManageIntent.UpdateAccountSkinOp(
+                    account.uniqueUUID,
+                    AccountSkinOperation.None
+                )
+            )
         }))
     }
 
@@ -415,7 +585,12 @@ class AccountManageViewModel @Inject constructor() : ViewModel() {
                 onRefresh()
             }
         }))
-        onIntent(AccountManageIntent.UpdateAccountSkinOp(account.uniqueUUID, AccountSkinOperation.None))
+        onIntent(
+            AccountManageIntent.UpdateAccountSkinOp(
+                account.uniqueUUID,
+                AccountSkinOperation.None
+            )
+        )
     }
 
     fun formatAccountError(context: Context, th: Throwable): String = when (th) {
@@ -434,6 +609,7 @@ class AccountManageViewModel @Inject constructor() : ViewModel() {
             }
             context.getString(res, th.response.status.value)
         }
+
         else -> {
             lError("An unknown exception was caught!", th)
             val errorMessage = th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
