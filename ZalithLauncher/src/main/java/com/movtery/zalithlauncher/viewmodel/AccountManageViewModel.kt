@@ -86,6 +86,7 @@ import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 import java.util.UUID
 import javax.inject.Inject
+import io.ktor.client.plugins.ResponseException as KtorResponseException
 
 /**
  * 账号管理界面 UI 状态
@@ -437,7 +438,7 @@ class AccountManageViewModel @Inject constructor(
                     runCatching { account.downloadSkin() }.onFailure { th ->
                         emitError(
                             context.getString(R.string.account_logging_in_failed),
-                            formatAccountError(context, th)
+                            formatAccountError(th)
                         )
                     }
 
@@ -445,10 +446,9 @@ class AccountManageViewModel @Inject constructor(
                         R.string.account_change_skin_update_toast,
                         duration = Toast.LENGTH_LONG
                     )
-                    emitRefreshAvatar(account.uniqueUUID)
                 },
                 onError = { th ->
-                    val (title, msg) = if (th is io.ktor.client.plugins.ResponseException) {
+                    val (title, msg) = if (th is KtorResponseException) {
                         val body = th.response.safeBodyAsJson<JsonObject>()
                         context.getString(
                             R.string.account_change_skin_failed_to_upload,
@@ -456,7 +456,7 @@ class AccountManageViewModel @Inject constructor(
                         ) to (body["errorMessage"]?.jsonPrimitive?.contentOrNull
                             ?: th.getMessageOrToString())
                     } else {
-                        context.getString(R.string.generic_error) to formatAccountError(context, th)
+                        context.getString(R.string.generic_error) to formatAccountError(th)
                     }
                     emitError(title, msg)
                     onIntent(AccountManageIntent.UpdateMicrosoftSkinOp(MicrosoftChangeSkinOperation.None))
@@ -510,6 +510,9 @@ class AccountManageViewModel @Inject constructor(
         val capeName = intent.capeName
         val isReset = intent.isReset
 
+        // 立即重置 UI 状态以关闭对话框
+        onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None))
+
         TaskSystem.submitTask(
             Task.runTask(
                 id = account.uniqueUUID + "_cape",
@@ -529,7 +532,7 @@ class AccountManageViewModel @Inject constructor(
                     onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None))
                 },
                 onError = { th ->
-                    val (title, msg) = if (th is io.ktor.client.plugins.ResponseException) {
+                    val (title, msg) = if (th is KtorResponseException) {
                         val body = th.response.safeBodyAsJson<JsonObject>()
                         context.getString(
                             R.string.account_change_cape_apply_failed,
@@ -537,7 +540,7 @@ class AccountManageViewModel @Inject constructor(
                         ) to (body["errorMessage"]?.jsonPrimitive?.contentOrNull
                             ?: th.getMessageOrToString())
                     } else {
-                        context.getString(R.string.generic_error) to formatAccountError(context, th)
+                        context.getString(R.string.generic_error) to formatAccountError(th)
                     }
                     emitError(title, msg)
                     onIntent(AccountManageIntent.UpdateMicrosoftCapeOp(MicrosoftChangeCapeOperation.None))
@@ -662,19 +665,18 @@ class AccountManageViewModel @Inject constructor(
 
     /**
      * 将多种异常类型统一转化为用户可读的本地化字符串。
-     * 
-     * @param context 环境上下文
+     *
      * @param th 捕获的异常
      * @return 格式化后的错误提示
      */
-    fun formatAccountError(context: Context, th: Throwable): String = when (th) {
+    fun formatAccountError(th: Throwable): String = when (th) {
         is NotPurchasedMinecraftException -> toLocal(context)
         is MinecraftProfileException -> th.toLocal(context)
         is XboxLoginException -> th.toLocal(context)
         is HttpRequestTimeoutException -> context.getString(R.string.error_timeout)
         is UnknownHostException, is UnresolvedAddressException -> context.getString(R.string.error_network_unreachable)
         is ConnectException -> context.getString(R.string.error_connection_failed)
-        is io.ktor.client.plugins.ResponseException -> {
+        is KtorResponseException -> {
             val res = when (th.response.status) {
                 HttpStatusCode.Unauthorized -> R.string.error_unauthorized
                 HttpStatusCode.NotFound -> R.string.error_notfound

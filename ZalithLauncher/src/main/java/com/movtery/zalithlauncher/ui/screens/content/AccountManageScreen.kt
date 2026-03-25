@@ -197,7 +197,7 @@ fun AccountManageScreen(
             backToMainScreen = backToMainScreen,
             navigateToWeb = { url -> backStackViewModel.mainScreen.backStack.navigateToWeb(url) },
             checkIfInWebScreen = { backStackViewModel.mainScreen.currentKey is NormalNavKey.WebScreen },
-            formatError = { ctx, th -> viewModel.formatAccountError(ctx, th) },
+            formatError = { _, th -> viewModel.formatAccountError(th) },
             submitError = submitError,
             refreshAvatarMap = refreshAvatarMap
         )
@@ -533,22 +533,20 @@ private fun LocalLoginOperation(
             SimpleAlertDialog(
                 title = stringResource(R.string.account_supporting_username_invalid_title),
                 text = {
-                    Column {
-                        Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint1))
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = stringResource(R.string.account_supporting_username_invalid_local_message_hint2),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint3))
-                        Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint4))
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = stringResource(R.string.account_supporting_username_invalid_local_message_hint5),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                    Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint1))
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(R.string.account_supporting_username_invalid_local_message_hint2),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint3))
+                    Text(text = stringResource(R.string.account_supporting_username_invalid_local_message_hint4))
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(R.string.account_supporting_username_invalid_local_message_hint5),
+                        fontWeight = FontWeight.Bold
+                    )
                 },
                 confirmText = stringResource(R.string.account_supporting_username_invalid_still_use),
                 onConfirm = {
@@ -649,7 +647,6 @@ private fun ServerTypeOperation(
     operation: ServerOperation,
     actions: AccountActions
 ) {
-    val context = LocalContext.current
     val addingFailureTitle = stringResource(R.string.account_other_login_adding_failure)
 
     when (operation) {
