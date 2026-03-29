@@ -31,6 +31,7 @@ import com.movtery.zalithlauncher.utils.killProgress
 import com.movtery.zalithlauncher.utils.logging.Logger.lInfo
 import com.movtery.zalithlauncher.utils.network.openLink
 import java.io.File
+import androidx.core.net.toUri
 
 @Keep
 object ZLNativeInvoker {
@@ -63,10 +64,26 @@ object ZLNativeInvoker {
     }
 
     /**
-     * 格式化文件路径，去除 `file:/..`，仅以`/`开头
+     * 格式化文件路径
      */
-    private fun formatFilePath(input: String): String {
-        return input.replace(Regex("^file:/+"), "/")
+    private fun formatFilePath(input: String): String? {
+        return try {
+            val uri = input.toUri()
+            if (uri.scheme == "file") {
+                uri.path
+            } else {
+                null
+            }
+        } catch (_: Exception) {
+            when {
+                input.startsWith("file:") -> {
+                    input
+                        .replace(Regex("^file:/+"), "/")
+                        .replace("%20", " ")
+                }
+                else -> null
+            }
+        }
     }
 
     @Keep
