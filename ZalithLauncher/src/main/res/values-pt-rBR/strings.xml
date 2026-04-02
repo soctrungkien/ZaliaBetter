@@ -492,7 +492,7 @@
     <string name="account_microsoft_getting_player_profile">Buscando perfil</string>
     <string name="account_microsoft_exit_by_user">Você saiu da página, portanto, o processo de logar com a conta da Microsoft foi cancelado.</string>
     <string name="account_advanced">Configurações Avançadas</string>
-    <string name="account_local_create_account">Criar conta offline</string>
+    <string name="account_local_create_account">Coloque seu nick</string>
     <string name="account_local_uuid_tip_1">UUID é o identificador único de um jogador de Minecraft.</string>
     <string name="account_local_uuid_tip_2">Diferentes launchers podem gerar UUIDs diferentes.</string>
     <string name="account_local_uuid_tip_3">Manter o UUID inalterado ao trocar de launcher permite que o jogo continue reconhecendo seu personagem e retenha os dados do inventário.</string>

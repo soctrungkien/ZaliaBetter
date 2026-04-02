@@ -447,7 +447,7 @@
     <string name="versions_overview_version_folder">Sürüm Klasörü</string>
     <string name="versions_overview_saves_folder">Dünyalar Klasörü</string>
     <string name="versions_overview_resource_pack_folder">Kaynak Paketi Klasörü</string>
-    <string name="versions_overview_shaders_pack_folder">Gölgelendirici Paketi klasörü</string>
+    <string name="versions_overview_shaders_pack_folder">Gölgelendirici Paketi Klasörü</string>
     <string name="versions_overview_screenshot_folder">Ekran Görüntüleri Klasörü</string>
     <string name="versions_overview_logs_folder">Günlük Klasörü</string>
     <string name="versions_overview_crash_report_folder">Çökme Raporu Klasörü</string>
@@ -714,7 +714,7 @@
     <string name="game_menu_title">Oyun menüsü</string>
     <string name="game_menu_option_force_close_text">Çalışmakta olan oyunu zorla kapatmak, kayıt verilerinin bozulmasına veya ayarların kaydedilmemesine neden olabilir. Gerekmedikçe bu işlemi yapmaktan kaçının.</string>
     <string name="game_menu_option_switch_log">Günlük Çıktısı</string>
-    <string name="game_menu_option_input_method">Klawyeyi aç</string>
+    <string name="game_menu_option_input_method">Klavye\'yi Aç</string>
     <string name="game_menu_option_switch_fps">Fps göstergesi</string>
     <string name="game_menu_option_switch_memory">Ram göstergesi</string>
     <string name="game_menu_option_menu_ball_opacity">Menü şefaflıgı</string>
@@ -1151,4 +1151,8 @@
     <string name="settings_gamepad_config_create_name">Yapılandırma Adı</string>
     <string name="settings_gamepad_config_create_contains">Aynı ada sahip bir yapılandırma zaten mevcut.</string>
     <string name="settings_gamepad_config_no_items">Hiçbir yapılandırma oluşturulmadı, geçiş yapılamıyor.</string>
+    <string name="unpack_screen_jre25">Java 25 (Minecraft 26.1+ için gerekli)</string>
+    <string name="plugin_unsupported_warning">Bu eklenti (%s) bu oyun sürümü için desteklenmiyor. Kullanmaya devam etmek oyunun çökmesine neden olabilir! Riski göz ardı edip devam etmek istediğinizden emin misiniz?</string>
+    <string name="settings_game_native_lib_plugin_title">Yerel Kütüphane Eklentileri</string>
+    <string name="settings_game_native_lib_plugin_summary">Yüklenmiş tüm yerel kütüphane eklentilerini listeler. Listede bunları etkinleştirebilir veya devre dışı bırakabilirsiniz.</string>
 </resources>
