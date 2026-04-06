@@ -130,7 +130,10 @@ fun BoxWithConstraintsScope.ControlEditor(
             viewModel.selectedLayer = layer
         },
         createLayer = {
-            viewModel.observableLayout.addLayer(createNewLayer(defaultLayerName = defaultLayerName))
+            val newLayer = viewModel.observableLayout.addLayer(
+                layer = createNewLayer(defaultLayerName = defaultLayerName)
+            )
+            viewModel.editorOperation = EditorOperation.EditLayer(newLayer)
         },
         onAttribute = { layer ->
             viewModel.editorOperation = EditorOperation.EditLayer(layer)

@@ -44,15 +44,18 @@ class ObservableControlLayout(
     val special = _special.asStateFlow()
 
     /**
-     * 添加控制层
+     * 添加控件层
+     * @return 新添加的可观察控件层
      */
-    fun addLayer(layer: ControlLayer) {
+    fun addLayer(layer: ControlLayer): ObservableControlLayer {
+        val newLayer = ObservableControlLayer(layer)
         //               在顶部添加
-        _layers.update { listOf(ObservableControlLayer(layer)) + it }
+        _layers.update { listOf(newLayer) + it }
+        return newLayer
     }
 
     /**
-     * 移除控制层
+     * 移除控件层
      */
     fun removeLayer(uuid: String) {
         _layers.update { oldLayers ->
