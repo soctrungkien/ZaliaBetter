@@ -291,6 +291,7 @@ private fun ActionsLayout(
                         onPageFinished = {
                             pageFinished = true
                             playerSkin.startAnim(ModelAnimation.NewIdle)
+                            playerSkin.setAzimuthAndPitch(-35, 10)
                         }
                     )
                 },

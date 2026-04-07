@@ -173,6 +173,13 @@ class PlayerSkin(
         )
     }
 
+    fun setAzimuthAndPitch(azimuthDeg: Int, pitchDeg: Int, distance: Int = 60) {
+        webview?.evaluateJavascript(
+            "setAzimuthAndPitch($azimuthDeg, $pitchDeg, $distance)",
+            null
+        )
+    }
+
     private fun InputStream.asBase64Image(): String {
         return readBytes().let { bytes ->
             val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)

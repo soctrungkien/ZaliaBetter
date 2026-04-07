@@ -124,8 +124,33 @@ skinViewer.controls.enableRotate = true;
 skinViewer.controls.enableZoom = false;
 skinViewer.controls.enablePan = false;
 
-// Center the camera and set initial control targets
-skinViewer.camera.position.set(0, 10, 50);
+//记录默认的相机位置和控制器目标点
+const defaultCameraPos = skinViewer.camera.position.clone();
+const defaultControlsTarget = skinViewer.controls.target.clone();
+
+function updateDefaultCameraPosition() {
+    defaultCameraPos.copy(skinViewer.camera.position);
+    defaultControlsTarget.copy(skinViewer.controls.target);
+}
+
+function setAzimuthAndPitch(azimuthDeg, pitchDeg, distance = 60) {
+    const controls = skinViewer.controls;
+    const target = controls.target;
+
+    const azimuth = azimuthDeg * Math.PI / 180;
+    const pitch = pitchDeg * Math.PI / 180;
+
+    const x = distance * Math.cos(pitch) * Math.sin(azimuth);
+    const y = distance * Math.sin(pitch);
+    const z = distance * Math.cos(pitch) * Math.cos(azimuth);
+
+    skinViewer.camera.position.set(target.x + x, target.y + y, target.z + z);
+    controls.update();
+
+    updateDefaultCameraPosition();
+}
+
+setAzimuthAndPitch(0, 10);
 
 // 确保 OrbitControls 也有相同的目标点，覆盖默认的 lookAt
 if (skinViewer.controls) {
@@ -134,9 +159,6 @@ if (skinViewer.controls) {
     skinViewer.camera.lookAt(0, 16, 0);
 }
 
-// 保存初始的摄像机位置和控制器目标点（克隆以避免被修改）
-const defaultCameraPos = skinViewer.camera.position.clone();
-const defaultControlsTarget = skinViewer.controls.target.clone();
 let resetAnimationId = null;
 
 // 监听容器的双击事件
