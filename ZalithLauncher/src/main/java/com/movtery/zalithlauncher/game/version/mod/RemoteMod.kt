@@ -124,7 +124,11 @@ class RemoteMod(
                     } else {
                         ensureActive()
                         remoteFile?.let { modFile ->
-                            val project = getProjectByVersion(modFile.projectId, modFile.platform)
+                            val project = getProjectByVersion(
+                                projectId = modFile.projectId,
+                                platform = modFile.platform,
+                                printLog = false
+                            )
                             val newProjectInfo = ModProject(
                                 id = project.platformId(),
                                 platform = project.platform(),

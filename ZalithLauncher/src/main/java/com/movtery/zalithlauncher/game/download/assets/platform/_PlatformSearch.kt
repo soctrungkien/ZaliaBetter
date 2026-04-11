@@ -61,6 +61,7 @@ private val mirrorCurseForgeSearcher = CurseForgeSearcher(
  */
 suspend fun <E: AbstractPlatformSearcher, T> mirroredPlatformSearcher(
     searchers: List<E>,
+    printLog: Boolean = true,
     block: suspend (E) -> T
 ): T {
     require(searchers.isNotEmpty()) { "Searcher list must not be empty." }
@@ -70,7 +71,9 @@ suspend fun <E: AbstractPlatformSearcher, T> mirroredPlatformSearcher(
 
     for (searcher in searchers) {
         try {
-            lDebug("Starting to attempt to perform the operation on source: {${searcher.source}}")
+            if (printLog) {
+                lDebug("Starting to attempt to perform the operation on source: {${searcher.source}}")
+            }
             return block(searcher)
         } catch (e: Exception) {
             lastException = e
@@ -86,14 +89,16 @@ suspend fun <E: AbstractPlatformSearcher, T> mirroredPlatformSearcher(
         }
     }
 
-    lWarning(
-        msg = "An error occurred during this search.",
-        t = IOException("All sources have failed to attempt", lastException).apply {
-            errors.forEachIndexed { i, e ->
-                addSuppressed(Exception("Mirror error #${i + 1}: ${e.message}"))
+    if (printLog) {
+        lWarning(
+            msg = "An error occurred during this search.",
+            t = IOException("All sources have failed to attempt", lastException).apply {
+                errors.forEachIndexed { i, e ->
+                    addSuppressed(Exception("Mirror error #${i + 1}: ${e.message}"))
+                }
             }
-        }
-    )
+        )
+    }
     throw lastException ?: IllegalStateException("Should not have executed to this stage.")
 }
 
@@ -256,16 +261,19 @@ suspend fun <E> getProject(
 
 suspend fun getProjectByVersion(
     projectId: String,
-    platform: Platform
+    platform: Platform,
+    printLog: Boolean = true
 ): PlatformProject = withContext(Dispatchers.IO) {
     when (platform) {
         Platform.MODRINTH -> mirroredPlatformSearcher(
-            searchers = mirroredModrinthSource()
+            searchers = mirroredModrinthSource(),
+            printLog = printLog
         ) { searcher ->
             searcher.getProject(projectId)
         }
         Platform.CURSEFORGE -> mirroredPlatformSearcher(
-            searchers = mirroredCurseForgeSource()
+            searchers = mirroredCurseForgeSource(),
+            printLog = printLog
         ) { searcher ->
             searcher.getProject(projectId)
         }
@@ -276,7 +284,8 @@ suspend fun getVersionByLocalFile(file: File, sha1: String): PlatformVersion? = 
     val modrinthDeferred = async(Dispatchers.IO) {
         runCatching {
             mirroredPlatformSearcher(
-                searchers = mirroredModrinthSource()
+                searchers = mirroredModrinthSource(),
+                printLog = false
             ) { searcher ->
                 searcher.getVersionByLocalFile(file, sha1)
             }
@@ -286,7 +295,8 @@ suspend fun getVersionByLocalFile(file: File, sha1: String): PlatformVersion? = 
     val curseForgeDeferred = async(Dispatchers.IO) {
         runCatching {
             mirroredPlatformSearcher(
-                searchers = mirroredCurseForgeSource()
+                searchers = mirroredCurseForgeSource(),
+                printLog = false
             ) { searcher ->
                 searcher.getVersionByLocalFile(file, sha1)
             }

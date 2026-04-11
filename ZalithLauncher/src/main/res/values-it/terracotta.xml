@@ -66,17 +66,6 @@
     <string name="terracotta_tutorial_guest_tab">Tutorial Ospite</string>
     <string name="terracotta_tutorial_host_tip">Tutorial Ospitante:</string>
     <string name="terracotta_tutorial_guest_tip">Tutorial Ospite:</string>
-    <string name="terracotta_tutorial_step_enable_multiplayer">- Leggi l\'avviso per l\'utente nella pagina iniziale multigiocatore del launcher, e abilita la funzione multigiocatore.</string>
-    <string name="terracotta_tutorial_step_open_multiplayer_menu">- Avvia il gioco, trova il menù multigiocatore nel menù FCL del gioco, e aprilo.</string>
-    <string name="terracotta_tutorial_step_vpn_permission">- Se un pop-up ti chiede il permesso VPN, per favore acconsenti; sennò non funzionera correttamente.</string>
-    <string name="terracotta_tutorial_step_offline_account_support">- Questo software permette gli account offline.</string>
-    <string name="terracotta_tutorial_step_interoperability">- Questo software permette le interconnessioni con FCL, HMCL, e PCL CE (Terracotta).</string>
-    <string name="terracotta_tutorial_host_step_become_host">- Premi su Voglio ospitare una sessione per trovare la porta di gioco.</string>
-    <string name="terracotta_tutorial_host_step_open_lan">- Apri il gioco e abilita l\'Apertura in LAN nelle impostazioni di gioco.</string>
-    <string name="terracotta_tutorial_host_step_copy_invite">- Aspetta un momento e il codice di invito sarà automaticamente copiato. Se non è automaticamente copiato, puoi anche copiarlo manualmente nel menù multigiocatore.</string>
     <string name="terracotta_tutorial_host_step_send_invite">- Invia il codice di invito ai tuoi amici</string>
-    <string name="terracotta_tutorial_guest_step_become_guest">- Premi su Voglio entrare in una sessione, inserisci il codice di invito dato dall\'ospitante nella zona di input, e aspetta pazientemente.</string>
-    <string name="terracotta_tutorial_guest_step_join_room">- Dopo che ti mostra che sei entrato nella stanza, seleziona Multigiocatore, e premi due volte su Terracotta Lobby.</string>
-    <string name="terracotta_tutorial_guest_step_alternate_server">- Quando si entra in gioco utilizzando l\'indirizzo backup del server, gli account offline non sono supportati. Per favore risolvi questo errore da solo.</string>
     <string name="terracotta_tutorial_note_title">Note:</string>
 </resources>

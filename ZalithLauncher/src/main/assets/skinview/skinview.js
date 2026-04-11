@@ -43,8 +43,8 @@ class IdleAnimation extends skinview3d.PlayerAnimation {
 
         const breathe = Math.sin(t * 1.2) * 0.04;
 
-        player.skin.body.position.y = Math.sin(t * 1.2) * 0.2 - 6.2;
-        player.skin.head.position.y = Math.sin(t * 1.2) * 0.1;
+        player.skin.body.position.y = Math.sin(t * 2.2) * -0.1 - 6.1;
+        player.skin.head.position.y = Math.sin(t * 2.2) * -0.1 - 0.1;
 
         player.skin.body.rotation.x = Math.sin(t * 2.2) * 0.02;
         player.skin.body.rotation.z = Math.sin(t * 1.5) * 0.01;

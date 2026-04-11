@@ -45,7 +45,6 @@
     <string name="terracotta_status_host_ok_code_copy_toast">Davet kodu panoya kopyalandı</string>
     <string name="terracotta_status_guest_ok_address_copy">Yedekleme adresini kopyala</string>
     <string name="terracotta_status_exception_back">Lütfen tekrar deneyin</string>
-    <string name="terracotta_tutorial_step_offline_account_support">- Bu yazılım çevrimdışı hesapları desteklemektedir.</string>
     <string name="terracotta_status_guest_ok_address_copy_toast">Yedekleme adresi panoya kopyalandı</string>
     <string name="terracotta_permission_vpn">Lütfen öncelikle uygulamaya VPN izni verin.</string>
     <string name="terracotta_status_guest_ok_address_desc">Lütfen gerekli olmadıkça bu adresi kullanmayın.</string>
@@ -58,7 +57,6 @@
     <string name="terracotta_status_guest_ok_address">Lütfen oyunu başlatın, Çok Oyunculu\'yu seçin ve Terracotta Lobisi\'ne çift tıklayın. Yedek adres:</string>
     <string name="terracotta_status_exception_desc_guest_et_crash">Odaya katılma başarısız oldu: EasyTier çöktü, lütfen bu sorunu geliştiricilere bildirin</string>
     <string name="terracotta_status_exception_desc_host_et_crash">Oda oluşturulamadı: EasyTier çöktü, lütfen bu sorunu geliştiricilere bildirin</string>
-    <string name="terracotta_tutorial_step_interoperability">- Bu yazılım, FCL, HMCL ve PCL CE (Terracotta) gibi Scaffolding protokolünü destekleyen yazılımlarla ara bağlantıyı destekler.</string>
     <string name="terracotta_player_kind_host">Ev sahibi</string>
     <string name="terracotta_player_kind_local">Kendin</string>
     <string name="terracotta_player_kind_guest">Misafir</string>
@@ -73,15 +71,6 @@
     <string name="terracotta_tutorial_guest_tip">Misafir Talimatları:</string>
     <string name="terracotta_status_host_ok_back">Bu işlem aynı zamanda odayı da kapatacak, diğer misafirler ayrılacak ve tekrar katılamayacaklar.</string>
     <string name="terracotta_status_exception_desc_scaffolding_invalid_response">Geçersiz Protokol: Sunucu geçersiz bir yanıt gönderdi, lütfen bu sorunu geliştiricilere bildirin</string>
-    <string name="terracotta_tutorial_host_step_become_host">- Oyun portunu taramak için \"Oturum başlatmak istiyorum\" seçeneğine tıklayın.</string>
-    <string name="terracotta_tutorial_step_enable_multiplayer">- Başlatıcının çok oyunculu ana sayfasındaki kullanıcı uyarısını okuyun ve ardından çok oyunculu işlevini etkinleştirin.</string>
-    <string name="terracotta_tutorial_step_open_multiplayer_menu">- Oyunu başlatın, oyun içi FCL menüsünde çok oyunculu menüsünü bulun ve açın.</string>
-    <string name="terracotta_tutorial_host_step_open_lan">- Oyunu açın ve oyun ayarlarında \"Yerel Ağdan Bağlan\" seçeneğini etkinleştirin.</string>
-    <string name="terracotta_tutorial_guest_step_join_room">- Odaya katıldığınızı gösteren ekran göründükten sonra Çok Oyunculu\'yu seçin ve Terracotta Lobisi\'ne çift tıklayın.</string>
     <string name="terracotta_status_host_ok_code_desc">Lütfen arkadaşlarınıza çok oyunculu modda Misafir modunu seçmelerini ve bu davet kodunu girmelerini hatırlatın.</string>
-    <string name="terracotta_tutorial_step_vpn_permission">- Eğer bir açılır pencere VPN izinleri istemenizi isterse, lütfen izin verin; aksi takdirde düzgün çalışmayacaktır.</string>
-    <string name="terracotta_tutorial_guest_step_alternate_server">- Yedek sunucu adresini kullanarak oyuna katılırken çevrimdışı hesaplar desteklenmemektedir. Lütfen bu sorunu kendiniz çözün.</string>
-    <string name="terracotta_tutorial_guest_step_become_guest">- \"Oturuma katılmak istiyorum\" seçeneğine tıklayın, ev sahibi tarafından verilen davet kodunu giriş kutusuna girin ve sabırla bekleyin.</string>
-    <string name="terracotta_tutorial_host_step_copy_invite">- Bir süre bekleyin, davet kodu otomatik olarak kopyalanacaktır. Otomatik olarak kopyalanmazsa, çok oyunculu menüsünden manuel olarak da kopyalayabilirsiniz.</string>
     <string name="terracotta_status_exception">Bağlantı kesildi</string>
 </resources>

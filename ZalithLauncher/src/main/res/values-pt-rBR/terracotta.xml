@@ -55,16 +55,7 @@
     <string name="terracotta_status_guest_ok_address_desc">Por favor, não utilize este endereço a menos que seja necessário.</string>
     <string name="terracotta_tutorial_host_tip">Tutorial para anfitriões:</string>
     <string name="terracotta_tutorial_guest_tip">Tutorial para convidados:</string>
-    <string name="terracotta_tutorial_step_enable_multiplayer">- Leia o aviso ao usuário na página inicial do modo multijogador do launcher e, em seguida, ative a função multijogador.</string>
-    <string name="terracotta_tutorial_step_open_multiplayer_menu">- Inicie o jogo, encontre o menu multijogador no menu FCL do jogo e abra-o.</string>
-    <string name="terracotta_tutorial_step_vpn_permission">- Se uma janela pop-up solicitar permissões de VPN, conceda-as; caso contrário, não funcionará corretamente.</string>
-    <string name="terracotta_tutorial_step_offline_account_support">- Este software suporta contas offline.</string>
-    <string name="terracotta_tutorial_step_interoperability">- Este software suporta a interconexão com softwares que suportam o protocolo Scaffolding, como FCL, HMCL e PCL CE (Terracota).</string>
-    <string name="terracotta_tutorial_host_step_become_host">- Clique em \"Quero hospedar uma sessão\" para verificar a porta do jogo.</string>
-    <string name="terracotta_tutorial_host_step_open_lan">- Abra o jogo e ative a opção \"Abrir para LAN\" nas configurações do jogo.</string>
-    <string name="terracotta_tutorial_host_step_copy_invite">’Aguarde um momento e o código de convite será copiado automaticamente. Caso não seja copiado automaticamente, você também pode copiá-lo manualmente no menu multijogador.</string>
     <string name="terracotta_tutorial_host_step_send_invite">- Envie o código de convite para seus amigos</string>
-    <string name="terracotta_tutorial_guest_step_become_guest">- Clique em \"Quero participar de uma sessão\", insira o código de convite fornecido pelo anfitrião na caixa de entrada e aguarde pacientemente.</string>
     <string name="terracotta_status_exception">Conexão perdida</string>
     <string name="terracotta_status_exception_back">Por favor, tente novamente</string>
     <string name="terracotta_status_exception_desc_ping_host_fail">Não foi possível entrar na sala: a sala está fechada ou a rede está instável</string>
@@ -81,7 +72,5 @@
     <string name="terracotta_player_kind_guest">Convidado</string>
     <string name="terracotta_tutorial_host_tab">Tutorial para anfitriões</string>
     <string name="terracotta_tutorial_guest_tab">Tutorial para convidados</string>
-    <string name="terracotta_tutorial_guest_step_join_room">- Depois de confirmar que você entrou na sala, selecione Multijogador e clique duas vezes em Terracotta Lobby.</string>
-    <string name="terracotta_tutorial_guest_step_alternate_server">- Ao entrar no jogo usando o endereço do servidor de backup, contas offline não são suportadas. Resolva este problema você mesmo.</string>
     <string name="terracotta_tutorial_note_title">Notas:</string>
 </resources>
