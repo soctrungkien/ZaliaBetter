@@ -18,7 +18,7 @@
     <string name="terracotta_confirm_p2p">Terracotta utilizza tecnologia P2P. Dopo una connessione riuscita, gli utenti nella stanza si connetteranno tra di loro, e nessun server di terze parti inoltrerà il tuo traffico. L\'esperienza multigiocatore finale dipende largamente sulla condizione internet dei partecipanti.</string>
     <string name="terracotta_confirm_law">Durante l\'intera procedura multigiocatore, dovrai rispettare rigorosamente tutte le leggi e i regolamenti del tuo Paese e della tua regione.</string>
     <string name="terracotta_menu">Menù Multigiocatore</string>
-    <string name="terracotta_notification_title">Terracotta è in esecuzione</string>
+    <string name="terracotta_notification_title">Terracotta | Multigiocatore è in esecuzione</string>
     <string name="terracotta_notification_desc">Identità: %s, Stato: %s</string>
     <string name="terracotta_status_waiting_host_title">Voglio ospitare una sessione</string>
     <string name="terracotta_status_waiting_host_desc">Crea una stanza e genera un codice di invito per giocare con gli amici</string>
@@ -68,4 +68,10 @@
     <string name="terracotta_tutorial_guest_tip">Tutorial Ospite:</string>
     <string name="terracotta_tutorial_host_step_send_invite">- Invia il codice di invito ai tuoi amici</string>
     <string name="terracotta_tutorial_note_title">Note:</string>
+    <string name="terracotta_difficulty_easiest">Connessione Eccelente: quasi connesso!</string>
+    <string name="terracotta_difficulty_simple">Buona connessione: per favore attendi</string>
+    <string name="terracotta_difficulty_tough">Connessione scarsa: attivando percorso alternativo, ma la connessione potrebbe fallire</string>
+    <string name="terracotta_difficulty_medium">Connessione media: attivando percorso alternativo, ma la connessione potrebbe fallire</string>
+    <string name="terracotta_tutorial_step_enable_multiplayer">- Attiva il Multigiocatore nella pagina principale del launcher dopo aver letto l\'avviso utente</string>
+    <string name="terracotta_tutorial_step_offline_account_support">- Questo programma supporta account offline</string>
 </resources>
