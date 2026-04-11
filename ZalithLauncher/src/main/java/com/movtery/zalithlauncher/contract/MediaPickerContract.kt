@@ -80,7 +80,7 @@ class MediaPickerContract(
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, allowMultiple)
             addCategory(Intent.CATEGORY_OPENABLE)
         }
-        return Intent.createChooser(intent, null)
+        return intent
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): List<Uri>? {
