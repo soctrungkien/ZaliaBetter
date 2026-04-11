@@ -39,7 +39,7 @@ class CurseForgeProject(
 
     override fun platformSlug(): String = data.slug
 
-    override fun platformIconUrl(): String? = data.logo.url
+    override fun platformIconUrl(): String? = data.logo?.url
 
     override fun platformTitle(): String = data.name
 

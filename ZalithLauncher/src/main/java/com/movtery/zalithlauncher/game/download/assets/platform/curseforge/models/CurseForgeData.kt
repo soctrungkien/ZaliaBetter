@@ -110,13 +110,13 @@ class CurseForgeData(
      * 项目的 Logo
      */
     @SerialName("logo")
-    val logo: Asset,
+    val logo: Asset? = null,
 
     /**
      * 项目的截图
      */
     @SerialName("screenshots")
-    val screenshots: Array<Asset>,
+    val screenshots: Array<Asset> = emptyArray(),
 
     /**
      * 项目的主文件 ID
@@ -333,7 +333,7 @@ class CurseForgeData(
 
     override fun platformAuthor(): String = authors[0].name
 
-    override fun platformIconUrl(): String? = logo.url
+    override fun platformIconUrl(): String? = logo?.url
 
     override fun platformDownloadCount(): Long = downloadCount
 
