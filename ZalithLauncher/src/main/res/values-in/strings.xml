@@ -1156,4 +1156,14 @@
     <string name="control_editor_edit_dialog_delete_widget">Apakah Anda yakin ingin menghapus widget ini?</string>
     <string name="control_editor_edit_style_config_common_style">Jangan bedakan tema gelap</string>
     <string name="control_editor_edit_style_config_delete">Apakah Anda yakin ingin menghapus tampilan kontrol %s?</string>
+    <string name="account_change_skin_arm_slim">Lengan Ramping</string>
+    <string name="versions_config_vibrate_kind_title">Jenis Getaran</string>
+    <string name="versions_config_vibrate_kind_summary">Atur jenis getaran saat TouchController memicu getaran</string>
+    <string name="vibrate_kind_one_shot">Konstan</string>
+    <string name="vibrate_kind_click">Klik</string>
+    <string name="vibrate_kind_double_click">Klik dua kali</string>
+    <string name="vibrate_kind_heavy_click">Klik kuat</string>
+    <string name="vibrate_kind_tick">Centang</string>
+    <string name="account_change_skin_arm_style">Gaya Lengan</string>
+    <string name="account_change_skin_arm_wide">Lengan Lebar</string>
 </resources>

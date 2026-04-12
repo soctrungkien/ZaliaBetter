@@ -33,7 +33,7 @@
     <string name="generic_input_length">Dimensione testo: %1$d/%2$d</string>
     <string name="generic_unpacking">Unpacking di %s</string>
     <string name="generic_unknown">Sconosciuto</string>
-    <string name="generic_follow_global">Globali</string>
+    <string name="generic_follow_global">Segui le impostazioni globali</string>
     <string name="generic_custom">Personalizzato</string>
     <string name="generic_search">Cerca</string>
     <string name="generic_loading">Caricamento</string>
@@ -157,4 +157,19 @@
     <string name="download_install_error_download_failed">Alcuni file non sono stati scaricati, possibilmente per problemi di internet.</string>
     <string name="download_install_success_title">Installazione finita con Sucesso</string>
     <string name="download_install_success_message">Il tuo gioco è stato installato correttamente!</string>
+    <string name="festivals_christmas">Buon Natale!</string>
+    <string name="generic_saved">Salvato</string>
+    <string name="generic_copied">Copiato</string>
+    <string name="page_title_version_list">Lista delle versioni</string>
+    <string name="page_title_version_manage">Gestisci Versioni</string>
+    <string name="page_title_account_list">Lista account</string>
+    <string name="page_title_select_files">Selezione cartella</string>
+    <string name="files_browse_folder">Sfoglia cartella</string>
+    <string name="files_importing">Importando file</string>
+    <string name="files_delete_file">Sei sicuro/a di volere eliminare %s?</string>
+    <string name="sort_by">Ordina per</string>
+    <string name="sort_by_name">Ordina per Nome</string>
+    <string name="sort_by_file_name">Ordina per Nome del file</string>
+    <string name="sort_by_last_modified">Ordina per Ultimo Modificato</string>
+    <string name="sort_by_last_played">Ordina per ultimo giocato</string>
 </resources>

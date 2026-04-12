@@ -23,7 +23,7 @@
     <string name="terracotta_confirm_p2p">Terracotta utiliza a tecnologia P2P. Após uma conexão bem-sucedida, os usuários na sala se conectarão diretamente uns aos outros, sem que um servidor de terceiros intermedie o tráfego. A experiência multiplayer final depende em grande parte das condições de rede dos participantes.</string>
     <string name="terracotta_confirm_law">Durante todo o processo multijogador, você deve cumprir rigorosamente todas as leis e regulamentos do seu país e região.</string>
     <string name="terracotta_menu">Menu Do Multiplayer</string>
-    <string name="terracotta_notification_title">Terracota está em andamento</string>
+    <string name="terracotta_notification_title">Terracota | Multijogador em andamento</string>
     <string name="terracotta_notification_desc">Identidade: %s, Estado: %s</string>
     <string name="terracotta_status_waiting_host_title">Eu procuro organizar uma sessão</string>
     <string name="terracotta_status_waiting_host_desc">Crie uma sala e gere um código de convite para jogar com amigos</string>
@@ -73,4 +73,15 @@
     <string name="terracotta_tutorial_host_tab">Tutorial para anfitriões</string>
     <string name="terracotta_tutorial_guest_tab">Tutorial para convidados</string>
     <string name="terracotta_tutorial_note_title">Notas:</string>
+    <string name="terracotta_tutorial_step_enable_multiplayer">- Habilite o modo multijogador na página inicial do launcher após ler o aviso ao usuário</string>
+    <string name="terracotta_tutorial_step_open_multiplayer_menu">- Inicie o jogo e, em seguida, encontre e abra o menu multijogador no jogo</string>
+    <string name="terracotta_tutorial_step_vpn_permission">- Se solicitado a conceder permissão à VPN, permita; caso contrário, não funcionará corretamente</string>
+    <string name="terracotta_tutorial_step_offline_account_support">- Este software suporta offline contas</string>
+    <string name="terracotta_tutorial_step_interoperability">- Este software suporta interoperabilidade com softwares como FCL, HMCL e PCL CE (Terracota) que suportam o protocolo Scaffolding</string>
+    <string name="terracotta_tutorial_host_step_become_host">- Toque em \"Quero hospedar uma sessão\" e escaneie a porta do jogo</string>
+    <string name="terracotta_tutorial_host_step_open_lan">- Entre no seu mundo e habilite Abrir para LAN no menu de pausa</string>
+    <string name="terracotta_tutorial_host_step_copy_invite">- Aguarde um momento para que o código de convite seja copiado automaticamente; caso contrário, você pode copiá-lo do menu multijogador</string>
+    <string name="terracotta_tutorial_guest_step_become_guest">- Toque em \"Quero participar de uma sessão\", insira o código de convite fornecido pelo anfitrião e aguarde pacientemente</string>
+    <string name="terracotta_tutorial_guest_step_join_room">- Após entrar na sala, vá para Multijogador no menu principal, atualize e clique duas vezes para entrar no lobby Terracotta</string>
+    <string name="terracotta_tutorial_guest_step_alternate_server">- Contas offline não são suportadas ao ingressar por meio de endereços de servidor alternativos; resolva isso você mesmo.</string>
 </resources>
