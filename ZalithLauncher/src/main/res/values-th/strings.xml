@@ -199,4 +199,21 @@
     <string name="import_modpack_task_extract_files_and_schedule_download">แตกไฟล์และเตรียมดาวโหลด</string>
     <string name="import_modpack_not_supported_title">มอดแพ็กที่ไม่รองรับ</string>
     <string name="import_modpack_not_supported_formats">รูปแบบของมอดแพ็กนี้ไม่รองรับ นี้คือรูปแบบที่รองรับ:</string>
+    <string name="crash_link_share_tip">ตัวเปิดเกมจะอัปโหลดบันทึกไปยังแพลตฟอร์มสาธารณะ คุณจะได้รับลิงก์ที่สามารถแชร์ให้ผู้อื่นเพื่อใช้วินิจฉัยปัญหาได้โดยสะดวก</string>
+    <string name="crash_link_share_uploading">กำลังอัพโหลดบันทึงไปที่ %s</string>
+    <string name="crash_link_share_failed">อัพโหลดผิดพลาด</string>
+    <string name="crash_link_share_failed_link_not_found">ไม่มีลิงก์ที่ใช้งานได้ กรุณาลองใหม่ภายหลัง.</string>
+    <string name="crash_launch_crash_title">การเปิดแอปล้มเหลว</string>
+    <string name="crash_launch_crash_message">รันเชอร์พบปัญหาร้ายแรงและผิดพลาดในช่วงเริ่มต้น</string>
+    <string name="error_import_image">การทำเข้ารูปผิดพลาด</string>
+    <string name="error_import_file">ข้อผิดพลาดที่เกิดขึ้นในขณะที่นําเข้าไฟล์</string>
+    <string name="error_create_dir">การสร้างไดเรกทอรีด้ล้มเหลว: %s</string>
+    <string name="error_timeout">คำขอหมดเวลา</string>
+    <string name="error_network_unreachable">เครือข่ายไม่สามารถใช้งานได้ ณ ตอนนี้</string>
+    <string name="error_connection_failed">การเข้าร่วมเซิฟเวอร์ล้มแหลว</string>
+    <string name="error_parse_failed">การวิเคราะห์ข้อมูลล้มเหลว</string>
+    <string name="error_unauthorized">(%s) ไม่ได้รับอนุญาต</string>
+    <string name="error_notfound">(%s) ไม่พบทรัพยากร</string>
+    <string name="error_client_error">(%s) ข้อผิดพลาดจากฝั่งไคลเอนต์</string>
+    <string name="error_unknown">ข้อผิดพลาดที่ไม่รู้จัก: %s</string>
 </resources>

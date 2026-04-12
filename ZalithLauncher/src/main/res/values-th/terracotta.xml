@@ -23,7 +23,7 @@
     <string name="terracotta_confirm_p2p">Terracotta ใช้เทคโนโลยี P2P หลังจากเชื่อมต่อสำเร็จ ผู้ใช้ในห้องจะเชื่อมต่อถึงกันโดยตรง และไม่มีเซิร์ฟเวอร์ของบุคคลที่สามใด ๆ ที่จะส่งต่อข้อมูลของคุณ ประสบการณ์การเล่นแบบผู้เล่นหลายคนขั้นสุดท้าย...</string>
     <string name="terracotta_confirm_law">ตลอดกระบวนการเล่นแบบผู้เล่นหลายคน คุณต้องปฏิบัติตามกฎหมายและข้อบังคับทั้งหมดของประเทศและภูมิภาคของคุณอย่างเคร่งครัด</string>
     <string name="terracotta_menu">เมนูผู้เล่นหลายคน</string>
-    <string name="terracotta_notification_title">Terracotta กำลังดำเนินการ</string>
+    <string name="terracotta_notification_title">Terracotta | ระบบผู้เล่นหลายคนกำลังทำงาน</string>
     <string name="terracotta_notification_desc">ตัวตน: %s / สถานะ: %s</string>
     <string name="terracotta_status_waiting_host_title">ฉันจะเป็นโฮสต์เซสชั่นนี้</string>
     <string name="terracotta_status_waiting_host_desc">สร้างห้องและสร้างรหัสเข้าร่วมเพื่อเล่นกับเพื่อน!!</string>
@@ -64,4 +64,24 @@
     <string name="terracotta_permission_vpn">กรุณาให้สิทธิ์แอพพิเคชั่นในการใช้ VPNก่อน.</string>
     <string name="terracotta_player_list">รายชื่อผู้เล่น</string>
     <string name="terracotta_player_anonymous">ผู้เล่นไม่ระบุตัวตน</string>
+    <string name="terracotta_player_kind_host">โฮสต์</string>
+    <string name="terracotta_player_kind_local">ตัวคุณเอง</string>
+    <string name="terracotta_player_kind_guest">แขก</string>
+    <string name="terracotta_tutorial_host_tab">คู่มือสำหลับโฮสต์</string>
+    <string name="terracotta_tutorial_guest_tab">คู่มือสำหลับแขก</string>
+    <string name="terracotta_tutorial_host_tip">คู่มือสำหลับโฮส:</string>
+    <string name="terracotta_tutorial_guest_tip">คู่มือสำหลับแขก:</string>
+    <string name="terracotta_tutorial_step_enable_multiplayer">- เปิดการใช้งานผู้เช่นหลายคนในหน้าหลักของรันเชอร์หลังจากอ่านประกาศสำหรับผู้ใช้</string>
+    <string name="terracotta_tutorial_step_open_multiplayer_menu">- หลังจากเปิดตัวเกมแล้วให้เปิดเมนูผู้เล่นหลายคนในเกม</string>
+    <string name="terracotta_tutorial_step_vpn_permission">- หากมีคำขอสิทธิ์การเข้าถึง VPN โปรดยอมรับ มิฉะนั้นแอปอาจทำงานไม่ถูกต้อง</string>
+    <string name="terracotta_tutorial_step_offline_account_support">- ซอฟต์แวร์นี้รอบรับ ไอดีออฟไลน์(มายคราฟไอดีเถื่อน)</string>
+    <string name="terracotta_tutorial_step_interoperability">- ซอฟต์แวร์นี้รองรับการทำงานร่วมกันกับซอฟต์แวร์ต่างๆ เช่น FCL, HMCL และ PCL CE (Terracotta) ที่รองรับโพรโทคอล Scaffolding</string>
+    <string name="terracotta_tutorial_host_step_become_host">- แตะ ฉันต้องการเป็นโฮสต์และสแกนพอร์ตเกม.</string>
+    <string name="terracotta_tutorial_host_step_open_lan">- เข้าสู่โลกของคุณและเปิดใช้งาน Open to LAN ในเมนูหยุดเกม</string>
+    <string name="terracotta_tutorial_host_step_copy_invite">- รอสักครู่เพื่อให้รหัสเชิญจะถูกคัดลอกอัตโนมัติ, ถ้าไม่คุณสามารถคำลอกได้จากเมนูผู้เล่นหลายคน</string>
+    <string name="terracotta_tutorial_host_step_send_invite">- ส่งรหัสเชิญไปให้เพื่อนของคุณ</string>
+    <string name="terracotta_tutorial_guest_step_become_guest">- แตะ \'ฉันต้องการเข้าร่วมเซสชัน\' กรอกรหัสคำเชิญที่ได้รับจากโฮสต์ และรอสักครู่</string>
+    <string name="terracotta_tutorial_guest_step_join_room">- หลังจากเข้าร่วมห้อง, ไปที่หลายผู้เล่นในเมนูหลัก, รีเฟรชและสองครั้งเพื่อป้อนล็อบบี้</string>
+    <string name="terracotta_tutorial_guest_step_alternate_server">- บัญชีออฟไลน์(มายคราฟไอดีเถื่อน)จะไม่รองรับเมื่อเข้าเล่นผ่านที่อยู่เซิร์ฟเวอร์สำรอง โปรดดำเนินการแก้ไขด้วยตนเอง</string>
+    <string name="terracotta_tutorial_note_title">หมายเหตุ:</string>
 </resources>
