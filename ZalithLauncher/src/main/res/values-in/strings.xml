@@ -1171,4 +1171,7 @@
     <string name="settings_game_graphics_api_default">Ikuti pengaturan game</string>
     <string name="settings_renderer_surface_title">Gunakan rendering SurfaceView</string>
     <string name="settings_renderer_surface_summary">Menggunakan layer terpisah di luar UI untuk rendering</string>
+    <string name="download_game_version_overwrite">Akan mengganti versi yang sudah terpasang: %s</string>
+    <string name="download_game_version_overwrite_select">Versi yang akan diganti</string>
+    <string name="download_game_version_overwrite_select_subtitle">Pilih versi yang ingin diganti. Fitur ini bisa digunakan untuk memperbarui atau menurunkan versi yang dipilih</string>
 </resources>
