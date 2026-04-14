@@ -1171,4 +1171,7 @@
     <string name="settings_game_graphics_api_default">Siga as configurações do jogo</string>
     <string name="settings_renderer_surface_title">Usar renderização SurfaceView</string>
     <string name="settings_renderer_surface_summary">Renderiza usando uma camada separada fora da interface do usuário</string>
+    <string name="download_game_version_overwrite">Isso irá sobrescrever a versão existente: %s</string>
+    <string name="download_game_version_overwrite_select">Versão para sobrescrever</string>
+    <string name="download_game_version_overwrite_select_subtitle">Selecione a versão para sobrescrever. Você pode usar este recurso para atualizar/rebaixar a versão selecionada.</string>
 </resources>
