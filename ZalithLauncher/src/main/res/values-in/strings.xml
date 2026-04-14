@@ -1169,4 +1169,6 @@
     <string name="settings_game_graphics_api_title">API Grafis</string>
     <string name="settings_game_graphics_api_summary">Atur API grafis yang digunakan oleh Minecraft 26.2+</string>
     <string name="settings_game_graphics_api_default">Ikuti pengaturan game</string>
+    <string name="settings_renderer_surface_title">Gunakan rendering SurfaceView</string>
+    <string name="settings_renderer_surface_summary">Menggunakan layer terpisah di luar UI untuk rendering</string>
 </resources>

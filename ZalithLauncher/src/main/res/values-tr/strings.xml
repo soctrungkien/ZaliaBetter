@@ -39,7 +39,7 @@
     <string name="generic_loading">Yükleniyor</string>
     <string name="generic_in_progress">İşleniyor</string>
     <string name="generic_anyway">Yine de Kullan</string>
-    <string name="generic_ignore">Görmezden gelmek</string>
+    <string name="generic_ignore">İptal</string>
     <string name="generic_authorization">Yetkilendirme</string>
     <string name="generic_file_name">Dosya adı:%s</string>
     <string name="generic_file_size">Dosya boyutu:%s</string>
@@ -294,7 +294,7 @@
     <string name="download_assets_features_items">İtemler</string>
     <string name="download_assets_features_locale">Yerel</string>
     <string name="download_assets_features_models">Modeller</string>
-    <string name="import_modpack">Modpack içeaktar</string>
+    <string name="import_modpack">Modpack\'i içe aktar</string>
     <string name="import_modpack_tip">Yerel mod paketi dosyalarını içe aktarabilirsiniz. Başlatıcı şu anda bu formatları desteklemektedir:</string>
     <string name="import_modpack_task_unpack">Dosyayı İçe Aktar ve Paketten Çıkar</string>
     <string name="import_modpack_task_parse">Mod Paketini Ayrıştır</string>
@@ -447,7 +447,7 @@
     <string name="versions_overview_logs_folder">Günlük Klasörü</string>
     <string name="versions_overview_crash_report_folder">Çökme Raporu Klasörü</string>
     <string name="versions_config_version_settings">Sürüm Bağımsız Ayarlar</string>
-    <string name="versions_config_game_settings">Oyuna özel ayarlar</string>
+    <string name="versions_config_game_settings">Oyuna Özel Ayarlar</string>
     <string name="versions_config_support_settings">Ek Destek Ayarları</string>
     <string name="versions_config_isolation_title">Sürüm Yalıtımı</string>
     <string name="versions_config_isolation_summary">Mevcut sürümü izole edin, böylece verileri diğer sürümlerle çakışmaz</string>
@@ -1146,4 +1146,29 @@
     <string name="festivals_new_year">Mutlu yıllar!</string>
     <string name="festivals_april_fools">1 Nisan Şaka Günü kutlu olsun!</string>
     <string name="festivals_christmas">Mutlu Noeller!</string>
+    <string name="account_change_skin_arm_style">Kol Stili</string>
+    <string name="account_change_skin_arm_wide">Kalın Kollar</string>
+    <string name="account_change_skin_arm_slim">İnce Kollar</string>
+    <string name="versions_config_vibrate_kind_title">Titreşim Türü</string>
+    <string name="versions_config_vibrate_kind_summary">TouchController titreşimi tetiklediğinde titreşim türünü ayarlayın.</string>
+    <string name="settings_renderer_surface_title">SurfaceView Oluşturma Kullanımı</string>
+    <string name="settings_renderer_surface_summary">Kullanıcı arayüzünün dışında ayrı bir katman kullanarak render işlemleri gerçekleştirir.</string>
+    <string name="settings_game_graphics_api_title">Grafikler API</string>
+    <string name="settings_game_graphics_api_summary">Minecraft 26.2 ve üzeri sürümlerde kullanılan grafik API\'sini ayarlayın.</string>
+    <string name="settings_game_graphics_api_default">Oyun ayarlarını takip et</string>
+    <string name="settings_launcher_festivals_effects_title">Kalıcı Festival Paskalya Yumurtası Efektleri</string>
+    <string name="settings_launcher_festivals_effects_summary">Belirli zaman dilimlerinde kalıcı paskalya yumurtası efektlerini göster.</string>
+    <string name="control_manage_import">İçe aktarma kontrol düzeni</string>
+    <string name="control_editor_layers_delete">%s kontrol katmanını silmek istediğinizden emin misiniz?</string>
+    <string name="control_editor_layers_attribute_hide_when_mouse">Fareyi kullanırken gizle</string>
+    <string name="control_editor_layers_attribute_hide_when_gamepad">Kontrolcü kullanırken gizle</string>
+    <string name="control_editor_layers_attribute_hide_when_joystick">Joystick aktif iken gizle</string>
+    <string name="control_editor_edit_dialog_delete_widget">Bu widget\'ı silmek istediğinizden emin misiniz?</string>
+    <string name="control_editor_edit_style_config_common_style">Koyu temayı ayırt etmeyin</string>
+    <string name="control_editor_edit_style_config_delete">%s kontrol görünümünü silmek istediğinizden emin misiniz?</string>
+    <string name="vibrate_kind_one_shot">Devamlı</string>
+    <string name="vibrate_kind_click">Tıkla</string>
+    <string name="vibrate_kind_double_click">Çift tıklama</string>
+    <string name="vibrate_kind_heavy_click">Ağır tıklama</string>
+    <string name="vibrate_kind_tick">Tik</string>
 </resources>

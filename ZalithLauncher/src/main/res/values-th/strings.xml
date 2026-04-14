@@ -348,4 +348,27 @@
     <string name="version_summary_fools_one_block_at_time">เราย่อยตัวเกมจนเหลือรูปแบบที่บริสุทธิ์ที่สุด: ทีละบล็อก</string>
     <string name="version_summary_fools_a_or_b">ผลวิจัยชี้ว่าผู้เล่นชอบการตัดสินใจ เราเลยให้คุณโหวตได้ทุกเรื่องเลย!</string>
     <string name="version_summary_fools_potato">หลายปีที่ผ่านมา มันฝรั่งพิษถูกเมินและประเมินค่าต่ำไป เราเลยจัดบัฟชุดใหญ่ให้มันซะเลย!</string>
+    <string name="version_summary_fools_creaft_mine">ตอนนี้คุณสามารถคราฟต์ได้ทุกอย่าง- แม้แต่โลก!</string>
+    <string name="version_summary_fools_herd_craft">หยุดจัดเรียงช่องเก็บของขอบคุณ เพราะไอเท็มและบล็อกจะวิ่งตามคุณ!</string>
+    <string name="game_launch_no_version">ไม่ได้เลือกเวอร์ชันเกม!</string>
+    <string name="game_launch_no_account">ยังไม่ได้เข้าสู่ระบบบัญชี!</string>
+    <string name="game_auto_pick_runtime_failed">ไม่พบรันไทม์ที่เข้ากันได้ กำลังใช้รันไทม์ของเวอร์ชันที่เลือก</string>
+    <string name="game_button_input">อินพุต</string>
+    <string name="game_button_force_close">บังคับปิด</string>
+    <string name="game_button_log_output">เอาต์พุตLog</string>
+    <string name="game_button_mouse_left">คลิกซ้าย</string>
+    <string name="game_button_mouse_right">คลิกขวา</string>
+    <string name="game_dialog_force_close_message">คุณแน่ใจหรือไม่ว่าต้องการบังคับปิดและกลับไปที่หน้าจอหลัก?</string>
+    <string name="game_loading">เกมกำลังทำงาน โปรดรอหน้าจอเกมปรากฏขึ้น</string>
+    <string name="game_loading_version_name">เวอร์ชันเกม: %s</string>
+    <string name="game_loading_version_info">ข้อมูลเกม: %s</string>
+    <string name="game_menu_title">เมนูเกม</string>
+    <string name="game_menu_option_force_close_text">การบังคับปิดเกมที่กำลังทำงานูอยู่อาจทำให้ข้อมูลที่บันทึกไว้เสียหาย หรือป้องกันไม่ให้บันทึกการตั้งค่า ควรหลีกเลี่ยงการกระทำนี้เว้นแต่จำเป็น</string>
+    <string name="game_menu_option_switch_log">เอาต์พุตLog</string>
+    <string name="game_menu_option_input_method">เปลี่ยนวิธีป้อนข้อมูล</string>
+    <string name="game_menu_option_switch_fps">แสดง FPS</string>
+    <string name="game_menu_option_switch_memory">แสดงหน่วยความจำ</string>
+    <string name="game_menu_option_menu_ball_opacity">ความโปร่งใสของปุ่มเมนูหลัก</string>
+    <string name="game_menu_option_send_keycode">ส่งรหัสปุ่ม</string>
+    <string name="game_menu_option_replacement_control">แทนที่ชุดปุ่มควบคุม</string>
 </resources>
