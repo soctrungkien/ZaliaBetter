@@ -27,8 +27,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -47,10 +47,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -1015,6 +1017,7 @@ private fun JoystickControlLayout(
     val joystickStyle by special.joystickStyle.collectAsStateWithLifecycle()
 
     val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
 
     val hideState = when (hideLayerWhen) {
         HideLayerWhen.WhenMouse -> AllSettings.joystickHideWhenMouse.state
@@ -1031,7 +1034,7 @@ private fun JoystickControlLayout(
         val x = AllSettings.joystickControlX.state
         val y = AllSettings.joystickControlY.state
 
-        val position = remember(screenSize, size, x, y) {
+        val position = remember(screenSize, size, x, y, layoutDirection) {
             val widgetSize = with(density) {
                 val pixelSize = size.roundToPx()
                 IntSize(
@@ -1040,17 +1043,26 @@ private fun JoystickControlLayout(
                 )
             }
 
-            widgetPosition(
+            val originalPosition = widgetPosition(
                 xPercentage = x / 10000f,
                 yPercentage = y / 10000f,
                 widgetSize = widgetSize,
                 screenSize = screenSize
             )
+
+            if (layoutDirection == LayoutDirection.Rtl) {
+                //fix: RTL布局下需手动反转X轴，避免使用absoluteOffset
+                // 不然控件会飞到屏幕外面去 #1034
+                val mirroredX = screenSize.width - originalPosition.x - widgetSize.width
+                Offset(x = mirroredX, y = originalPosition.y)
+            } else {
+                originalPosition
+            }
         }
 
         StyleableJoystick(
             modifier = Modifier
-                .absoluteOffset {
+                .offset {
                     IntOffset(x = position.x.toInt(), y = position.y.toInt())
                 },
             style = if (AllSettings.joystickUseStyleByLayout.state) {
