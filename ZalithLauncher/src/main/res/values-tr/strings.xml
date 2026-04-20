@@ -1170,4 +1170,7 @@
     <string name="vibrate_kind_double_click">Çift tıklama</string>
     <string name="vibrate_kind_heavy_click">Ağır tıklama</string>
     <string name="vibrate_kind_tick">Tik</string>
+    <string name="download_game_version_overwrite">Mevcut sürümün üzerine yazılacak: %s</string>
+    <string name="download_game_version_overwrite_select">Üzerine yazılacak sürüm</string>
+    <string name="download_game_version_overwrite_select_subtitle">Üzerine yazılacak sürümü seçin. Bu özelliği hedef sürümü yükseltmek/düşürmek için kullanabilirsiniz.</string>
 </resources>
