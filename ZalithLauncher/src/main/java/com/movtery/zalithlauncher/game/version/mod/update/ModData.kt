@@ -69,44 +69,44 @@ data class ModData(
                     .toSet()
                 val targetLoaders = when {
                     currentLoaderName in currentFileLoaders -> {
-                        //当前模组文件支持当前游戏加载器：仅检查当前加载器通道的更新
+                        // 当前模组文件支持当前游戏加载器：仅检查当前加载器通道的更新
                         setOf(currentLoaderName)
                     }
 
                     currentFileLoaders.isNotEmpty() -> {
-                        //当前模组文件不支持当前游戏加载器（例如连接器场景）：
-                        //优先沿用该模组文件自身支持的加载器通道来检查更新
+                        // 当前模组文件不支持当前游戏加载器（例如 信雅互联 场景）：
+                        // 优先沿用该模组文件自身支持的加载器通道来检查更新
                         currentFileLoaders
                     }
 
                     else -> {
-                        //无法识别当前文件加载器信息时，回退到当前游戏加载器
+                        // 无法识别当前文件加载器信息时，回退到当前游戏加载器
                         setOf(currentLoaderName)
                     }
                 }
 
-                //获取所有版本并初始化
+                // 获取所有版本并初始化
                 val versions = getVersions(
                     projectId,
                     project.platform
                 ).initAll(projectId)
                     .filter { version ->
                         if (version.platformId() == modFile.id) {
-                            //当前版本，设置版本号
+                            // 当前版本，设置版本号
                             currentVersion = version.platformVersion()
                         }
                         val loaderNames = version.platformLoaders()
                             .map { it.getDisplayName().lowercase() }
                             .toSet()
-                        //是否支持当前MC版本
+                        // 是否支持当前MC版本
                         minecraftVer in version.platformGameVersion() &&
-                        //是否匹配目标加载器（当前加载器，或当前文件自身的加载器）
+                        // 是否匹配目标加载器（当前加载器，或当前文件自身的加载器）
                         loaderNames.any { it in targetLoaders } &&
-                        //是否比当前版本更新
+                        // 是否比当前版本更新
                         version.platformDatePublished() > datePublished
                     }
 
-                //获取最新的版本
+                // 获取最新的版本
                 versions.firstOrNull()?.also { version ->
                     lInfo("Detected update for mod ${file.name}: $currentVersion -> ${version.platformVersion()}")
                 }
