@@ -1221,6 +1221,7 @@
     <string name="language_uyghur" translatable="false">ۋىغرۇچە</string>
     <string name="language_filipino" translatable="false">Filipino</string>
     <string name="language_thai" translatable="false">ไทย</string>
+    <string name="language_korean" translatable="false">한국어</string>
     <!-- Vibration Kind -->
     <string name="vibrate_kind_one_shot">Constant</string>
     <string name="vibrate_kind_click">Click</string>
