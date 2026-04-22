@@ -18,13 +18,17 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.versions
 
+import android.content.ContentValues
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -34,6 +38,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,15 +49,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Deselect
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -66,13 +73,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
@@ -89,6 +99,7 @@ import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
 import com.movtery.zalithlauncher.ui.components.ScalingLabel
+import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.SimpleTextInputField
 import com.movtery.zalithlauncher.ui.components.itemLayoutColor
 import com.movtery.zalithlauncher.ui.components.itemLayoutShadowElevation
@@ -103,12 +114,14 @@ import com.movtery.zalithlauncher.ui.screens.content.versions.elements.Minecraft
 import com.movtery.zalithlauncher.ui.screens.content.versions.layouts.VersionChunkBackground
 import com.movtery.zalithlauncher.utils.animation.getAnimateTween
 import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
+import com.movtery.zalithlauncher.utils.string.getMessageOrToString
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.apache.commons.io.FileUtils
 import java.io.File
 
 // 数据模型
@@ -121,6 +134,11 @@ data class ScreenshotInfo(
 
 data class ScreenshotFilter(val filterName: String)
 
+sealed interface ExportOperation {
+    data object None : ExportOperation
+    data class Ask(val files: List<File>, val isAll: Boolean) : ExportOperation
+}
+
 private class ScreenshotsManageViewModel(
     val screenshotDir: File
 ) : ViewModel() {
@@ -131,18 +149,17 @@ private class ScreenshotsManageViewModel(
         private set
     var filteredScreenshots by mutableStateOf<List<ScreenshotInfo>?>(null)
         private set
-    // 默认按文件名排序
     var sortByEnum by mutableStateOf(SortByEnum.Name)
         private set
-    // 默认倒序排列
     var isAscending by mutableStateOf(false)
         private set
-
     var listState by mutableStateOf<LoadingState>(LoadingState.None)
         private set
 
     val selectedFiles = mutableStateListOf<File>()
+
     var deleteAllOperation by mutableStateOf<DeleteAllOperation>(DeleteAllOperation.None)
+    var exportOperation by mutableStateOf<ExportOperation>(ExportOperation.None)
 
     fun selectAllFiles() {
         allScreenshots.forEach { info ->
@@ -159,8 +176,8 @@ private class ScreenshotsManageViewModel(
                 val tempList = mutableListOf<ScreenshotInfo>()
                 try {
                     if (screenshotDir.exists() && screenshotDir.isDirectory) {
-                        screenshotDir.listFiles { file -> 
-                            file.isFile && file.extension.lowercase() == "png" 
+                        screenshotDir.listFiles { file ->
+                            file.isFile && file.extension.lowercase() == "png"
                         }?.forEach { file ->
                             ensureActive()
                             tempList.add(ScreenshotInfo(file))
@@ -250,15 +267,77 @@ fun ScreenshotsManagerScreen(
         levels1 = listOf(
             Pair(NestedNavKey.VersionSettings::class.java, mainScreenKey)
         ),
-        Triple(NormalNavKey.Versions.ScreenshotsManager, versionsScreenKey, false) 
+        Triple(NormalNavKey.Versions.ScreenshotsManager, versionsScreenKey, false)
     ) { isVisible ->
         val viewModel = rememberScreenshotsManageViewModel(screenshotDir, version)
+        val context = LocalContext.current
+        val operationScope = rememberCoroutineScope()
 
         DeleteAllOperation(
             operation = viewModel.deleteAllOperation,
             changeOperation = { viewModel.deleteAllOperation = it },
             submitError = submitError,
             onRefresh = { viewModel.refresh() }
+        )
+
+        ExportDialogHandler(
+            operation = viewModel.exportOperation,
+            updateOperation = { viewModel.exportOperation = it },
+            onExport = { files, deleteAfter ->
+                // 立即关闭对话框
+                viewModel.exportOperation = ExportOperation.None
+
+                // 在后台协程执行导出逻辑
+                operationScope.launch(Dispatchers.IO) {
+                    try {
+                        val resolver = context.contentResolver
+                        for (file in files) {
+                            val contentValues = ContentValues().apply {
+                                put(MediaStore.Images.Media.DISPLAY_NAME, file.name)
+                                put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/ZalithLauncher")
+                                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                                }
+                            }
+                            val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                            if (uri != null) {
+                                resolver.openOutputStream(uri)?.use { out ->
+                                    file.inputStream().use { input ->
+                                        input.copyTo(out)
+                                    }
+                                }
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    contentValues.clear()
+                                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                                    resolver.update(uri, contentValues, null, null)
+                                }
+                            }
+                        }
+                        
+                        // 完成后删除源文件
+                        if (deleteAfter) {
+                            files.forEach { FileUtils.deleteQuietly(it) }
+                        }
+                        
+                        // 切回主线程进行成功提示和刷新
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "导出完成", Toast.LENGTH_SHORT).show()
+                            viewModel.refresh()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        withContext(Dispatchers.Main) {
+                            submitError(
+                                ErrorViewModel.ThrowableMessage(
+                                    title = "导出出错",
+                                    message = e.getMessageOrToString()
+                                )
+                            )
+                        }
+                    }
+                }
+            }
         )
 
         val yOffset by swapAnimateDpAsState(
@@ -275,36 +354,65 @@ fun ScreenshotsManagerScreen(
         ) {
             when (viewModel.listState) {
                 is LoadingState.None -> {
-                    Column {
-                        ScreenshotHeader(
-                            modifier = Modifier.fillMaxWidth(),
-                            filter = viewModel.filter,
-                            changeFilter = { viewModel.updateFilter(it) },
-                            supportedSortByEnums = viewModel.supportedSortByEnums,
-                            sortByEnum = viewModel.sortByEnum,
-                            onSortByChanged = { viewModel.updateSortBy(it) },
-                            isAscending = viewModel.isAscending,
-                            onToggleSortOrder = { viewModel.updateSortOrder() },
-                            onDeleteAll = {
-                                if (viewModel.deleteAllOperation == DeleteAllOperation.None && viewModel.selectedFiles.isNotEmpty()) {
-                                    viewModel.deleteAllOperation = DeleteAllOperation.Warning(viewModel.selectedFiles)
-                                }
-                            },
-                            isFilesSelected = viewModel.selectedFiles.isNotEmpty(),
-                            onSelectAll = { viewModel.selectAllFiles() },
-                            onClearFilesSelected = { viewModel.selectedFiles.clear() },
-                            onRefresh = { viewModel.refresh() }
-                        )
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            ScreenshotHeader(
+                                modifier = Modifier.fillMaxWidth(),
+                                filter = viewModel.filter,
+                                changeFilter = { viewModel.updateFilter(it) },
+                                supportedSortByEnums = viewModel.supportedSortByEnums,
+                                sortByEnum = viewModel.sortByEnum,
+                                onSortByChanged = { viewModel.updateSortBy(it) },
+                                isAscending = viewModel.isAscending,
+                                onToggleSortOrder = { viewModel.updateSortOrder() },
+                                onDeleteAll = {
+                                    if (viewModel.deleteAllOperation == DeleteAllOperation.None && viewModel.selectedFiles.isNotEmpty()) {
+                                        viewModel.deleteAllOperation = DeleteAllOperation.Warning(viewModel.selectedFiles)
+                                    }
+                                },
+                                isFilesSelected = viewModel.selectedFiles.isNotEmpty(),
+                                onSelectAll = { viewModel.selectAllFiles() },
+                                onClearFilesSelected = { viewModel.selectedFiles.clear() },
+                                onRefresh = { viewModel.refresh() }
+                            )
 
-                        ScreenshotGrid(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            list = viewModel.filteredScreenshots,
-                            selectedFiles = viewModel.selectedFiles,
-                            removeFromSelected = { viewModel.selectedFiles.remove(it) },
-                            addToSelected = { viewModel.selectedFiles.add(it) }
-                        )
+                            ScreenshotGrid(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                                list = viewModel.filteredScreenshots,
+                                selectedFiles = viewModel.selectedFiles,
+                                removeFromSelected = { viewModel.selectedFiles.remove(it) },
+                                addToSelected = { viewModel.selectedFiles.add(it) }
+                            )
+                        }
+
+                        // 悬浮操作按钮 FAB
+                        if (viewModel.allScreenshots.isNotEmpty()) {
+                            FloatingActionButton(
+                                onClick = {
+                                    val isAll = viewModel.selectedFiles.isEmpty()
+                                    val targets = if (isAll) {
+                                        viewModel.allScreenshots.map { it.file }
+                                    } else {
+                                        viewModel.selectedFiles.toList()
+                                    }
+                                    if (targets.isNotEmpty()) {
+                                        viewModel.exportOperation = ExportOperation.Ask(targets, isAll)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(16.dp),
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Archive,
+                                    contentDescription = "导出图片"
+                                )
+                            }
+                        }
                     }
                 }
                 is LoadingState.Loading -> {
@@ -313,6 +421,61 @@ fun ScreenshotsManagerScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+// 导出对话框处理器
+@Composable
+private fun ExportDialogHandler(
+    operation: ExportOperation,
+    updateOperation: (ExportOperation) -> Unit,
+    onExport: (List<File>, Boolean) -> Unit
+) {
+    when (operation) {
+        is ExportOperation.None -> {}
+        is ExportOperation.Ask -> {
+            var deleteAfter by remember { mutableStateOf(false) }
+
+            SimpleAlertDialog(
+                title = "导出图片",
+                text = {
+                    Column {
+                        Text(
+                            text = if (operation.isAll) {
+                                "是否导出所有图片到系统相册？"
+                            } else {
+                                "是否导出选中的 ${operation.files.size} 张图片到系统相册？"
+                            }
+                        )
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .clickable { deleteAfter = !deleteAfter }
+                                .padding(8.dp)
+                        ) {
+                            Checkbox(
+                                checked = deleteAfter,
+                                onCheckedChange = null 
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "完成后删除",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                },
+                confirmText = "导出",
+                dismissText = "取消",
+                onConfirm = { onExport(operation.files, deleteAfter) },
+                onCancel = { updateOperation(ExportOperation.None) },
+                onDismissRequest = { updateOperation(ExportOperation.None) }
+            )
         }
     }
 }
@@ -482,7 +645,7 @@ private fun ScreenshotItemLayout(
 ) {
     val borderWidth by animateDpAsState(if (selected) 2.dp else (-1).dp)
     val scale = remember { Animatable(initialValue = 0.95f) }
-    
+
     LaunchedEffect(Unit) {
         scale.animateTo(targetValue = 1f, animationSpec = getAnimateTween())
     }
@@ -506,7 +669,6 @@ private fun ScreenshotItemLayout(
                 modifier = Modifier.fillMaxSize()
             )
 
-            // 底部仅保留信息条（无菜单按钮）
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
