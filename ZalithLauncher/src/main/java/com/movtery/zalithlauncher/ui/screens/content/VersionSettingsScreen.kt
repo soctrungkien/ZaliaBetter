@@ -42,6 +42,7 @@ import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Dns
 import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -97,6 +98,7 @@ import com.movtery.zalithlauncher.ui.screens.content.versions.AddonDiffs
 import com.movtery.zalithlauncher.ui.screens.content.versions.ModsManagerScreen
 import com.movtery.zalithlauncher.ui.screens.content.versions.ResourcePackManageScreen
 import com.movtery.zalithlauncher.ui.screens.content.versions.SavesManagerScreen
+import com.movtery.zalithlauncher.ui.screens.content.versions.ScreenshotsManagerScreen
 import com.movtery.zalithlauncher.ui.screens.content.versions.ServerListScreen
 import com.movtery.zalithlauncher.ui.screens.content.versions.ShadersManagerScreen
 import com.movtery.zalithlauncher.ui.screens.content.versions.UpdateLoaderScreen
@@ -279,6 +281,7 @@ private val settingItems = listOf(
     CategoryItem(NormalNavKey.Versions.SavesManager, { CategoryIcon(Icons.Outlined.Public, R.string.saves_manage) }, R.string.saves_manage),
     CategoryItem(NormalNavKey.Versions.ResourcePackManager, { CategoryIcon(R.drawable.ic_format_paint, R.string.resource_pack_manage) }, R.string.resource_pack_manage),
     CategoryItem(NormalNavKey.Versions.ShadersManager, { CategoryIcon(Icons.Outlined.Lightbulb, R.string.shader_pack_manage) }, R.string.shader_pack_manage),
+    CategoryItem(NormalNavKey.Versions.ScreenshotsManager, { CategoryIcon(Icons.Outlined.PhotoLibrary, R.string.screenshot_manage) }, R.string.screenshot_manage),
     CategoryItem(NormalNavKey.Versions.ServerList, { CategoryIcon(Icons.Outlined.Dns, R.string.servers_list) }, R.string.servers_list, division = true),
 )
 
@@ -494,6 +497,15 @@ private fun NavigationUI(
                                 targetScreen = backScreenViewModel.downloadShadersScreen
                             )
                         },
+                        submitError = submitError
+                    )
+                }
+                entry<NormalNavKey.Versions.ScreenshotsManager> {
+                    ScreenshotsManagerScreen(
+                        mainScreenKey = mainScreenKey,
+                        versionsScreenKey = versionsScreenKey,
+                        version = version,
+                        backToMainScreen = backToMainScreen,
                         submitError = submitError
                     )
                 }

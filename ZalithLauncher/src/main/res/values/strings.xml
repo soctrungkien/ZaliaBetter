@@ -795,6 +795,7 @@
     <string name="shader_pack_manage_name">Shader Pack Name</string>
     <string name="shader_pack_manage_delete_warning">Are you sure you want to delete the shader pack %s? This action cannot be undone!</string>
     <string name="shader_pack_manage_no_packs">No shader packs for this version</string>
+    <string name="screenshot_manage">Screenshot</string>
     <string name="servers_list">Servers</string>
     <string name="servers_list_no_servers">No servers have been added for this version</string>
     <string name="servers_list_failed_to_connect">Unable to Connect to Server</string>
