@@ -600,7 +600,6 @@
     <string name="versions_manage_category_modloader">Moddable</string>
     <string name="versions_manage_pin">Pin</string>
     <string name="versions_manage_install_exists">Version name already exists!</string>
-    <string name="versions_manage_install_cannot_use_mc_name">Do not use vanilla names for modded versions.</string>
     <string name="versions_manage_invalid">Invalid version</string>
     <string name="versions_manage_rename_version">Rename Version</string>
     <string name="versions_manage_copy_version">Copy Version</string>
@@ -795,6 +794,14 @@
     <string name="shader_pack_manage_name">Shader Pack Name</string>
     <string name="shader_pack_manage_delete_warning">Are you sure you want to delete the shader pack %s? This action cannot be undone!</string>
     <string name="shader_pack_manage_no_packs">No shader packs for this version</string>
+    <string name="screenshots_manage">Screenshots</string>
+    <string name="screenshots_manage_no_screenshots">No screenshots for this version</string>
+    <string name="screenshots_manage_export">Export</string>
+    <string name="screenshots_manage_export_title">Export Screenshots</string>
+    <string name="screenshots_manage_export_success">Export completed</string>
+    <string name="screenshots_manage_export_failed">Export failed</string>
+    <string name="screenshots_manage_export_all_message">Export all screenshots to the system gallery?</string>
+    <string name="screenshots_manage_export_selected_message">Export %1$d selected screenshots to the system gallery?</string>
     <string name="servers_list">Servers</string>
     <string name="servers_list_no_servers">No servers have been added for this version</string>
     <string name="servers_list_failed_to_connect">Unable to Connect to Server</string>

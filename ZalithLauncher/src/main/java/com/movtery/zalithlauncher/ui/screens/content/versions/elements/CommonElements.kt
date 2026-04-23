@@ -101,7 +101,8 @@ fun DeleteAllOperation(
             )
         }
         is DeleteAllOperation.Delete -> {
-            val context = LocalContext.current
+            val errorTitle = stringResource(R.string.generic_error)
+            val errorMessage = stringResource(R.string.manage_delete_all_error)
             SimpleTaskDialog(
                 title = stringResource(R.string.manage_delete_all),
                 task = {
@@ -116,11 +117,10 @@ fun DeleteAllOperation(
                 context = Dispatchers.IO,
                 onDismiss = {},
                 onError = { th ->
-                    val message = context.getString(R.string.manage_delete_all_error)
                     submitError(
                         ErrorViewModel.ThrowableMessage(
-                            title = context.getString(R.string.generic_error),
-                            message = message + "\r\n" + th.getMessageOrToString()
+                            title = errorTitle,
+                            message = errorMessage + "\r\n" + th.getMessageOrToString()
                         )
                     )
                 }

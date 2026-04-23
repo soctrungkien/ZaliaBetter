@@ -129,6 +129,10 @@ sealed interface NormalNavKey : TitledNavKey {
         @Serializable data object ShadersManager : Versions {
             override var title: Int = R.string.shader_pack_manage
         }
+        /** 截屏管理屏幕 */
+        @Serializable data object ScreenshotsManager : Versions {
+            override var title: Int = R.string.screenshots_manage
+        }
         /** 服务器列表屏幕 */
         @Serializable data object ServerList : Versions {
             override var title: Int = R.string.servers_list

@@ -35,7 +35,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Extension
-import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.SportsEsports
@@ -133,7 +132,7 @@ private fun TabMenu(
         CategoryItem(backScreenViewModel.downloadGameScreen, { CategoryIcon(Icons.Outlined.SportsEsports, R.string.download_category_game) }, R.string.download_category_game),
         CategoryItem(backScreenViewModel.downloadModPackScreen, { CategoryIcon(R.drawable.ic_package_2, R.string.download_category_modpack) }, R.string.download_category_modpack),
         CategoryItem(backScreenViewModel.downloadModScreen, { CategoryIcon(Icons.Outlined.Extension, R.string.download_category_mod) }, R.string.download_category_mod, division = true),
-        CategoryItem(backScreenViewModel.downloadResourcePackScreen, { CategoryIcon(Icons.Outlined.Image, R.string.download_category_resource_pack) }, R.string.download_category_resource_pack),
+        CategoryItem(backScreenViewModel.downloadResourcePackScreen, { CategoryIcon(R.drawable.ic_format_paint, R.string.download_category_resource_pack) }, R.string.download_category_resource_pack),
         CategoryItem(backScreenViewModel.downloadSavesScreen, { CategoryIcon(Icons.Outlined.Public, R.string.download_category_saves) }, R.string.download_category_saves),
         CategoryItem(backScreenViewModel.downloadShadersScreen, { CategoryIcon(Icons.Outlined.Lightbulb, R.string.download_category_shaders) }, R.string.download_category_shaders),
     )
