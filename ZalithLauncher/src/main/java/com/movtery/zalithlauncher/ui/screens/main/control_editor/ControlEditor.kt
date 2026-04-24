@@ -288,7 +288,8 @@ fun BoxWithConstraintsScope.ControlEditor(
 
     MenuBox(
         position = viewModel.editorBallPosition,
-        onPositionChanged = { viewModel.editorBallPosition = it }
+        onPositionChanged = { viewModel.editorBallPosition = it },
+        opened = viewModel.editorMenu == MenuState.SHOW
     ) {
         viewModel.switchMenu()
     }

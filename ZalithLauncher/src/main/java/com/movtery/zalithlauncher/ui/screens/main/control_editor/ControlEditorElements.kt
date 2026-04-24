@@ -19,10 +19,10 @@
 package com.movtery.zalithlauncher.ui.screens.main.control_editor
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -170,6 +170,7 @@ fun VisibilityType.getVisibilityText(): String {
 fun MenuBox(
     position: Offset,
     onPositionChanged: (Offset) -> Unit,
+    opened: Boolean,
     onClick: () -> Unit
 ) {
     FloatingBall(
@@ -177,17 +178,25 @@ fun MenuBox(
         onPositionChanged = onPositionChanged,
         onClick = onClick
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .padding(all = 2.dp)
-                .animateContentSize(),
-            verticalAlignment = Alignment.CenterVertically
+                .size(28.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Icon(
-                modifier = Modifier.size(28.dp),
-                painter = painterResource(R.drawable.ic_settings_filled),
-                contentDescription = null
-            )
+            Crossfade(opened) { state ->
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(
+                        if (state) {
+                            R.drawable.ic_menu_open
+                        } else {
+                            R.drawable.ic_menu
+                        }
+                    ),
+                    contentDescription = null
+                )
+            }
         }
     }
 }

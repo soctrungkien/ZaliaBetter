@@ -20,11 +20,13 @@ package com.movtery.zalithlauncher.ui.screens.game.elements
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -56,6 +58,7 @@ fun DraggableGameBall(
     onSavePos: () -> Unit,
     gameFps: Int?,
     showMemory: Boolean,
+    opened: Boolean,
     alpha: Float = 1f,
     onClick: () -> Unit = {}
 ) {
@@ -71,7 +74,8 @@ fun DraggableGameBall(
     ) {
         GameBallContent(
             gameFps = gameFps,
-            showMemory = showMemory
+            showMemory = showMemory,
+            opened = opened,
         )
     }
 }
@@ -79,7 +83,8 @@ fun DraggableGameBall(
 @Composable
 private fun GameBallContent(
     gameFps: Int?,
-    showMemory: Boolean
+    showMemory: Boolean,
+    opened: Boolean,
 ) {
     val showFps = remember(gameFps) {
         gameFps != null
@@ -89,11 +94,24 @@ private fun GameBallContent(
         modifier = Modifier.padding(all = 2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
+        Box(
             modifier = Modifier.size(28.dp),
-            painter = painterResource(R.drawable.ic_settings_filled),
-            contentDescription = null
-        )
+            contentAlignment = Alignment.Center
+        ) {
+            Crossfade(opened) { state ->
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(
+                        if (state) {
+                            R.drawable.ic_menu_open
+                        } else {
+                            R.drawable.ic_menu
+                        }
+                    ),
+                    contentDescription = null
+                )
+            }
+        }
 
         AnimatedVisibility(
             visible = showFps || showMemory

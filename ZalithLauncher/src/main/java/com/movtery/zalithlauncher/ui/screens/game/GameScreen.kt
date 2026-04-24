@@ -775,6 +775,7 @@ fun GameScreen(
                     },
                     gameFps = gameFps,
                     showMemory = AllSettings.showMemory.state,
+                    opened = viewModel.gameMenuState == MenuState.SHOW,
                     alpha = AllSettings.menuBallOpacity.state / 100f,
                     onClick = {
                         viewModel.switchMenu()
