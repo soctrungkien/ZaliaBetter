@@ -82,4 +82,6 @@
     <string name="terracotta_tutorial_host_step_open_lan"></string>
     <string name="terracotta_tutorial_guest_step_become_guest"></string>
     <string name="terracotta_tutorial_guest_step_alternate_server"></string>
+    <string name="terracotta_difficulty_estimate_only"></string>
+    <string name="terracotta_tutorial_step_interoperability"></string>
 </resources>
