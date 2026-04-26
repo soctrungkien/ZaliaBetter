@@ -1203,4 +1203,5 @@
     <string name="upgrade_version_size"></string>
     <string name="versions_export_tip_2"></string>
     <string name="settings_renderer_vsync_in_zink_title"></string>
+    <string name="versions_export_pack_min_memory"></string>
 </resources>
