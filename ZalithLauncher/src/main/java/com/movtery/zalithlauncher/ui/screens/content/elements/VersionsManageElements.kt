@@ -385,7 +385,6 @@ fun VersionsOperation(
         }
         is VersionsOperation.Copy -> {
             CopyVersionDialog(
-                version = versionsOperation.version,
                 onDismissRequest = { updateVersionsOperation(VersionsOperation.None) },
                 onConfirm = { name, copyAll ->
                     updateVersionsOperation(
@@ -480,7 +479,6 @@ fun RenameVersionDialog(
 
 @Composable
 fun CopyVersionDialog(
-    version: Version,
     onDismissRequest: () -> Unit = {},
     onConfirm: (value: String, copyAll: Boolean) -> Unit = { _, _ -> }
 ) {
