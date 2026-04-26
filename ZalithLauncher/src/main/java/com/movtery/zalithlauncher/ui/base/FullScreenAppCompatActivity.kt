@@ -24,9 +24,10 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.CallSuper
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -49,11 +50,19 @@ abstract class FullScreenAppCompatActivity : AbstractAppCompatActivity() {
 
     @Suppress("DEPRECATION")
     private fun applyFullImmersive() {
-        window?.decorView?.systemUiVisibility = systemUIVisibility
-        if (Build.VERSION.SDK_INT >= 28) {
-            val attributes: WindowManager.LayoutParams = window.attributes
-            attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            window.setAttributes(attributes)
+        if (window != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val params = window.attributes
+                val newParams = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                if (params.layoutInDisplayCutoutMode != newParams) {
+                    params.layoutInDisplayCutoutMode = newParams
+                    window.attributes = params
+                }
+            }
+
+            window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            window.decorView.systemUiVisibility = systemUIVisibility
         }
     }
 }
@@ -63,6 +72,6 @@ fun Modifier.applyFullscreen(value: Boolean): Modifier {
     val modifier = Modifier.fillMaxSize()
     return then(
         if (value) modifier
-        else modifier.windowInsetsPadding(WindowInsets.displayCutout)
+        else modifier.padding(WindowInsets.displayCutout.asPaddingValues())
     )
 }
