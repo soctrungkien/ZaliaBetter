@@ -1190,4 +1190,16 @@
     <string name="settings_renderer_surface_title"></string>
     <string name="account_supporting_username_invalid_local_message_hint4"></string>
     <string name="versions_manage_install_new"></string>
+    <string name="versions_export_tip_remote_2"></string>
+    <string name="versions_export_tip_3"></string>
+    <string name="versions_export_tip_4"></string>
+    <string name="version_summary_fools_2_0"></string>
+    <string name="cape_name_zombie_horse"></string>
+    <string name="versions_export_tip_5"></string>
+    <string name="version_summary_fools_herd_craft"></string>
+    <string name="download_game_addon_warning_api"></string>
+    <string name="versions_export_tip_1"></string>
+    <string name="versions_export_tip_remote_1"></string>
+    <string name="upgrade_version_size"></string>
+    <string name="versions_export_tip_2"></string>
 </resources>
