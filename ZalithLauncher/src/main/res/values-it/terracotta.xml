@@ -74,4 +74,12 @@
     <string name="terracotta_difficulty_medium">Connessione media: attivando percorso alternativo, ma la connessione potrebbe fallire</string>
     <string name="terracotta_tutorial_step_enable_multiplayer">- Attiva il Multigiocatore nella pagina principale del launcher dopo aver letto l\'avviso utente</string>
     <string name="terracotta_tutorial_step_offline_account_support">- Questo programma supporta account offline</string>
+    <string name="terracotta_tutorial_guest_step_join_room"></string>
+    <string name="terracotta_tutorial_host_step_copy_invite"></string>
+    <string name="terracotta_tutorial_step_vpn_permission"></string>
+    <string name="terracotta_tutorial_step_open_multiplayer_menu"></string>
+    <string name="terracotta_tutorial_host_step_become_host"></string>
+    <string name="terracotta_tutorial_host_step_open_lan"></string>
+    <string name="terracotta_tutorial_guest_step_become_guest"></string>
+    <string name="terracotta_tutorial_guest_step_alternate_server"></string>
 </resources>
