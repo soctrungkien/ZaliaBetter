@@ -1212,4 +1212,6 @@
     <string name="versions_export_type_curseforge"></string>
     <string name="versions_export_task_error_message"></string>
     <string name="settings_renderer_surface_title"></string>
+    <string name="control_editor_layers_attribute_hide_when_gamepad"></string>
+    <string name="control_editor_layers_attribute_hide_when_mouse"></string>
 </resources>
