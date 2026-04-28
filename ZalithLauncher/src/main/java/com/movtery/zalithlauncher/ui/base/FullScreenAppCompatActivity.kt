@@ -29,9 +29,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 
 abstract class FullScreenAppCompatActivity : AbstractAppCompatActivity() {
     @CallSuper
@@ -54,6 +51,16 @@ abstract class FullScreenAppCompatActivity : AbstractAppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
+    private val systemUIVisibility = (
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            )
+
     private fun applyFullscreen() {
         if (isInMultiWindowMode) {
             applyDefault()
@@ -62,20 +69,21 @@ abstract class FullScreenAppCompatActivity : AbstractAppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun applyFullImmersive() {
-        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-        insetsController.apply {
-            hide(WindowInsetsCompat.Type.systemBars())
-            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val attributes = window.attributes
-            val newParams = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            if (attributes.layoutInDisplayCutoutMode != newParams) {
-                attributes.layoutInDisplayCutoutMode = newParams
-                window.attributes = attributes
+        if (window != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val params = window.attributes
+                val newParams = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                if (params.layoutInDisplayCutoutMode != newParams) {
+                    params.layoutInDisplayCutoutMode = newParams
+                    window.attributes = params
+                }
             }
+
+            window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            window.decorView.systemUiVisibility = systemUIVisibility
         }
     }
 
