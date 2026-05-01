@@ -53,6 +53,11 @@ jobs:
         with:
           add-job-summary: "on-failure"
 
+      - name: Setup signing properties
+        run: |
+          echo "default_store_password=${{ secrets.STORE_PASSWORD }}" >> gradle.properties
+          echo "default_key_password=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
+
       - name: Build APK for ${{ matrix.arch }}
         run: |
           chmod +x gradlew
