@@ -2,6 +2,10 @@ name: Build APK
 
 on:
   workflow_dispatch:
+    inputs:
+      variant:
+        required: true
+        type: string
   workflow_call:
     inputs:
       variant:
