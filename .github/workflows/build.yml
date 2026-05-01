@@ -53,14 +53,6 @@ jobs:
         with:
           add-job-summary: "on-failure"
 
-      - name: Setup signing properties
-        run: |
-          cat > gradle.properties << EOF
-          android.nonTransitiveRClass=true
-          default_store_password=${{ secrets.STORE_PASSWORD }}
-          default_key_password=${{ secrets.KEY_PASSWORD }}
-          EOF
-
       - name: Build APK for ${{ matrix.arch }}
         run: |
           chmod +x gradlew
