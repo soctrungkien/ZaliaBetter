@@ -55,9 +55,11 @@ jobs:
 
       - name: Setup signing properties
         run: |
-          echo "android.nonTransitiveRClass=true" >> gradle.properties
-          echo "default_store_password=${{ secrets.STORE_PASSWORD }}" >> gradle.properties
-          echo "default_key_password=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
+          cat > gradle.properties << EOF
+          android.nonTransitiveRClass=true
+          default_store_password=${{ secrets.STORE_PASSWORD }}
+          default_key_password=${{ secrets.KEY_PASSWORD }}
+          EOF
 
       - name: Build APK for ${{ matrix.arch }}
         run: |
