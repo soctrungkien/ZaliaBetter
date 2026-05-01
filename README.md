@@ -1,4 +1,9 @@
-# ⚠️ About Regional Restrictions
+## ⚠️ Unofficial Modified Version
+
+This project is an unofficial modified version of the original Zalith Launcher.
+
+It is not affiliated with, endorsed by, or associated with the original developers.
+## ⚠️ About Regional Restrictions
 
 The original launcher applies region-based limitations that may restrict access for users depending on their location.
 
