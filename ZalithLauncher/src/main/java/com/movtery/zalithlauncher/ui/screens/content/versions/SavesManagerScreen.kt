@@ -82,7 +82,7 @@ import coil3.compose.AsyncImage
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.context.COPY_LABEL_SAVE_SEED
 import com.movtery.zalithlauncher.coroutine.TaskSystem
-import com.movtery.zalithlauncher.game.download.assets.install.unpackSaveZip
+import com.movtery.zalithlauncher.game.version.saves.unpackSaveZip
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.game.version.installed.VersionInfo

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/gpl-3.0.txt>.
  */
 
-package com.movtery.zalithlauncher.game.download.assets.install
+package com.movtery.zalithlauncher.game.version.saves
 
 import com.movtery.zalithlauncher.utils.file.CompressZipEntryAdapter
 import com.movtery.zalithlauncher.utils.file.JavaZipEntryAdapter
@@ -24,6 +24,8 @@ import com.movtery.zalithlauncher.utils.file.UnpackZipException
 import com.movtery.zalithlauncher.utils.file.ZipEntryBase
 import com.movtery.zalithlauncher.utils.file.extractFromZip
 import com.movtery.zalithlauncher.utils.logging.Logger.lInfo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.apache.commons.compress.archivers.zip.ZipFile
 import org.apache.commons.io.FileUtils
 import java.io.File
@@ -33,7 +35,7 @@ import java.util.zip.ZipFile as JDKZipFile
 /**
  * 解压存档压缩包
  */
-suspend fun unpackSaveZip(zipFile: File, targetPath: File) {
+suspend fun unpackSaveZip(zipFile: File, targetPath: File) = withContext(Dispatchers.IO) {
     val path = extractLevelPath(zipFile) ?: throw IOException("Unable to locate the level where the level.dat file is stored.")
     lInfo("Found the level of the level.data file: $path")
     val target = File(targetPath, zipFile.nameWithoutExtension)
@@ -87,14 +89,14 @@ private fun extractLevelPath(file: File): String? {
         }
     } catch (e: Exception) {
         if (e !is UnpackZipException) {
-            return extractLevelPathWithApacheZip(file)
+            return extractLevelPathCompress(file)
         } else {
             throw e
         }
     }
 }
 
-private fun extractLevelPathWithApacheZip(file: File): String? {
+private fun extractLevelPathCompress(file: File): String? {
     val zipFile = ZipFile.Builder()
         .setFile(file)
         .get()
@@ -108,14 +110,63 @@ private fun extractLevelPathWithApacheZip(file: File): String? {
     }
 }
 
-private fun <T> findLevelEntryName(
+private fun <T : ZipEntryBase> findLevelEntryName(
     entries: Sequence<T>
-): String? where T : ZipEntryBase {
-    val levelDatEntry = entries.find { it.name.endsWith("level.dat", ignoreCase = true) }
-    if (levelDatEntry == null) {
+): String? {
+    val allEntries = entries.toList()
+    var currentPrefix = ""
+
+    while (true) {
+        val inLayer = allEntries.filter {
+            //过滤当前层级内的所有内容
+            it.name.startsWith(currentPrefix) && it.name != currentPrefix
+        }
+        if (inLayer.isEmpty()) {
+            //当前层无任何有效内容，这是一个无效的存档格式
+            return null
+        }
+
+        //检查当前层级是否存在 level.dat
+        val hasLevelDat = inLayer.any {
+            val relative = it.name.removePrefix(currentPrefix)
+            !it.isDirectory && relative.equals("level.dat", ignoreCase = true)
+        }
+
+        if (hasLevelDat) {
+            //存在 level.dat 文件时，必须至少有一个文件夹
+            //否则认为这是一个无效的存档格式
+            val hasFolder = inLayer.any {
+                val relative = it.name.removePrefix(currentPrefix)
+                it.isDirectory || relative.contains("/")
+            }
+            return if (hasFolder) currentPrefix.removeSuffix("/") else null
+        }
+
+        //不存在 level.dat 时，只有在当前层级只有一个目录且没有文件的情况下才深入
+        val relativeNames = inLayer.map {
+            it.name.removePrefix(currentPrefix)
+        }
+
+        val topLevelNames = relativeNames.map {
+            it.substringBefore("/")
+        }.distinct()
+
+        if (topLevelNames.size == 1) {
+            val name = topLevelNames[0]
+            val isFolder = inLayer.any {
+                val rel = it.name.removePrefix(currentPrefix)
+                rel.startsWith("$name/") || (rel == name && it.isDirectory)
+            }
+            val hasFileWithSameName = inLayer.any {
+                val rel = it.name.removePrefix(currentPrefix)
+                !it.isDirectory && rel == name
+            }
+
+            if (isFolder && !hasFileWithSameName) {
+                currentPrefix = "$currentPrefix$name/"
+                continue
+            }
+        }
         return null
     }
-    val path = levelDatEntry.name
-    val levelPath = path.substringBeforeLast("/")
-    return levelPath
 }
