@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.halilibo.richtext.ui.RichTextStyle
 import com.movtery.zalithlauncher.ui.components.MarkdownView
@@ -81,6 +82,8 @@ private fun MarkdownBlocksRenderer(
 @Composable
 private fun BlockItem(
     block: MarkdownBlock,
+    modifier: Modifier = Modifier,
+    inRow: Boolean = false,
     richTextStyle: RichTextStyle = defaultRichTextStyle(),
     onLauncherEvent: (String) -> Unit
 ) {
@@ -88,13 +91,15 @@ private fun BlockItem(
         is MarkdownBlock.Normal -> {
             MarkdownView(
                 content = block.content,
+                modifier = modifier,
                 richTextStyle = richTextStyle
             )
         }
         is MarkdownBlock.Card -> {
             CustomHomeCard(
+                modifier = modifier,
                 title = block.title,
-                shape = parseCardShape(block.params),
+                shape = parseShape(block.params),
                 contentPadding = parseCardPadding(block.params)
             ) {
                 MarkdownBlocksRenderer(
@@ -109,23 +114,40 @@ private fun BlockItem(
         }
         is MarkdownBlock.Button -> {
             CustomHomeButton(
+                modifier = modifier,
                 text = block.text,
                 event = block.event,
                 type = block.style,
                 onLauncherEvent = onLauncherEvent
             )
         }
+        is MarkdownBlock.Image -> {
+            val useWeight = inRow && parseWeight(block.params) != null
+            CustomHomeImage(
+                modifier = modifier,
+                url = block.url,
+                width = if (useWeight) null else block.width,
+                shape = parseShape(block.params)
+            )
+        }
         is MarkdownBlock.RowBlock -> {
             Row(
                 horizontalArrangement = block.horizontalArrangement,
                 verticalAlignment = block.verticalAlignment,
-                modifier = Modifier.fillMaxWidth()
+                modifier = modifier.fillMaxWidth()
             ) {
-                block.buttons.forEach { button ->
-                    CustomHomeButton(
-                        text = button.text,
-                        event = button.event,
-                        type = button.style,
+                block.children.forEach { child ->
+                    val weightInfo = parseWeight(child.params)
+                    val childModifier = if (weightInfo != null) {
+                        Modifier.weight(weightInfo.first, weightInfo.second)
+                    } else {
+                        Modifier
+                    }
+                    BlockItem(
+                        block = child,
+                        modifier = childModifier,
+                        inRow = true,
+                        richTextStyle = richTextStyle,
                         onLauncherEvent = onLauncherEvent
                     )
                 }
@@ -137,12 +159,14 @@ private fun BlockItem(
 
 sealed interface MarkdownBlock {
     val stableKey: Any
+    val params: String
 
     /**
      * 普通的Markdown内容
      */
     data class Normal(val content: String) : MarkdownBlock {
         override val stableKey: Any get() = content.hashCode()
+        override val params: String get() = ""
     }
 
     /**
@@ -153,7 +177,7 @@ sealed interface MarkdownBlock {
      */
     data class Card(
         val title: String,
-        val params: String,
+        override val params: String,
         val content: List<MarkdownBlock>
     ) : MarkdownBlock {
         override val stableKey: Any get() = "card_${title}_${params.hashCode()}"
@@ -175,27 +199,47 @@ sealed interface MarkdownBlock {
     data class Button(
         val text: String,
         val event: String?,
-        val style: HomeButtonType
+        val style: HomeButtonType,
+        override val params: String
     ) : MarkdownBlock {
-        override val stableKey: Any get() = "btn_${text}_${event}_${style}"
+        override val stableKey: Any get() = "btn_${text}_${event}_${style}_${params.hashCode()}"
     }
 
     /**
-     * Row组件，和Compose原生的Row一致，不过此处主要修饰Button组件
+     * 图片组件
+     * @param url 必须携带的图片链接
+     * @param width 可选的宽度属性
+     */
+    data class Image(
+        val url: String,
+        val width: Width?,
+        override val params: String
+    ) : MarkdownBlock {
+        override val stableKey: Any get() = "img_${url}_width=${width}_${params.hashCode()}"
+
+        sealed interface Width {
+            data class Percent(val value: Float): Width
+            data class DP(val value: Dp): Width
+        }
+    }
+
+    /**
+     * Row组件，和Compose原生的Row一致
      */
     data class RowBlock(
         val horizontalArrangement: Arrangement.Horizontal,
         val verticalAlignment: Alignment.Vertical,
-        val buttons: List<Button>
+        val children: List<MarkdownBlock>,
+        override val params: String
     ) : MarkdownBlock {
-        override val stableKey: Any get() = "row_${buttons.hashCode()}"
+        override val stableKey: Any get() = "row_${children.hashCode()}"
     }
 }
 
 
 
 private val blockPattern = Regex(
-    """(\.\.\.card-start([^\n]*))|(\.\.\.button(-outlined|-filled-tonal|-text)?\s+text="([^"]*)"(?:\s+(?:event|onClick)="([^"]*)")?)|(\.\.\.row-start([^\n]*))""",
+    """(\.\.\.card-start([^\n]*))|(\.\.\.button(-outlined|-filled-tonal|-text)?\s+([^\n]*))|(\.\.\.row-start([^\n]*))|(\.\.\.image\s+([^\n]*))""",
     RegexOption.DOT_MATCHES_ALL
 )
 
@@ -243,7 +287,8 @@ private fun parseMarkdownBlocksInternal(
 
         val isCardStart = match.groupValues[1].isNotEmpty()
         val isButton = match.groupValues[3].isNotEmpty()
-        val isRowStart = match.groupValues[7].isNotEmpty()
+        val isRowStart = match.groupValues[6].isNotEmpty()
+        val isImage = match.groupValues[8].isNotEmpty()
 
         when {
             isCardStart && allowCard -> {
@@ -279,7 +324,7 @@ private fun parseMarkdownBlocksInternal(
             }
 
             isRowStart && allowRow -> {
-                val params = match.groupValues[8]
+                val params = match.groupValues[7]
                 val closingIndex = cleared.indexOf(
                     string = "...row-end",
                     startIndex = match.range.last + 1
@@ -290,17 +335,18 @@ private fun parseMarkdownBlocksInternal(
                         endIndex = closingIndex
                     ).trim('\n')
 
-                    val buttons = parseMarkdownBlocksInternal(
+                    val children = parseMarkdownBlocksInternal(
                         cleared = innerContent,
                         allowCard = false,
                         allowRow = false
-                    ).filterIsInstance<MarkdownBlock.Button>()
+                    ).filter { it is MarkdownBlock.Button || it is MarkdownBlock.Image }
 
                     blocks.add(
                         MarkdownBlock.RowBlock(
-                            horizontalArrangement = parseHorizontalArrangement(params),
+                            horizontalArrangement = parseHorizontalArrangement(params = params),
                             verticalAlignment = parseVerticalAlignment(params),
-                            buttons = buttons
+                            children = children,
+                            params = params
                         )
                     )
                     lastIndex = closingIndex + "...row-end".length
@@ -314,10 +360,17 @@ private fun parseMarkdownBlocksInternal(
                 blocks.add(
                     parseButton(
                         styleSuffix = match.groupValues[4],
-                        text = match.groupValues[5],
-                        event = match.groupValues[6]
+                        params = match.groupValues[5]
                     )
                 )
+                lastIndex = match.range.last + 1
+            }
+
+            isImage -> {
+                parseImage(match.groupValues[9])?.let { image ->
+                    blocks.add(image)
+                }
+
                 lastIndex = match.range.last + 1
             }
 
@@ -365,8 +418,7 @@ private fun findNestedClosingTag(
 
 private fun parseButton(
     styleSuffix: String,
-    text: String,
-    event: String?
+    params: String
 ): MarkdownBlock.Button {
     val style = when (styleSuffix) {
         "-outlined" -> HomeButtonType.Outlined
@@ -374,10 +426,13 @@ private fun parseButton(
         "-text" -> HomeButtonType.Text
         else -> HomeButtonType.Filled
     }
+    val text = Regex("""text\s*=\s*"([^"]*)"""").find(params)?.groupValues?.get(1) ?: ""
+    val event = Regex("""(?:event|onClick)\s*=\s*"([^"]*)"""").find(params)?.groupValues?.get(1)
     return MarkdownBlock.Button(
         text = text,
-        event = event.takeIf { it?.isNotEmpty() == true },
-        style = style
+        event = event,
+        style = style,
+        params = params
     )
 }
 
@@ -418,7 +473,7 @@ private fun parseVerticalAlignment(params: String): Alignment.Vertical {
 }
 
 @Composable
-private fun parseCardShape(params: String): Shape? {
+private fun parseShape(params: String): Shape? {
     return when {
         params.contains("shape=extraSmall") -> MaterialTheme.shapes.extraSmall
         params.contains("shape=small") -> MaterialTheme.shapes.small
@@ -452,4 +507,32 @@ private fun parseCardPadding(params: String): PaddingValues? {
         )
         else -> null
     }
+}
+
+
+private fun parseImage(params: String): MarkdownBlock.Image? {
+    val url = Regex("""url\s*=\s*"([^"]*)"""").find(params)?.groupValues?.get(1) ?: return null
+    val widthParam = Regex("""width\s*=\s*(\d+%?)""").find(params)?.groupValues?.get(1)?.let { w ->
+        when {
+            w.endsWith("%") -> {
+                val percent = w.dropLast(1).toFloatOrNull() ?: 100f
+                MarkdownBlock.Image.Width.Percent((percent / 100f).coerceIn(0f, 1f))
+            }
+            else -> w.toIntOrNull()?.let { MarkdownBlock.Image.Width.DP(it.dp) }
+        }
+    }
+
+    return MarkdownBlock.Image(
+        url = url,
+        width = widthParam,
+        params = params
+    )
+}
+
+private fun parseWeight(params: String): Pair<Float, Boolean>? {
+    val regex = Regex("""weight\s*=\s*\(([\d.]+)(?:,\s*(noFill))?\)""")
+    val match = regex.find(params) ?: return null
+    val weight = match.groupValues[1].toFloatOrNull() ?: return null
+    val fill = match.groupValues[2] != "noFill"
+    return Pair(weight, fill)
 }

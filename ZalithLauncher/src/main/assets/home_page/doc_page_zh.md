@@ -5,6 +5,13 @@
 
 当然，除了标准 Markdown 语法外，我们还提供了一些**扩展组件**来增强界面交互！
 
+...card-start title="网格图片示例"
+    ...row-start horizontalArrangement=Arrangement.spacedBy(16) verticalAlignment=Alignment.CenterVertically
+        ...button text="按钮" weight=(1)
+        ...button text="按钮" weight=(1)
+        ...image url="https://www.baidu.com/img/flexible/logo/pc/result.png" width=30%   shape=16dp weight=(2)
+    ...row-end
+...card-end
 
 ---
 

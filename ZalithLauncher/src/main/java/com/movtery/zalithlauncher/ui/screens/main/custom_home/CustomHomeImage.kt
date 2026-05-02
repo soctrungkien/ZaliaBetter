@@ -1,0 +1,41 @@
+package com.movtery.zalithlauncher.ui.screens.main.custom_home
+
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+
+/**
+ * 自定义主页内的高级图片组件，Markdown自身的图片语法太过简陋
+ * 可能不满足部分场景需求
+ */
+@Composable
+fun CustomHomeImage(
+    url: String,
+    width: MarkdownBlock.Image.Width?,
+    modifier: Modifier = Modifier,
+    shape: Shape? = null,
+) {
+    val finalModifier = modifier.then(
+        when (width) {
+            is MarkdownBlock.Image.Width.DP -> Modifier.width(width.value)
+            is MarkdownBlock.Image.Width.Percent -> Modifier.fillMaxWidth(width.value)
+            else -> Modifier
+        }
+    )
+
+    AsyncImage(
+        modifier = finalModifier.clip(shape ?: RoundedCornerShape(0.dp)),
+        model = url,
+        alignment = Alignment.Center,
+        contentScale = ContentScale.FillWidth,
+        contentDescription = null,
+    )
+}
