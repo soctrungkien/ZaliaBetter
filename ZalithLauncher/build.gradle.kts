@@ -56,7 +56,7 @@ android {
         create("releaseBuild") {
             storeFile = file("my-release-key.jks")
             storePassword = getKeyFromLocal("STORE_PASSWORD", ".store_password.txt")
-            keyAlias = "123451a"
+            keyAlias = "alias_name"
             keyPassword = getKeyFromLocal("KEY_PASSWORD", ".key_password.txt")
         }
         create("debugBuild") {
