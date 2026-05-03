@@ -239,8 +239,8 @@ sealed interface MarkdownBlock {
 
 
 private val blockPattern = Regex(
-    """(\.\.\.card-start([^\n]*))|(\.\.\.button(-outlined|-filled-tonal|-text)?\s+([^\n]*))|(\.\.\.row-start([^\n]*))|(\.\.\.image\s+([^\n]*))""",
-    RegexOption.DOT_MATCHES_ALL
+    """^[ \t]*(?:(\.\.\.card-start([^\n]*))|(\.\.\.button(-outlined|-filled-tonal|-text)?\s+([^\n]*))|(\.\.\.row-start([^\n]*))|(\.\.\.image\s+([^\n]*)))""",
+    RegexOption.MULTILINE
 )
 
 /**
@@ -325,14 +325,11 @@ private fun parseMarkdownBlocksInternal(
 
             isRowStart && allowRow -> {
                 val params = match.groupValues[7]
-                val closingIndex = cleared.indexOf(
-                    string = "...row-end",
-                    startIndex = match.range.last + 1
-                )
-                if (closingIndex != -1) {
+                val closingMatch = Regex("(?m)^[ \t]*\\.\\.\\.row-end").find(cleared, match.range.last + 1)
+                if (closingMatch != null) {
                     val innerContent = cleared.substring(
                         startIndex = match.range.last + 1,
-                        endIndex = closingIndex
+                        endIndex = closingMatch.range.first
                     ).trim('\n')
 
                     val children = parseMarkdownBlocksInternal(
@@ -349,7 +346,7 @@ private fun parseMarkdownBlocksInternal(
                             params = params
                         )
                     )
-                    lastIndex = closingIndex + "...row-end".length
+                    lastIndex = closingMatch.range.last + 1
                 } else {
                     blocks.add(MarkdownBlock.Normal(match.value))
                     lastIndex = match.range.last + 1
@@ -401,7 +398,7 @@ private fun findNestedClosingTag(
 ): IntRange? {
     var depth = 1
     var current = startIndex
-    val pattern = Regex("($openTagPattern)|(${Regex.escape(closeTag)})")
+    val pattern = Regex("(?m)^[ \t]*(?:($openTagPattern)|(${Regex.escape(closeTag)}))")
 
     while (current < content.length) {
         val match = pattern.find(content, current) ?: return null
