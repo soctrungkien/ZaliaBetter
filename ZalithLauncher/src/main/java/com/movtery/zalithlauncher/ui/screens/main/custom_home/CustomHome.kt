@@ -258,6 +258,8 @@ fun parseMarkdownBlocks(
 }
 
 
+private val titleRegex = Regex("""title\s*=\s*"([^"]*)"""")
+private val rowEndPattern = Regex("(?m)^[ \t]*\\.\\.\\.row-end")
 private fun parseMarkdownBlocksInternal(
     cleared: String,
     allowCard: Boolean = true,
@@ -293,7 +295,7 @@ private fun parseMarkdownBlocksInternal(
         when {
             isCardStart && allowCard -> {
                 val params = match.groupValues[2]
-                val title = Regex("""title\s*=\s*"([^"]*)"""").find(params)?.groupValues?.get(1) ?: ""
+                val title = titleRegex.find(params)?.groupValues?.get(1) ?: ""
                 //寻找对应的卡片闭合标签
                 val closingRange = findNestedClosingTag(
                     content = cleared,
@@ -325,7 +327,7 @@ private fun parseMarkdownBlocksInternal(
 
             isRowStart && allowRow -> {
                 val params = match.groupValues[7]
-                val closingMatch = Regex("(?m)^[ \t]*\\.\\.\\.row-end").find(cleared, match.range.last + 1)
+                val closingMatch = rowEndPattern.find(cleared, match.range.last + 1)
                 if (closingMatch != null) {
                     val innerContent = cleared.substring(
                         startIndex = match.range.last + 1,
@@ -413,6 +415,8 @@ private fun findNestedClosingTag(
     return null
 }
 
+private val buttonTextRegex = Regex("""text\s*=\s*"([^"]*)"""")
+private val buttonEventRegex = Regex("""event\s*=\s*"([^"]*)"""")
 private fun parseButton(
     styleSuffix: String,
     params: String
@@ -423,8 +427,8 @@ private fun parseButton(
         "-text" -> HomeButtonType.Text
         else -> HomeButtonType.Filled
     }
-    val text = Regex("""text\s*=\s*"([^"]*)"""").find(params)?.groupValues?.get(1) ?: ""
-    val event = Regex("""(?:event|onClick)\s*=\s*"([^"]*)"""").find(params)?.groupValues?.get(1)
+    val text = buttonTextRegex.find(params)?.groupValues?.get(1) ?: ""
+    val event = buttonEventRegex.find(params)?.groupValues?.get(1)
     return MarkdownBlock.Button(
         text = text,
         event = event,
@@ -476,35 +480,37 @@ private fun parseVerticalAlignment(params: String): Alignment.Vertical {
 
     return when (verticalValue) {
         "Top" -> Alignment.Top
-        "Center" -> Alignment.CenterVertically
+        "Center", "CenterVertically" -> Alignment.CenterVertically
         "Bottom" -> Alignment.Bottom
         else -> Alignment.Top
     }
 }
 
+private val shapeRegex = Regex("""shape\s*=\s*([^\s\t\n]+)""")
 @Composable
 private fun parseShape(params: String): Shape? {
-    return when {
-        params.contains("shape=extraSmall") -> MaterialTheme.shapes.extraSmall
-        params.contains("shape=small") -> MaterialTheme.shapes.small
-        params.contains("shape=medium") -> MaterialTheme.shapes.medium
-        params.contains("shape=large") -> MaterialTheme.shapes.large
-        params.contains("shape=extraLarge") -> MaterialTheme.shapes.extraLarge
-        params.contains(Regex("""shape=\d+dp""")) -> {
-            val size = Regex("""shape=(\d+)dp""").find(params)?.groupValues?.get(1)?.toIntOrNull() ?: return null
-            RoundedCornerShape(size.dp)
+    val shapeValue = shapeRegex.find(params)?.groupValues?.get(1) ?: return null
+    return when (shapeValue) {
+        "extraSmall" -> MaterialTheme.shapes.extraSmall
+        "small" -> MaterialTheme.shapes.small
+        "medium" -> MaterialTheme.shapes.medium
+        "large" -> MaterialTheme.shapes.large
+        "extraLarge" -> MaterialTheme.shapes.extraLarge
+        else -> {
+            if (shapeValue.endsWith("dp")) {
+                val size = shapeValue.dropLast(2).toIntOrNull() ?: return null
+                RoundedCornerShape(size.dp)
+            } else {
+                val percent = shapeValue.toIntOrNull() ?: return null
+                RoundedCornerShape(percent)
+            }
         }
-        params.contains(Regex("""shape=\d+(?!\w)""")) -> {
-            val percent = Regex("""shape=(\d+)(?!\w)""").find(params)?.groupValues?.get(1)?.toIntOrNull() ?: return null
-            RoundedCornerShape(percent)
-        }
-        else -> null
     }
 }
 
+private val paddingRegex = Regex("""contentPadding\s*=\s*\(([\d\s,]+)\)""")
 private fun parseCardPadding(params: String): PaddingValues? {
-    val regex = Regex("""contentPadding\s*=\s*\(([\d\s,]+)\)""")
-    val match = regex.find(params) ?: return null
+    val match = paddingRegex.find(params) ?: return null
     val values = match.groupValues[1].split(",").map { it.trim().toIntOrNull() ?: 0 }
     return when (values.size) {
         1 -> PaddingValues(values[0].dp)
@@ -519,10 +525,11 @@ private fun parseCardPadding(params: String): PaddingValues? {
     }
 }
 
-
+private val urlRegex = Regex("""url\s*=\s*"([^"]*)"""")
+private val widthRegex = Regex("""width\s*=\s*(\d+%?)""")
 private fun parseImage(params: String): MarkdownBlock.Image? {
-    val url = Regex("""url\s*=\s*"([^"]*)"""").find(params)?.groupValues?.get(1) ?: return null
-    val widthParam = Regex("""width\s*=\s*(\d+%?)""").find(params)?.groupValues?.get(1)?.let { w ->
+    val url = urlRegex.find(params)?.groupValues?.get(1) ?: return null
+    val widthParam = widthRegex.find(params)?.groupValues?.get(1)?.let { w ->
         when {
             w.endsWith("%") -> {
                 val percent = w.dropLast(1).toFloatOrNull() ?: 100f
@@ -539,9 +546,9 @@ private fun parseImage(params: String): MarkdownBlock.Image? {
     )
 }
 
+private val weightRegex = Regex("""weight\s*=\s*\(([\d.]+)(?:,\s*(noFill))?\)""")
 private fun parseWeight(params: String): Pair<Float, Boolean>? {
-    val regex = Regex("""weight\s*=\s*\(([\d.]+)(?:,\s*(noFill))?\)""")
-    val match = regex.find(params) ?: return null
+    val match = weightRegex.find(params) ?: return null
     val weight = match.groupValues[1].toFloatOrNull() ?: return null
     val fill = match.groupValues[2] != "noFill"
     return Pair(weight, fill)
