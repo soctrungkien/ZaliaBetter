@@ -98,41 +98,41 @@ Use the `Row` component to arrange **buttons and images** horizontally, avoiding
 ### Detailed Row Configuration
 Row supports two main attributes, aligned with Jetpack Compose's native Row component:
 
-#### 1. `horizontalArrangement` (Horizontal Distribution)
+#### 1. `horizontal` (Horizontal Distribution)
 
 **Standard values:**
-- `Arrangement.Start` (default)
-- `Arrangement.Center`
-- `Arrangement.End`
-- `Arrangement.SpaceBetween`
-- `Arrangement.SpaceAround`
-- `Arrangement.SpaceEvenly`
+- `Start` (default)
+- `Center`
+- `End`
+- `SpaceBetween`
+- `SpaceAround`
+- `SpaceEvenly`
 
-...row-start horizontalArrangement=Arrangement.SpaceBetween
+...row-start horizontal=SpaceBetween
     ...button text="Left"
     ...button text="Middle"
     ...button text="Right"
 ...row-end
 
 **Distribution with spacing:**
-...row-start horizontalArrangement=Arrangement.spacedBy(12)
+...row-start horizontal=spacedBy(12)
     ...button text="Button A"
     ...button text="Button B"
 ...row-end
 
-You can also specify the horizontal alignment (`Alignment.Start`, `Center`, `End`):
-...row-start horizontalArrangement=Arrangement.spacedBy(12, Alignment.End)
+You can also specify the horizontal alignment (`Start`, `Center`, `End`):
+...row-start horizontal=spacedBy(12, End)
     ...button text="Placed at end, spacing 12"
     ...image url="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg" width=20%
 ...row-end
 
-#### 2. `verticalAlignment` (Vertical Alignment)
+#### 2. `vertical` (Vertical Alignment)
 
-- `Alignment.Top` (default)
-- `Alignment.CenterVertically`
-- `Alignment.Bottom`
+- `Top` (default)
+- `Center`
+- `Bottom`
 
-...row-start verticalAlignment=Alignment.CenterVertically
+...row-start vertical=Center
     ...button text="Vertically centered"
     ...image url="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg" width=10%
 ...row-end

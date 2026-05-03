@@ -99,41 +99,41 @@
 ### Row 详细配置
 Row 支持两个主要属性，与 Jetpack Compose 原生的 Row 组件对齐：
 
-#### 1. `horizontalArrangement`（水平分布）
+#### 1. `horizontal`（水平分布）
 
 **常规值：**
-- `Arrangement.Start`（默认）
-- `Arrangement.Center`
-- `Arrangement.End`
-- `Arrangement.SpaceBetween`
-- `Arrangement.SpaceAround`
-- `Arrangement.SpaceEvenly`
+- `Start`（默认）
+- `Center`
+- `End`
+- `SpaceBetween`
+- `SpaceAround`
+- `SpaceEvenly`
 
-...row-start horizontalArrangement=Arrangement.SpaceBetween
+...row-start horizontal=SpaceBetween
     ...button text="左"
     ...button text="中"
     ...button text="右"
 ...row-end
 
 **带间距的分布：**
-...row-start horizontalArrangement=Arrangement.spacedBy(12)
+...row-start horizontal=spacedBy(12)
     ...button text="按钮A"
     ...button text="按钮B"
 ...row-end
 
-你还可以指定水平对齐方式（`Alignment.Start`、`Center`、`End`）：
-...row-start horizontalArrangement=Arrangement.spacedBy(12, Alignment.End)
+你还可以指定水平对齐方式（`Start`、`Center`、`End`）：
+...row-start horizontal=spacedBy(12, End)
     ...button text="位于末尾，且间距12"
     ...image url="https://www.baidu.com/img/flexible/logo/pc/result.png" width=20%
 ...row-end
 
-#### 2. `verticalAlignment`（垂直对齐）
+#### 2. `vertical`（垂直对齐）
 
-- `Alignment.Top`（默认）
-- `Alignment.CenterVertically`
-- `Alignment.Bottom`
+- `Top`（默认）
+- `Center`
+- `Bottom`
 
-...row-start verticalAlignment=Alignment.CenterVertically
+...row-start vertical=Center
     ...button text="垂直居中"
     ...image url="https://www.baidu.com/img/flexible/logo/pc/result.png" width=10%
 ...row-end

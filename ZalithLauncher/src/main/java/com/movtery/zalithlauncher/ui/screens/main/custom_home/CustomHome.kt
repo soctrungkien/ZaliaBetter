@@ -132,8 +132,8 @@ private fun BlockItem(
         }
         is MarkdownBlock.RowBlock -> {
             Row(
-                horizontalArrangement = block.horizontalArrangement,
-                verticalAlignment = block.verticalAlignment,
+                horizontalArrangement = block.horizontal,
+                verticalAlignment = block.vertical,
                 modifier = modifier.fillMaxWidth()
             ) {
                 block.children.forEach { child ->
@@ -227,8 +227,8 @@ sealed interface MarkdownBlock {
      * Row组件，和Compose原生的Row一致
      */
     data class RowBlock(
-        val horizontalArrangement: Arrangement.Horizontal,
-        val verticalAlignment: Alignment.Vertical,
+        val horizontal: Arrangement.Horizontal,
+        val vertical: Alignment.Vertical,
         val children: List<MarkdownBlock>,
         override val params: String
     ) : MarkdownBlock {
@@ -340,8 +340,8 @@ private fun parseMarkdownBlocksInternal(
 
                     blocks.add(
                         MarkdownBlock.RowBlock(
-                            horizontalArrangement = parseHorizontalArrangement(params = params),
-                            verticalAlignment = parseVerticalAlignment(params),
+                            horizontal = parseHorizontalArrangement(params = params),
+                            vertical = parseVerticalAlignment(params),
                             children = children,
                             params = params
                         )
@@ -433,38 +433,51 @@ private fun parseButton(
     )
 }
 
+private val horizontalRegex = Regex("""horizontal\s*=\s*(spacedBy\([^)]*\)|[^\s\t\n]+)""")
+private val spacedByRegex = Regex("""spacedBy\(\s*(\d+)(?:\.dp)?\s*(?:,\s*(\w+))?\s*\)""")
+
 private fun parseHorizontalArrangement(
     params: String,
-//    alignment: String,
 ): Arrangement.Horizontal {
-    val spacedByRegex = Regex("""Arrangement\.spacedBy\((\d+)(?:,\s*Alignment\.(Start|End|CenterHorizontally))?\)""")
-    spacedByRegex.find(params)?.let { match ->
-        val space = match.groupValues[1].toIntOrNull() ?: 0
-        val alignment = when (match.groupValues[2]) {
-            "Start" -> Alignment.Start
-            "End" -> Alignment.End
-            "CenterHorizontally" -> Alignment.CenterHorizontally
-            else -> null
+    val horizontalValue = horizontalRegex.find(params)?.groupValues?.get(1)?.trim()
+
+    if (horizontalValue != null) {
+        spacedByRegex.find(horizontalValue)?.let { match ->
+            val space = match.groupValues[1].toIntOrNull() ?: 0
+            val alignment = when (match.groupValues[2]) {
+                "Start" -> Alignment.Start
+                "End" -> Alignment.End
+                "Center" -> Alignment.CenterHorizontally
+                else -> null
+            }
+            return if (alignment != null) {
+                Arrangement.spacedBy(space.dp, alignment)
+            } else {
+                Arrangement.spacedBy(space.dp)
+            }
         }
-        return if (alignment != null) Arrangement.spacedBy(space.dp, alignment) else Arrangement.spacedBy(space.dp)
+        return when (horizontalValue) {
+            "Start" -> Arrangement.Start
+            "End" -> Arrangement.End
+            "Center" -> Arrangement.Center
+            "SpaceEvenly" -> Arrangement.SpaceEvenly
+            "SpaceBetween" -> Arrangement.SpaceBetween
+            "SpaceAround" -> Arrangement.SpaceAround
+            else -> Arrangement.Start
+        }
     }
 
-    return when {
-        params.contains("Arrangement.Start") -> Arrangement.Start
-        params.contains("Arrangement.End") -> Arrangement.End
-        params.contains("Arrangement.Center") -> Arrangement.Center
-        params.contains("Arrangement.SpaceEvenly") -> Arrangement.SpaceEvenly
-        params.contains("Arrangement.SpaceBetween") -> Arrangement.SpaceBetween
-        params.contains("Arrangement.SpaceAround") -> Arrangement.SpaceAround
-        else -> Arrangement.Start
-    }
+    return Arrangement.Start
 }
 
+private val verticalRegex = Regex("""vertical\s*=\s*(\w+)""")
 private fun parseVerticalAlignment(params: String): Alignment.Vertical {
-    return when {
-        params.contains("Alignment.Top") -> Alignment.Top
-        params.contains("Alignment.CenterVertically") -> Alignment.CenterVertically
-        params.contains("Alignment.Bottom") -> Alignment.Bottom
+    val verticalValue = verticalRegex.find(params)?.groupValues?.get(1)
+
+    return when (verticalValue) {
+        "Top" -> Alignment.Top
+        "Center" -> Alignment.CenterVertically
+        "Bottom" -> Alignment.Bottom
         else -> Alignment.Top
     }
 }
