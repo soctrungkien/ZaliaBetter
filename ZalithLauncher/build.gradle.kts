@@ -248,6 +248,7 @@ dependencies {
     implementation(libs.androidx.webkit)
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
+    implementation(libs.coil.svg)
     implementation(libs.coil.network.ktor3)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.material)

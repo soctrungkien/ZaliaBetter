@@ -1,19 +1,16 @@
 # Custom Homepage User Guide!
 
-Welcome to Zalith Launcher2's custom homepage! You can use Markdown syntax to write your homepage!  
-Just like this homepage, you can refer to its writing style, I'm sure you'll get it~  
+Welcome to Zalith Launcher2's custom homepage! You can use **Markdown** syntax to write your homepage!  
+Just like this homepage, you can refer to its writing style—I'm sure you'll get it~
 
-Of course, in addition to standard Markdown syntax, we also provide some **extension components** to enhance the interface interaction!
-
+In addition to standard Markdown syntax, we also provide a series of **extension components** to make the interface richer and the layout more flexible!
 
 ---
 
+## Comments
 
-### Comments
-We can use simple comments to explain certain parts of the homepage ~~(to avoid confusing ourselves XD)~~  
-Comments are used to add notes in the source code and are completely ignored during rendering.  
-If you add `//` at the beginning of a line, that line will be treated as a comment line.
-
+Adding comments in the source code can explain the purpose of certain content ~~(to avoid confusing yourself XD)~~  
+Comments are **completely ignored** during rendering and will not be displayed on the interface.
 
 **Correct example:**  
 // This is a single-line comment, it will not be displayed on the interface
@@ -27,143 +24,167 @@ This line is not a comment // The text after this will be rendered as normal tex
 
 ---
 
+## Cards
+Cards are **content grouping containers**, fully supporting Markdown syntax inside.
 
-### Cards
-Cards are containers that group content, and they fully support Markdown syntax inside.
+### Basic Card
 
-**Below is a basic card**  
 ...card-start title="Simplest Card"
 This is the simplest card, containing just a title and a paragraph of text ~~(nonsense)~~
 ...card-end
 
-**Supported attributes**: title, contentPadding, shape  
-You can use attributes to control the appearance of the card:
+### Supported Attributes
 
-> title="Custom Styled Card"
-> shape=large
-> contentPadding=(10)
+| Attribute        | Description                                                                                                                                                                                | Example                                                                            |
+|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| `title`          | Card title. Leave empty `""` to hide the title bar.                                                                                                                                        | `title="Welcome Page"`                                                             |
+| `contentPadding` | Padding (in dp).<br>Supports 1, 2 or 4 values, representing: (all sides), (horizontal, vertical), (left, top, right, bottom).                                                              | `contentPadding=(12)`<br>`contentPadding=(8, 16)`<br>`contentPadding=(4, 8, 4, 8)` |
+| `shape`          | Corner radius.<br>Options: `extraSmall`, `small`, `medium`, `large`, `extraLarge`<br>Or specify directly like `12dp`<br>Or a percentage (e.g., `50` meaning 50% radius, can form a circle) | `shape=large`<br>`shape=16dp`<br>`shape=50`                                        |
 
-...card-start title="Custom Styled Card" shape=large contentPadding=(10)
-Inside the card, you can use Markdown syntax like **bold**, *italic*  
-Here's a detailed introduction to the card attributes~
+...card-start title="Example Card" shape=large contentPadding=(10)
+Inside the card, you can use **bold**, *italic* and other Markdown syntax.
 
-- **title**: The title of the card. Leave it empty `""` to hide the title bar
-    - ```text
-      title="This is a title!"
-      ```
-- **contentPadding**: Margins. Supports `(all sides)`, `(horizontal, vertical)`, or `(left, top, right, bottom)`.
-    - ```text
-      Padding of 12 on all sides
-      contentPadding=(12)
-      Horizontal 0 padding, vertical 12 padding
-      contentPadding=(0, 12)
-      Left 0 padding, top 12 padding, right 12 padding, bottom 0 padding
-      contentPadding=(0, 12, 12, 0)
-      ```
-- **shape**: Corner radius. Supports `extraSmall`, `small`, `medium`, `large`, `extraLarge` or a specific value like `16dp`
-    - ```text
-      Use a very small corner radius, provided by MaterialTheme!
-      shape=extraSmall
-      Use a relatively small corner radius, provided by MaterialTheme!
-      shape=small
-      Use a medium corner radius, provided by MaterialTheme!
-      shape=medium
-      Use a relatively large corner radius, provided by MaterialTheme!
-      shape=large
-      Use a very large corner radius, provided by MaterialTheme!
-      shape=extraLarge
-      Jetpack Compose uses dp as the measurement unit, you can specify how large you want the corner radius to be
-      shape=16dp
-      If you don't specify the dp unit, we will treat it as a percentage, e.g., 50 means a perfect circle
-      shape=50
-      ```
+- **title**: Card title, leave empty to hide the title block.
+- **contentPadding**: Padding.
+- **shape**: Corner radius style, supports Material predefined values, dp values, or percentages.
 ...card-end
 
-...card-start title="Important Notes" shape=large contentPadding=(10)
-When using cards, we need to be aware of the following:
-1. A card is a component that allows nesting of child components. To delimit the content, we must use a start tag and an end tag to enclose the content, otherwise the launcher won't know which components are inside the card.
-2. Nesting cards inside cards is not allowed! If you insist on nesting, it will look like this:
-
-...card-start title="Nested Card"
-Content inside the nested card
-...card-end
-...card-end
-
+> **Note**: Cards cannot be nested inside cards, otherwise the inner card will be rendered as plain text.
 
 ---
 
+## Buttons
+Buttons are used to trigger interaction events, or can also be purely decorative.
 
-### Buttons and Layout
-Buttons are used to trigger interaction events, but they can also do nothing!
+### Basic Syntax
 
-**Basic buttons and events**  
-A button must include `text`, `event` is optional:  
+A button must include `text`, `event` is optional:
 ...button text="Display-only button"
 ...button text="Visit YouTube" event="url=https://www.youtube.com/"
-...button text="Launcher function" event="launcher=check_update"
+...button text="Check for updates" event="launcher=check_update"
 
-- **url**: Opens the specified link in the system browser  
-- **launcher**: Triggers a launcher-specific event tag  
+- **url**: Opens the specified link in the system browser.
+- **launcher**: Triggers a launcher-specific event tag.
 
-**Button appearance styles**
+### Button Styles
+
 We provide four Material Design 3 button styles:
 ...button text="Default style"
 ...button-outlined text="Outlined style"
 ...button-filled-tonal text="Filled tonal style"
 ...button-text text="Text style"
 
-**Horizontal layout control: Row component**  
-This is a quite important layout component. As you can see from the examples above, buttons are arranged vertically by default—this is very bad!  
-At this point, we can use `Row` to control the layout!  
-`Row` places child components horizontally. Currently, `Row` only supports buttons inside! ~~Nonsense, buttons are the only components available for now~~
-
-...row-start
-...button text="Button 1"
-...button-outlined text="Button 2"
-...row-end
-
-**Detailed Row configuration options:**  
-These attributes align with Jetpack Compose's native Row component.  
-- **horizontalArrangement**: Controls horizontal distribution
-    - Standard: `Arrangement.Start`, `Center`, `End`, `SpaceBetween`, `SpaceAround`, `SpaceEvenly`
-      - ```text
-        horizontalArrangement=Arrangement.Start
-        horizontalArrangement=Arrangement.Center
-        horizontalArrangement=Arrangement.End
-        horizontalArrangement=Arrangement.SpaceBetween
-        horizontalArrangement=Arrangement.SpaceAround
-        horizontalArrangement=Arrangement.SpaceEvenly
-        ```
-    - Spacing: `Arrangement.spacedBy(12)`
-      - ```text
-        Places a fixed distance of 12 between every two adjacent child components.
-        If the remaining width is empty, the distance parameter can be negative, in which case child components will overlap!
-        You can specify alignment to horizontally align the spaced items within the parent.
-        horizontalArrangement=Arrangement.spacedBy(12)
-        
-        You can specify a horizontal Alignment to align the spaced items within the parent.
-        spacedBy only supports horizontal Alignment: Alignment.Start, Alignment.End, Alignment.CenterHorizontally
-        horizontalArrangement=Arrangement.spacedBy(12, Alignment.Start)
-        ```
-- **verticalAlignment**: Controls vertical alignment  
-    - `Alignment.Top`, `Alignment.CenterVertically`, `Alignment.Bottom`
-
+The style is specified by the suffix of `...button`:
+- No suffix → Filled style
+- `-outlined` → Outlined style
+- `-filled-tonal` → Filled tonal style
+- `-text` → Text style
 
 ---
 
+## Horizontal Layout (Row)
+Use the `Row` component to arrange **buttons and images** horizontally, avoiding the default vertical layout.
 
-### Important Notes
-When writing extension components, please adhere to the following rules to ensure correct rendering:
+### Basic Usage
 
-**Strict nesting prohibition**:  
-- **No card nesting**: For interface simplicity, you cannot define another card inside a card.  
-- **No Row nesting**: For now, Row can only contain button series components.  
-- **Combination allowed**: You can place `Row` components and button components inside a card.  
+...row-start
+    // Yes, we can indent child components!
+    // No indentation is fine either, just for eye comfort
+    // And you can use as many spaces as you want for indentation
+    ...button text="Button 1"
+    ...button-outlined text="Button 2"
+...row-end
 
-**Syntax details**:  
-- Extension syntax cannot be embedded directly inside standard Markdown syntax (e.g., cards cannot be placed inside Markdown lists, blockquotes, etc.).  
-- Component tags that can contain child components must appear in pairs.  
+### Detailed Row Configuration
+Row supports two main attributes, aligned with Jetpack Compose's native Row component:
 
-**You must at least know basic Markdown**:  
-- After all, this is an extension of Markdown; basic content still follows standard Markdown syntax.  
-- If you don't know it, no worries—it's really easy to learn! https://www.markdownguide.org/getting-started/
+#### 1. `horizontalArrangement` (Horizontal Distribution)
+
+**Standard values:**
+- `Arrangement.Start` (default)
+- `Arrangement.Center`
+- `Arrangement.End`
+- `Arrangement.SpaceBetween`
+- `Arrangement.SpaceAround`
+- `Arrangement.SpaceEvenly`
+
+...row-start horizontalArrangement=Arrangement.SpaceBetween
+    ...button text="Left"
+    ...button text="Middle"
+    ...button text="Right"
+...row-end
+
+**Distribution with spacing:**
+...row-start horizontalArrangement=Arrangement.spacedBy(12)
+    ...button text="Button A"
+    ...button text="Button B"
+...row-end
+
+You can also specify the horizontal alignment (`Alignment.Start`, `Center`, `End`):
+...row-start horizontalArrangement=Arrangement.spacedBy(12, Alignment.End)
+    ...button text="Placed at end, spacing 12"
+    ...image url="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg" width=20%
+...row-end
+
+#### 2. `verticalAlignment` (Vertical Alignment)
+
+- `Alignment.Top` (default)
+- `Alignment.CenterVertically`
+- `Alignment.Bottom`
+
+...row-start verticalAlignment=Alignment.CenterVertically
+    ...button text="Vertically centered"
+    ...image url="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg" width=10%
+...row-end
+
+### Weight
+Distribute remaining space proportionally to child elements.  
+Inside a Row component, you can specify the `weight` parameter for each button or image to control their share of the remaining space.
+
+- Syntax: `weight=(weightValue)` or `weight=(weightValue, noFill)`
+- `weightValue`: a decimal or integer, e.g., `1`, `2.5`
+- `noFill` (optional): when `noFill` is added, the element will not be forced to fill its allocated space; its width is determined by its own content.
+
+...row-start
+    ...button weight=(1) text="Takes 1 share"
+    ...button weight=(2) text="Takes 2 shares"
+    ...button weight=(3, noFill) text="Takes 3 shares, but no fill"
+...row-end
+
+> If you want an element not to take weight and keep its original width, just omit the `weight` parameter.
+
+---
+
+## Image Component
+Enhanced image component supporting **percentage width** and **fixed DP width**, with customizable corner radius.
+
+### Supported Attributes
+
+| Attribute | Description                                     | Example                                                                                   |
+|-----------|-------------------------------------------------|-------------------------------------------------------------------------------------------|
+| `url`     | Image link, this attribute is required.         | `url="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg"` |
+| `width`   | Width: a number (in dp) or a percentage string. | `width=150`<br>`width=50%`                                                                |
+| `shape`   | Corner radius, usage same as for cards.         | `shape=medium`<br>`shape=20dp`<br>`shape=50`                                              |
+
+### Examples
+
+Width: 50% (50% of the overall homepage width)  
+Shape: medium corner radius  
+...image url="https://picsum.photos/300/200" width=50% shape=medium
+Width: 48 (size 48dp)  
+Shape: 50% radius, circle  
+...image url="icon.png" width=48 shape=50
+
+---
+
+## Important Notes
+- Cards cannot be nested; otherwise the inner card will be treated as plain text.
+- Row currently only supports buttons and images inside.
+- Weight is only effective for child elements inside a Row and must be written on the same line as the corresponding child component's parameters.
+- Tags must appear in pairs: `...card-start` with `...card-end`, `...row-start` with `...row-end`.
+- Extension components cannot be embedded in standard Markdown containers: extension components are relatively independent and not fully integrated into Markdown syntax. For example, you cannot put `...card-start` inside a Markdown list item or blockquote.
+- Image loading depends on the network; ensure the image link is accessible.
+
+Although we provide rich extension components, the entire homepage is still based on **Markdown**.  
+If you're not yet familiar with standard Markdown syntax, we recommend spending a few minutes learning it — it's really easy!  
+https://www.markdownguide.org/getting-started/
