@@ -101,8 +101,8 @@ private fun BlockItem(
             is MarkdownBlock.Width.DP -> Modifier.width(widthInfo.value)
             is MarkdownBlock.Width.Percent -> Modifier.fillMaxWidth(widthInfo.value)
         }
-    } else if (!isInsideFlex && !isContentComponent) {
-        //布局组件在根布局，且未配置 width 时默认填充宽度
+    } else if (!isContentComponent) {
+        //布局组件、普通文本在根布局或容器布局中，且未配置 width/weight 时默认填充宽度
         Modifier.fillMaxWidth()
     } else {
         modifier
@@ -395,7 +395,7 @@ private fun parseMarkdownBlocksInternal(
         val match = blockPattern.find(cleared, lastIndex)
         if (match == null) {
             //没有更多匹配，添加剩余内容
-            val remaining = cleared.substring(lastIndex).trim()
+            val remaining = cleared.substring(lastIndex).trim('\n')
             if (remaining.isNotEmpty()) {
                 blocks.add(MarkdownBlock.Normal(astNode = parseMarkdown(remaining)))
             }
@@ -404,7 +404,7 @@ private fun parseMarkdownBlocksInternal(
 
         //处理匹配项之前的普通文本
         if (match.range.first > lastIndex) {
-            val text = cleared.substring(lastIndex, match.range.first).trim()
+            val text = cleared.substring(lastIndex, match.range.first).trim('\n')
             if (text.isNotEmpty()) {
                 blocks.add(MarkdownBlock.Normal(astNode = parseMarkdown(text)))
             }
@@ -473,13 +473,8 @@ private fun parseMarkdownBlocksInternal(
                     val children = parseMarkdownBlocksInternal(
                         cleared = innerContent,
                         parseMarkdown = parseMarkdown,
-                        allowCard = false, //Row内不允许放卡片
-                    ).filter {
-                        it is MarkdownBlock.Button ||
-                                it is MarkdownBlock.Image ||
-                                it is MarkdownBlock.RowBlock ||
-                                it is MarkdownBlock.ColumnBlock
-                    }
+                        allowCard = false, //布局组件内不允许放卡片
+                    )
 
                     blocks.add(
                         MarkdownBlock.RowBlock(
@@ -516,13 +511,8 @@ private fun parseMarkdownBlocksInternal(
                     val children = parseMarkdownBlocksInternal(
                         cleared = innerContent,
                         parseMarkdown = parseMarkdown,
-                        allowCard = false, //Column内不允许放卡片
-                    ).filter {
-                        it is MarkdownBlock.Button ||
-                                it is MarkdownBlock.Image ||
-                                it is MarkdownBlock.RowBlock ||
-                                it is MarkdownBlock.ColumnBlock
-                    }
+                        allowCard = false, //布局组件内不允许放卡片
+                    )
 
                     blocks.add(
                         MarkdownBlock.ColumnBlock(

@@ -156,7 +156,8 @@ contentPadding=(4, 4, 12, 12)
 ...row-end
 - `width`: 布局组件的宽度，可选，与按钮的属性一致；若该组件是根组件，则默认值为 `100%`
 
-> Row 或 Column 内部不能包含普通 Markdown 文本，只能放置按钮、图片、或嵌套的 Row/Column 组件
+> Row 或 Column 内部可放置按钮、图片、或嵌套的 Row/Column 组件
+> 当然也可以放置 Markdown 文本，不过 Markdown 文本不能像其他高级组件一样，进行缩进处理！否则会出现渲染异常
 
 ---
 
@@ -191,8 +192,7 @@ contentPadding=(4, 4, 12, 12)
 ...column-end
 - `width`: 布局组件的宽度，可选，与按钮的属性一致；若该组件是根组件，则默认值为 `100%`
 
-> 与 Row 相同，Column 内部不能包含普通 Markdown 文本
-> Column 不支持对子组件使用 `weight` 属性
+> 与 Row 相同，但 Column 不支持对子组件使用 `weight` 属性
 
 ---
 
@@ -243,7 +243,7 @@ contentPadding=(4, 4, 12, 12)
 - **组件嵌套**:
     - `Row` 与 `Column` 支持无限互相嵌套
     - `Card` 禁止嵌套，否则内部卡片会被当作普通文本
-    - `Row`/`Column` 内部不能直接写普通 Markdown 文本，只能放置按钮、图片或嵌套的布局组件
+    - `Row`/`Column` 内部可以放置按钮、图片或嵌套的布局组件，也可以放置 Markdown 文本，不过 Markdown 文本不能像其他高级组件一样，进行缩进处理！否则会出现渲染异常
 - 标签必须成对出现，如 `...card-start` 与 `...card-end` 必须配对
 - 扩展组件不能嵌入标准 Markdown 容器：扩展组件相对独立，并没有彻底融入 Markdown 语法，例如无法将 `...image` 写在 Markdown 的代码块或表格内部
 - 图片加载依赖网络，请确保图片链接可访问

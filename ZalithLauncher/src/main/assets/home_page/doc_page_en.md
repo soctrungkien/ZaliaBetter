@@ -156,7 +156,8 @@ This component aligns with the Row component in Jetpack Compose.
 ...row-end
 - `width`: The width of the layout component, optional, same as the button's width attribute; if this component is the root component, the default value is `100%`.
 
-> Row or Column cannot contain plain Markdown text; only buttons, images, or nested Row/Column components are allowed.
+> Inside Row or Column, you can place buttons, images, or nested Row/Column components.
+> You can also place Markdown text, but Markdown text cannot be indented like other advanced components, otherwise rendering anomalies may occur!
 
 ---
 
@@ -191,8 +192,7 @@ This component aligns with the Column component in Jetpack Compose.
 ...column-end
 - `width`: The width of the layout component, optional, same as the button's width attribute; if this component is the root component, the default value is `100%`.
 
-> Same as Row, Column cannot contain plain Markdown text.
-> Column does not support the `weight` attribute on child components.
+> Same as Row, but Column does not support the `weight` attribute on child components.
 
 ---
 
@@ -243,7 +243,7 @@ We can use the advanced image component to solve this problem.
 - **Component nesting**:
     - `Row` and `Column` support unlimited nesting within each other.
     - `Card` cannot be nested; otherwise the inner card will be treated as plain text.
-    - `Row`/`Column` cannot directly contain plain Markdown text; only buttons, images, or nested layout components are allowed.
+    - Inside `Row`/`Column`, you can place buttons, images, or nested layout components. You can also place Markdown text, but Markdown text cannot be indented like other advanced components, otherwise rendering anomalies may occur!
 - Tags must appear in pairs, e.g., `...card-start` must be paired with `...card-end`.
 - Extension components cannot be embedded inside standard Markdown containers: extension components are relatively independent and not fully integrated into Markdown syntax. For example, you cannot put `...image` inside a Markdown code block or table.
 - Image loading depends on network; ensure the image link is accessible.
