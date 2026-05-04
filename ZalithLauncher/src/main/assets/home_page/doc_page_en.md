@@ -35,11 +35,11 @@ This is the simplest card, containing just a title and a paragraph of text ~~(no
 
 ### Supported Attributes
 
-| Attribute        | Description                                                                                                                                                                                | Example                                                                            |
-|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| `title`          | Card title. Leave empty `""` to hide the title bar.                                                                                                                                        | `title="Welcome Page"`                                                             |
-| `contentPadding` | Padding (in dp).<br>Supports 1, 2 or 4 values, representing: (all sides), (horizontal, vertical), (left, top, right, bottom).                                                              | `contentPadding=(12)`<br>`contentPadding=(8, 16)`<br>`contentPadding=(4, 8, 4, 8)` |
-| `shape`          | Corner radius.<br>Options: `extraSmall`, `small`, `medium`, `large`, `extraLarge`<br>Or specify directly like `12dp`<br>Or a percentage (e.g., `50` meaning 50% radius, can form a circle) | `shape=large`<br>`shape=16dp`<br>`shape=50`                                        |
+| Attribute        | Description                                                                                                                                                                 | Example                                                                            |
+|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| `title`          | Card title. Leave empty `""` to hide the title bar.                                                                                                                         | `title="Welcome Page"`                                                             |
+| `contentPadding` | Padding (in dp).<br>Supports 1, 2 or 4 values, representing: (all sides), (horizontal, vertical), (left, top, right, bottom).                                               | `contentPadding=(12)`<br>`contentPadding=(8, 16)`<br>`contentPadding=(4, 8, 4, 8)` |
+| `shape`          | Corner radius.<br>Available presets: `extraSmall`, `small`, `medium`, `large`, `extraLarge`<br>Or directly specify `12dp`<br>Or percentage `50%`, meaning 50% corner radius | `shape=large`<br>`shape=16dp`<br>`shape=50%`                                       |
 
 ...card-start title="Example Card" shape=large contentPadding=(10)
 Inside the card, you can use **bold**, *italic* and other Markdown syntax.
@@ -160,11 +160,11 @@ Enhanced image component supporting **percentage width** and **fixed DP width**,
 
 ### Supported Attributes
 
-| Attribute | Description                                     | Example                                                                                   |
-|-----------|-------------------------------------------------|-------------------------------------------------------------------------------------------|
-| `url`     | Image link, this attribute is required.         | `url="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg"` |
-| `width`   | Width: a number (in dp) or a percentage string. | `width=150`<br>`width=50%`                                                                |
-| `shape`   | Corner radius, usage same as for cards.         | `shape=medium`<br>`shape=20dp`<br>`shape=50`                                              |
+| Attribute | Description                                     | Example                                                       |
+|-----------|-------------------------------------------------|---------------------------------------------------------------|
+| `url`     | Image link, this attribute is required.         | `url="https://www.baidu.com/img/flexible/logo/pc/result.png"` |
+| `width`   | Width: a number (in dp) or a percentage string. | `width=150`<br>`width=50%`                                    |
+| `shape`   | Corner radius, usage same as for cards.         | `shape=medium`<br>`shape=20dp`<br>`shape=50%`                 |
 
 ### Examples
 
@@ -173,7 +173,7 @@ Shape: medium corner radius
 ...image url="https://picsum.photos/300/200" width=50% shape=medium
 Width: 48 (size 48dp)  
 Shape: 50% radius, circle  
-...image url="https://picsum.photos/300/200" width=48 shape=50
+...image url="https://picsum.photos/300/200" width=48 shape=50%
 
 ---
 

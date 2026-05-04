@@ -370,12 +370,12 @@ private fun parseMarkdownBlocksInternal(
             }
 
             isButton -> {
-                blocks.add(
-                    parseButton(
-                        styleSuffix = match.groupValues[4],
-                        params = match.groupValues[5]
-                    )
-                )
+                parseButton(
+                    styleSuffix = match.groupValues[4],
+                    params = match.groupValues[5]
+                )?.let { button ->
+                    blocks.add(button)
+                }
                 lastIndex = match.range.last + 1
             }
 
@@ -438,14 +438,14 @@ private val buttonEventRegex = Regex("""event\s*=\s*"([^"]*)"""")
 private fun parseButton(
     styleSuffix: String,
     params: String
-): MarkdownBlock.Button {
+): MarkdownBlock.Button? {
     val style = when (styleSuffix) {
         "-outlined" -> HomeButtonType.Outlined
         "-filled-tonal" -> HomeButtonType.FilledTonal
         "-text" -> HomeButtonType.Text
         else -> HomeButtonType.Filled
     }
-    val text = buttonTextRegex.find(params)?.groupValues?.get(1) ?: ""
+    val text = buttonTextRegex.find(params)?.groupValues?.get(1) ?: return null
     val event = buttonEventRegex.find(params)?.groupValues?.get(1)
     return MarkdownBlock.Button(
         text = text,
@@ -515,12 +515,16 @@ private fun parseShape(params: String): Shape? {
         "large" -> MaterialTheme.shapes.large
         "extraLarge" -> MaterialTheme.shapes.extraLarge
         else -> {
-            if (shapeValue.endsWith("dp")) {
-                val size = shapeValue.dropLast(2).toIntOrNull() ?: return null
-                RoundedCornerShape(size.dp)
-            } else {
-                val percent = shapeValue.toIntOrNull() ?: return null
-                RoundedCornerShape(percent)
+            when {
+                shapeValue.endsWith("dp") -> {
+                    val size = shapeValue.dropLast(2).toFloatOrNull() ?: return null
+                    RoundedCornerShape(size.dp)
+                }
+                shapeValue.endsWith("%") -> {
+                    val percent = shapeValue.dropLast(1).toIntOrNull() ?: return null
+                    RoundedCornerShape(percent)
+                }
+                else -> null
             }
         }
     }

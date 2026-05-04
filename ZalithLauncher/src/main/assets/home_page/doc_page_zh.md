@@ -36,11 +36,11 @@
 
 ### 支持的属性
 
-| 属性               | 说明                                                                                                                | 示例                                                                                 |
-|------------------|-------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| `title`          | 卡片标题。留空 `""` 则不显示标题栏                                                                                              | `title="欢迎页"`                                                                      |
-| `contentPadding` | 内边距（单位 dp）<br>支持 1、2 或 4 个值，分别代表：(所有方向的边距)、(水平内边距, 垂直内边距)、(左内边距, 上内边距, 右内边距, 下内边距)                                | `contentPadding=(12)`<br>`contentPadding=(8, 16)`<br>`contentPadding=(4, 8, 4, 8)` |
-| `shape`          | 圆角大小<br>可选：`extraSmall`, `small`, `medium`, `large`, `extraLarge`<br>或直接指定 `12dp`<br>或百分比（如 `50` 表示 50% 圆角，可形成圆形） | `shape=large`<br>`shape=16dp`<br>`shape=50`                                        |
+| 属性               | 说明                                                                                                           | 示例                                                                                 |
+|------------------|--------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| `title`          | 卡片标题。留空 `""` 则不显示标题栏                                                                                         | `title="欢迎页"`                                                                      |
+| `contentPadding` | 内边距（单位 dp）<br>支持 1、2 或 4 个值，分别代表：(所有方向的边距)、(水平内边距, 垂直内边距)、(左内边距, 上内边距, 右内边距, 下内边距)                           | `contentPadding=(12)`<br>`contentPadding=(8, 16)`<br>`contentPadding=(4, 8, 4, 8)` |
+| `shape`          | 圆角大小<br>可选预设值：`extraSmall`, `small`, `medium`, `large`, `extraLarge`<br>或直接指定 `12dp`<br>或百分比 `50%`，表示 50% 圆角 | `shape=large`<br>`shape=16dp`<br>`shape=50%`                                       |
 
 ...card-start title="示例卡片" shape=large contentPadding=(10)
 这里是卡片内部，你可以使用 **加粗**、*斜体* 等 Markdown 语法
@@ -165,7 +165,7 @@ Row 支持两个主要属性，与 Jetpack Compose 原生的 Row 组件对齐：
 |---------|---------------------|---------------------------------------------------------------|
 | `url`   | 图片链接，这个属性是必填项       | `url="https://www.baidu.com/img/flexible/logo/pc/result.png"` |
 | `width` | 宽度：数字（单位 dp）或百分比字符串 | `width=150`<br>`width=50%`                                    |
-| `shape` | 圆角，用法同卡片            | `shape=medium`<br>`shape=20dp`<br>`shape=50`                  |
+| `shape` | 圆角，用法同卡片            | `shape=medium`<br>`shape=20dp`<br>`shape=50%`                 |
 
 ### 示例
 
@@ -174,7 +174,7 @@ Row 支持两个主要属性，与 Jetpack Compose 原生的 Row 组件对齐：
 ...image url="https://picsum.photos/300/200" width=50% shape=medium
 宽度：48 大小为 48dp    
 形状：50 百分比圆角，圆形  
-...image url="https://picsum.photos/300/200" width=48 shape=50
+...image url="https://picsum.photos/300/200" width=48 shape=50%
 
 
 ---
