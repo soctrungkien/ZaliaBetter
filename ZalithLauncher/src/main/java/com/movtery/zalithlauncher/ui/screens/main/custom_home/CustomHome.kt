@@ -254,6 +254,8 @@ fun parseMarkdownBlocks(
         //清洗注释行
         .filterNot { it.trimStart().startsWith("//") }
         .joinToString("\n")
+        .replace(Regex("<br\\s*/?>", RegexOption.IGNORE_CASE), "\u2028")
+
     return parseMarkdownBlocksInternal(cleaned)
 }
 
