@@ -24,7 +24,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -45,11 +45,11 @@ fun LazyListScope.customHomePage(
     richTextStyle: RichTextStyle,
     onEvent: (MarkdownBlock.Button.Event) -> Unit = {}
 ) {
-    items(
+    itemsIndexed(
         items = blocks,
-        key = { it.stableKey },
-        contentType = { it::class }
-    ) { block ->
+        key = { index, it -> "${it.stableKey}_$index" },
+        contentType = { _, it -> it::class }
+    ) { _, block ->
         BlockItem(
             block = block,
             richTextStyle = richTextStyle,
@@ -68,8 +68,8 @@ private fun MarkdownInnerRenderer(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        blocks.forEach { block ->
-            key(block.stableKey) {
+        blocks.forEachIndexed { index, block ->
+            key("${block.stableKey}_$index") {
                 BlockItem(
                     block = block,
                     richTextStyle = richTextStyle,
@@ -84,7 +84,7 @@ private fun MarkdownInnerRenderer(
 private fun BlockItem(
     block: MarkdownBlock,
     modifier: Modifier = Modifier,
-    inRow: Boolean = false,
+    isInsideFlex: Boolean = false,
     richTextStyle: RichTextStyle = defaultRichTextStyle(),
     onEvent: (MarkdownBlock.Button.Event) -> Unit
 ) {
@@ -123,7 +123,8 @@ private fun BlockItem(
             )
         }
         is MarkdownBlock.Image -> {
-            val useWeight = inRow && parseWeight(block.params) != null
+            val hasWeight = parseWeight(block.params) != null
+            val useWeight = isInsideFlex && hasWeight
             CustomHomeImage(
                 modifier = modifier,
                 url = block.url,
@@ -147,7 +148,23 @@ private fun BlockItem(
                     BlockItem(
                         block = child,
                         modifier = childModifier,
-                        inRow = true,
+                        isInsideFlex = true,
+                        richTextStyle = richTextStyle,
+                        onEvent = onEvent
+                    )
+                }
+            }
+        }
+        is MarkdownBlock.ColumnBlock -> {
+            Column(
+                horizontalAlignment = block.horizontal,
+                verticalArrangement = block.vertical,
+                modifier = modifier.fillMaxWidth()
+            ) {
+                block.children.forEach { child ->
+                    BlockItem(
+                        block = child,
+                        isInsideFlex = true,
                         richTextStyle = richTextStyle,
                         onEvent = onEvent
                     )
@@ -181,7 +198,7 @@ sealed interface MarkdownBlock {
         override val params: String,
         val content: List<MarkdownBlock>
     ) : MarkdownBlock {
-        override val stableKey: Any get() = "card_${title}_${params.hashCode()}"
+        override val stableKey: Any get() = "card_${title}_${params.hashCode()}_${content.hashCode()}"
     }
 
     /**
@@ -234,14 +251,26 @@ sealed interface MarkdownBlock {
         val children: List<MarkdownBlock>,
         override val params: String
     ) : MarkdownBlock {
-        override val stableKey: Any get() = "row_${children.hashCode()}"
+        override val stableKey: Any get() = "row_${params.hashCode()}_${children.hashCode()}"
+    }
+
+    /**
+     * Column组件，和Compose原生的Column一致
+     */
+    data class ColumnBlock(
+        val horizontal: Alignment.Horizontal,
+        val vertical: Arrangement.Vertical,
+        val children: List<MarkdownBlock>,
+        override val params: String
+    ) : MarkdownBlock {
+        override val stableKey: Any get() = "col_${params.hashCode()}_${children.hashCode()}"
     }
 }
 
 
 
 private val blockPattern = Regex(
-    """^[ \t]*(?:(\.\.\.card-start([^\n]*))|(\.\.\.button(-outlined|-filled-tonal|-text)?\s+([^\n]*))|(\.\.\.row-start([^\n]*))|(\.\.\.image\s+([^\n]*)))""",
+    """^[ \t]*(?:(\.\.\.card-start([^\n]*))|(\.\.\.button(-outlined|-filled-tonal|-text)?\s+([^\n]*))|(\.\.\.row-start([^\n]*))|(\.\.\.column-start([^\n]*))|(\.\.\.image\s+([^\n]*)))""",
     RegexOption.MULTILINE
 )
 
@@ -276,12 +305,10 @@ fun parseMarkdownBlocks(
 
 
 private val titleRegex = Regex("""title\s*=\s*"([^"]*)"""")
-private val rowEndPattern = Regex("(?m)^[ \t]*\\.\\.\\.row-end")
 private fun parseMarkdownBlocksInternal(
     cleared: String,
     parseMarkdown: (String) -> AstNode,
     allowCard: Boolean = true,
-    allowRow: Boolean = true,
 ): List<MarkdownBlock> {
     val blocks = mutableListOf<MarkdownBlock>()
 
@@ -308,7 +335,8 @@ private fun parseMarkdownBlocksInternal(
         val isCardStart = match.groupValues[1].isNotEmpty()
         val isButton = match.groupValues[3].isNotEmpty()
         val isRowStart = match.groupValues[6].isNotEmpty()
-        val isImage = match.groupValues[8].isNotEmpty()
+        val isColumnStart = match.groupValues[8].isNotEmpty()
+        val isImage = match.groupValues[10].isNotEmpty()
 
         when {
             isCardStart && allowCard -> {
@@ -332,7 +360,6 @@ private fun parseMarkdownBlocksInternal(
                                 cleared = innerContent,
                                 parseMarkdown = parseMarkdown,
                                 allowCard = false, //不允许内部嵌套卡片组件
-                                allowRow = true
                             )
                         )
                     )
@@ -348,21 +375,31 @@ private fun parseMarkdownBlocksInternal(
                 }
             }
 
-            isRowStart && allowRow -> {
+            isRowStart -> {
                 val params = match.groupValues[7]
-                val closingMatch = rowEndPattern.find(cleared, match.range.last + 1)
-                if (closingMatch != null) {
+                // 寻找对应的Row闭合标签，支持嵌套
+                val closingRange = findNestedClosingTag(
+                    content = cleared,
+                    startIndex = match.range.last + 1,
+                    openTagPattern = """\.\.\.row-start""",
+                    closeTag = "...row-end"
+                )
+                if (closingRange != null) {
                     val innerContent = cleared.substring(
                         startIndex = match.range.last + 1,
-                        endIndex = closingMatch.range.first
+                        endIndex = closingRange.first
                     ).trim('\n')
 
                     val children = parseMarkdownBlocksInternal(
                         cleared = innerContent,
                         parseMarkdown = parseMarkdown,
-                        allowCard = false,
-                        allowRow = false
-                    ).filter { it is MarkdownBlock.Button || it is MarkdownBlock.Image }
+                        allowCard = false, //Row内不允许放卡片
+                    ).filter {
+                        it is MarkdownBlock.Button ||
+                                it is MarkdownBlock.Image ||
+                                it is MarkdownBlock.RowBlock ||
+                                it is MarkdownBlock.ColumnBlock
+                    }
 
                     blocks.add(
                         MarkdownBlock.RowBlock(
@@ -372,7 +409,48 @@ private fun parseMarkdownBlocksInternal(
                             params = params
                         )
                     )
-                    lastIndex = closingMatch.range.last + 1
+                    lastIndex = closingRange.last + 1
+                } else {
+                    blocks.add(
+                        MarkdownBlock.Normal(
+                            astNode = parseMarkdown(match.value)
+                        )
+                    )
+                    lastIndex = match.range.last + 1
+                }
+            }
+
+            isColumnStart -> {
+                val params = match.groupValues[9]
+                //寻找对应的Column闭合标签，支持嵌套
+                val closingRange = findNestedClosingTag(
+                    content = cleared,
+                    startIndex = match.range.last + 1,
+                    openTagPattern = """\.\.\.column-start""",
+                    closeTag = "...column-end"
+                )
+                if (closingRange != null) {
+                    val innerContent = cleared.substring(match.range.last + 1, closingRange.first).trim('\n')
+                    val children = parseMarkdownBlocksInternal(
+                        cleared = innerContent,
+                        parseMarkdown = parseMarkdown,
+                        allowCard = false, //Column内不允许放卡片
+                    ).filter {
+                        it is MarkdownBlock.Button ||
+                                it is MarkdownBlock.Image ||
+                                it is MarkdownBlock.RowBlock ||
+                                it is MarkdownBlock.ColumnBlock
+                    }
+
+                    blocks.add(
+                        MarkdownBlock.ColumnBlock(
+                            horizontal = parseHorizontalAlignment(params = params),
+                            vertical = parseVerticalArrangement(params = params),
+                            children = children,
+                            params = params
+                        )
+                    )
+                    lastIndex = closingRange.last + 1
                 } else {
                     blocks.add(
                         MarkdownBlock.Normal(
@@ -394,7 +472,7 @@ private fun parseMarkdownBlocksInternal(
             }
 
             isImage -> {
-                parseImage(match.groupValues[9])?.let { image ->
+                parseImage(match.groupValues[11])?.let { image ->
                     blocks.add(image)
                 }
 
@@ -420,8 +498,8 @@ private fun parseMarkdownBlocksInternal(
  * 寻找嵌套结构的闭合标记
  * @param content 完整内容
  * @param startIndex 开始寻找的位置
- * @param openTagPattern 开始标记的正则模式（如 \.\.\.card-start）
- * @param closeTag 结束标记的字符串（如 ...card-end）
+ * @param openTagPattern 开始标记的正则模式
+ * @param closeTag 结束标记的字符串
  * @return 结束标记的范围，如果未找到则返回 null
  */
 private fun findNestedClosingTag(
@@ -465,7 +543,7 @@ private fun parseButton(
     val event = eventValue?.let { eventValue0 ->
         val value = buttonEventDataRegex.find(eventValue0) ?: return@let null
         val eventKey = value.groupValues.getOrNull(1) ?: return@let null
-        val eventData = value.groupValues.getOrNull(2)
+        val eventData = value.groupValues.getOrNull(2)?.takeIf { it.isNotEmpty() }
         MarkdownBlock.Button.Event(eventKey, eventData)
     }
     return MarkdownBlock.Button(
@@ -479,49 +557,72 @@ private fun parseButton(
 private val horizontalRegex = Regex("""horizontal\s*=\s*(spacedBy\([^)]*\)|[^\s\t\n]+)""")
 private val spacedByRegex = Regex("""spacedBy\(\s*(\d+(?:\.\d+)?)\s*(?:,\s*(\w+))?\s*\)""")
 
-private fun parseHorizontalArrangement(
-    params: String,
-): Arrangement.Horizontal {
-    val horizontalValue = horizontalRegex.find(params)?.groupValues?.get(1)?.trim()
-
-    if (horizontalValue != null) {
-        spacedByRegex.find(horizontalValue)?.let { match ->
-            val space = match.groupValues[1].toFloatOrNull() ?: 0f
-            val alignment = when (match.groupValues[2]) {
-                "Start" -> Alignment.Start
-                "End" -> Alignment.End
-                "Center" -> Alignment.CenterHorizontally
-                else -> null
-            }
-            return if (alignment != null) {
-                Arrangement.spacedBy(space.dp, alignment)
-            } else {
-                Arrangement.spacedBy(space.dp)
-            }
+private fun parseHorizontalArrangement(params: String): Arrangement.Horizontal {
+    val horizontalValue = horizontalRegex.find(params)?.groupValues?.get(1)?.trim() ?: return Arrangement.Start
+    spacedByRegex.find(horizontalValue)?.let { match ->
+        val space = match.groupValues[1].toFloatOrNull() ?: 0f
+        val alignment = when (match.groupValues[2]) {
+            "Start" -> Alignment.Start
+            "End" -> Alignment.End
+            "Center", "CenterHorizontally" -> Alignment.CenterHorizontally
+            else -> null
         }
-        return when (horizontalValue) {
-            "Start" -> Arrangement.Start
-            "End" -> Arrangement.End
-            "Center" -> Arrangement.Center
-            "SpaceEvenly" -> Arrangement.SpaceEvenly
-            "SpaceBetween" -> Arrangement.SpaceBetween
-            "SpaceAround" -> Arrangement.SpaceAround
-            else -> Arrangement.Start
+        return if (alignment != null) {
+            Arrangement.spacedBy(space.dp, alignment)
+        } else {
+            Arrangement.spacedBy(space.dp)
         }
     }
-
-    return Arrangement.Start
+    return when (horizontalValue) {
+        "Center", "CenterHorizontally" -> Arrangement.Center
+        "End" -> Arrangement.End
+        "SpaceEvenly" -> Arrangement.SpaceEvenly
+        "SpaceBetween" -> Arrangement.SpaceBetween
+        "SpaceAround" -> Arrangement.SpaceAround
+        else -> Arrangement.Start
+    }
 }
 
-private val verticalRegex = Regex("""vertical\s*=\s*(\w+)""")
-private fun parseVerticalAlignment(params: String): Alignment.Vertical {
-    val verticalValue = verticalRegex.find(params)?.groupValues?.get(1)
-
+private fun parseVerticalArrangement(params: String): Arrangement.Vertical {
+    val verticalValue = verticalRegex.find(params)?.groupValues?.get(1)?.trim() ?: return Arrangement.Top
+    spacedByRegex.find(verticalValue)?.let { match ->
+        val space = match.groupValues[1].toFloatOrNull() ?: 0f
+        val alignment = when (match.groupValues[2]) {
+            "Top" -> Alignment.Top
+            "Bottom" -> Alignment.Bottom
+            "Center", "CenterVertically" -> Alignment.CenterVertically
+            else -> null
+        }
+        return if (alignment != null) {
+            Arrangement.spacedBy(space.dp, alignment)
+        } else {
+            Arrangement.spacedBy(space.dp)
+        }
+    }
     return when (verticalValue) {
-        "Top" -> Alignment.Top
+        "Center", "CenterVertically" -> Arrangement.Center
+        "Bottom" -> Arrangement.Bottom
+        "SpaceEvenly" -> Arrangement.SpaceEvenly
+        "SpaceBetween" -> Arrangement.SpaceBetween
+        "SpaceAround" -> Arrangement.SpaceAround
+        else -> Arrangement.Top
+    }
+}
+
+private val verticalRegex = Regex("""vertical\s*=\s*(spacedBy\([^)]*\)|[^\s\t\n]+)""")
+private fun parseVerticalAlignment(params: String): Alignment.Vertical {
+    return when (verticalRegex.find(params)?.groupValues?.get(1)) {
         "Center", "CenterVertically" -> Alignment.CenterVertically
         "Bottom" -> Alignment.Bottom
         else -> Alignment.Top
+    }
+}
+
+private fun parseHorizontalAlignment(params: String): Alignment.Horizontal {
+    return when (horizontalRegex.find(params)?.groupValues?.get(1)) {
+        "Center", "CenterHorizontally" -> Alignment.CenterHorizontally
+        "End" -> Alignment.End
+        else -> Alignment.Start
     }
 }
 
