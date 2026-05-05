@@ -257,6 +257,8 @@ dependencies {
     implementation(libs.richtext.commonmark)
     implementation(libs.richtext.ui)
     implementation(libs.richtext.ui.material3)
+    implementation(platform(libs.editor.bom))
+    implementation(libs.editor)
     //Project
     implementation(project(":LayerController"))
     implementation(project(":ColorPicker"))

@@ -95,6 +95,7 @@ import com.movtery.zalithlauncher.viewmodel.BackgroundViewModel
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.LocalBackgroundViewModel
+import com.movtery.zalithlauncher.viewmodel.LocalHomePageViewModel
 import kotlinx.coroutines.Dispatchers
 import java.io.File
 
@@ -111,7 +112,8 @@ fun LauncherSettingsScreen(
     settingsScreenKey: TitledNavKey?,
     mainScreenKey: TitledNavKey?,
     eventViewModel: EventViewModel,
-    submitError: (ErrorViewModel.ThrowableMessage) -> Unit
+    toHomePageEditor: () -> Unit,
+    submitError: (ErrorViewModel.ThrowableMessage) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -352,6 +354,16 @@ fun LauncherSettingsScreen(
                                             }
                                         ) {
                                             Text(text = stringResource(R.string.settings_launcher_home_page_type_local_gen_doc))
+                                        }
+                                        val viewModel = LocalHomePageViewModel.current
+                                        //编辑主页文件
+                                        FilledTonalButton(
+                                            onClick = {
+                                                viewModel.loadLocalEditor()
+                                                toHomePageEditor()
+                                            }
+                                        ) {
+                                            Text(text = stringResource(R.string.generic_edit))
                                         }
                                     }
                                 }

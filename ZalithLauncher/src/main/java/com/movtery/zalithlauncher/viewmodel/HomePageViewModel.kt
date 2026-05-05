@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.viewmodel
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.res.stringResource
@@ -32,6 +33,7 @@ import com.movtery.zalithlauncher.context.copyAssetFile
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.HomePageType
+import com.movtery.zalithlauncher.ui.code_editor.EditorState
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.screens.main.custom_home.MarkdownBlock
 import com.movtery.zalithlauncher.ui.screens.main.custom_home.parseMarkdownBlocks
@@ -40,6 +42,7 @@ import com.movtery.zalithlauncher.utils.logging.Logger.lWarning
 import com.movtery.zalithlauncher.utils.network.fetchStringFromUrl
 import com.movtery.zalithlauncher.utils.string.isEmptyOrBlank
 import com.movtery.zalithlauncher.utils.string.toUuid
+import io.github.rosemoe.sora.text.Content
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -67,6 +70,10 @@ class HomePageViewModel : ViewModel() {
     private val _pageOp = MutableStateFlow<HomePageOperation>(HomePageOperation.None)
     /** 启动器主页操作流 */
     val pageOp = _pageOp.asStateFlow()
+
+    private val _editorState = MutableStateFlow<EditorState>(EditorState.Loading)
+    /** 主页编辑器状态 */
+    val editorState = _editorState.asStateFlow()
 
     fun updateOperation(
         operation: HomePageOperation
@@ -155,6 +162,60 @@ class HomePageViewModel : ViewModel() {
         }
     }
 
+    private var localEditorJob: Job? = null
+    /**
+     * 加载本地主页编辑器
+     */
+    fun loadLocalEditor() {
+        localEditorJob?.cancel()
+        localEditorJob = viewModelScope.launch {
+            _editorState.update { EditorState.Loading }
+            //加载本地主页文件
+            val content = runCatching {
+                if (localPageFile.exists()) {
+                    localPageFile.readText()
+                } else {
+                    ""
+                }
+            }.getOrDefault("")
+            val soraContent = Content(content)
+            _editorState.update {
+                EditorState.Success(soraContent)
+            }
+        }
+    }
+
+    private var saveEditorJob: Job? = null
+    /**
+     * 保存编辑器内主页到本地文件
+     */
+    fun localEditorSave(
+        context: Context
+    ) {
+        val state = _editorState.value
+        if (state !is EditorState.Success) return
+        saveEditorJob?.cancel()
+        saveEditorJob = viewModelScope.launch(Dispatchers.IO) {
+            val content = state.content.toString()
+            runCatching {
+                localPageFile.writeText(content)
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        R.string.generic_saved,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }.onFailure { e ->
+                lWarning("Failed to save the homepage to the local file!", e)
+            }
+
+            reloadPage(true)
+            saveEditorJob = null
+        }
+    }
+
     /**
      * 从网络地址加载启动器主页
      * @param force 是否强制重新缓存远端主页
@@ -223,6 +284,10 @@ class HomePageViewModel : ViewModel() {
         reloadJob = null
         genJob?.cancel()
         genJob = null
+        localEditorJob?.cancel()
+        localEditorJob = null
+        saveEditorJob?.cancel()
+        saveEditorJob = null
     }
 }
 
