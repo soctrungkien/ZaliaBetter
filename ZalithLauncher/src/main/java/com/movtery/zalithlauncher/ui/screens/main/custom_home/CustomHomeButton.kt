@@ -21,12 +21,14 @@ package com.movtery.zalithlauncher.ui.screens.main.custom_home
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
 enum class HomeButtonType {
@@ -42,7 +44,8 @@ fun CustomHomeButton(
     event: MarkdownBlock.Button.Event?,
     type: HomeButtonType,
     onEvent: (MarkdownBlock.Button.Event) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shape: Shape? = null,
 ) {
     val onClick: () -> Unit = {
         event?.let { e ->
@@ -55,12 +58,14 @@ fun CustomHomeButton(
     }
 
     val buttonModifier = modifier.padding(vertical = 4.dp)
+    val buttonShape = shape ?: ButtonDefaults.shape
 
     when (type) {
         HomeButtonType.Filled -> {
             Button(
                 modifier = buttonModifier,
                 onClick = onClick,
+                shape = buttonShape,
                 content = content
             )
         }
@@ -68,6 +73,7 @@ fun CustomHomeButton(
             OutlinedButton(
                 modifier = buttonModifier,
                 onClick = onClick,
+                shape = buttonShape,
                 content = content
             )
         }
@@ -75,6 +81,7 @@ fun CustomHomeButton(
             FilledTonalButton(
                 modifier = buttonModifier,
                 onClick = onClick,
+                shape = buttonShape,
                 content = content
             )
         }
@@ -82,6 +89,7 @@ fun CustomHomeButton(
             TextButton(
                 modifier = buttonModifier,
                 onClick = onClick,
+                shape = buttonShape,
                 content = content
             )
         }

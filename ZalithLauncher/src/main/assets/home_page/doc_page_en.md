@@ -96,6 +96,7 @@ Creates a clickable button.
     - Examples:
       ...button text="Button 1" width=50%
       ...button text="Button 2" width=120dp
+- `shape`: Corner radius of the button, same as the shape parameter for cards.
 - `weight`: Only available inside Row or Column, see the layout component sections below.
 
 > The button is a content component. If `width` or `weight` is not explicitly specified, its width is determined by the text length (limited by the container so it does not exceed the homepage).

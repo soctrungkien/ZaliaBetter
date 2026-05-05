@@ -96,6 +96,7 @@ contentPadding=(4, 4, 12, 12)
     - 示例：
       ...button text="按钮1" width=50%
       ...button text="按钮2" width=120dp
+- `shape`: 按钮的形状，可选，与卡片的形状参数一致
 - `weight`: 仅在 Row 或 Column 内部可用，见下方布局组件的说明
 
 > 按钮属于内容组件，若未显式指定 `width` 或 `weight`，其宽度由文字长度决定（受容器限制不会超出主页）

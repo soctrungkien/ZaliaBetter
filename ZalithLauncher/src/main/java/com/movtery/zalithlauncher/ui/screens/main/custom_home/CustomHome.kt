@@ -139,6 +139,7 @@ private fun BlockItem(
                 text = block.text,
                 event = block.event,
                 type = block.style,
+                shape = block.shape?.toShape(),
                 onEvent = onEvent
             )
         }
@@ -238,11 +239,13 @@ sealed interface MarkdownBlock {
      * @param text 必须携带的文本内容组件，按钮的文本内容
      * @param event 可选的按钮执行事件组件
      * @param style 该按钮的样式
+     * @param shape 预解析的形状规格
      */
     data class Button(
         val text: String,
         val event: Event?,
         val style: HomeButtonType,
+        val shape: ShapeSpec?,
         override val width: Width?,
         override val params: String,
         override val weight: Pair<Float, Boolean>?
@@ -627,6 +630,7 @@ private fun parseButton(
         text = text,
         event = event,
         style = style,
+        shape = parseShape(params),
         width = parseWidth(params),
         params = params,
         weight = parseWeight(params)
