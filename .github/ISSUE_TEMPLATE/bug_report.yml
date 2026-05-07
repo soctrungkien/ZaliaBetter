@@ -35,7 +35,7 @@ body:
         If your issue is related to a "Game Crash":  
         < 2.4.3  
         You can use a file manager to navigate to ZL2's public directory and locate the "latest_game.log" file.  
-        >= 2.4.3  
+        \>= 2.4.3  
         You can find the "Running Log" button in the version overview page, click it to open the log menu, and then share it.  
         **Please do not upload the game's own logs here, as the information they record is not comprehensive!**  
         ---
@@ -44,7 +44,7 @@ body:
         如果您的问题属于“游戏运行崩溃”：  
         < 2.4.3  
         您可以在文件管理器软件内进入 ZL2 的公有目录，找到 “latest_game.log” 文件。  
-        >= 2.4.3  
+        \>= 2.4.3  
         您可以在版本概览中，找到“运行日志”按钮，点击打开日志菜单，即可分享。  
         **请不要在此处上传游戏自己的日志，它记录的信息并不全面！**
     validations:
