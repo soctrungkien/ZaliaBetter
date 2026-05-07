@@ -43,6 +43,10 @@ sealed interface NormalNavKey : TitledNavKey {
     ) : NormalNavKey {
         override val title: Int = R.string.page_title_account_list
     }
+    /** 自定义主页编辑器屏幕 */
+    @Serializable data object HomePageEditor : NormalNavKey {
+        override val title: Int = R.string.page_title_home_page_editor
+    }
     /** Web屏幕 */
     @Serializable data class WebScreen(val url: String) : NormalNavKey
     /** 版本管理屏幕 */
@@ -61,6 +65,13 @@ sealed interface NormalNavKey : TitledNavKey {
     /** 多人联机屏幕 */
     @Serializable data object Multiplayer: NormalNavKey {
         override val title: Int = R.string.terracotta_terracotta
+    }
+
+    /** 查看日志屏幕 */
+    @Serializable data class LogView(
+        val logPath: String
+    ) : NormalNavKey {
+        override val title: Int = R.string.versions_overview_log
     }
 
     /** 设置嵌套子屏幕 */

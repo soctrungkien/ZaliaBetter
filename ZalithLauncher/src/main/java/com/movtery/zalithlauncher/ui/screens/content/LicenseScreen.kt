@@ -18,35 +18,29 @@
 
 package com.movtery.zalithlauncher.ui.screens.content
 
-import android.content.Context
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
+import com.movtery.zalithlauncher.context.readRawContent
+import com.movtery.zalithlauncher.setting.enums.isLauncherInDarkTheme
 import com.movtery.zalithlauncher.ui.base.BaseScreen
+import com.movtery.zalithlauncher.ui.code_editor.EditorState
+import com.movtery.zalithlauncher.ui.code_editor.SoraEditor
+import com.movtery.zalithlauncher.ui.code_editor.scheme.SchemeIDEADark
+import com.movtery.zalithlauncher.ui.code_editor.scheme.SchemeIDEALight
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
-import com.movtery.zalithlauncher.ui.theme.backgroundColor
-import com.movtery.zalithlauncher.ui.theme.onBackgroundColor
-import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
+import com.movtery.zalithlauncher.utils.logging.Logger.lWarning
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
+import io.github.rosemoe.sora.text.Content
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun LicenseScreen(
@@ -54,77 +48,42 @@ fun LicenseScreen(
     backStackViewModel: ScreenBackStackViewModel
 ) {
     val context = LocalContext.current
-    var licenseState by remember { mutableStateOf(LicenseState.LOADING) }
-    val license = remember { mutableStateListOf<String>() }
+    val isDark = isLauncherInDarkTheme()
 
-    LaunchedEffect(key, context) {
-        licenseState = LicenseState.LOADING
-        license.clear()
-        license.addAll(key.raw.readRawLicenseLines(context))
-        licenseState = LicenseState.FINE
+    var editorState by remember { mutableStateOf<EditorState>(EditorState.Loading) }
+
+    LaunchedEffect(key) {
+        editorState = EditorState.Loading
+        val content = withContext(Dispatchers.IO) {
+            runCatching {
+                context.readRawContent(key.raw)
+            }.getOrElse { e ->
+                lWarning("Unable to read R.raw license", e)
+                e.message
+            }
+        }
+        editorState = EditorState.Success(Content(content))
     }
 
     BaseScreen(
         screenKey = key,
         currentKey = backStackViewModel.mainScreen.currentKey
     ) { isVisible ->
-        val yOffset by swapAnimateDpAsState(
-            targetValue = (-40).dp,
-            swapIn = isVisible
-        )
-
-        Surface(
-            modifier = Modifier.fillMaxSize()
-                .offset { IntOffset(x = 0, y = yOffset.roundToPx())
-            },
-            color = backgroundColor(),
-            contentColor = onBackgroundColor()
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            when (licenseState) {
-                LicenseState.LOADING -> {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                }
-                LicenseState.FINE -> {
-                    if (license.isNotEmpty()) {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(12.dp)
-                        ) {
-                            items(license) { line ->
-                                Text(
-                                    text = line,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    }
-                }
+            val scheme = remember(isDark) {
+                if (isDark) SchemeIDEADark() else SchemeIDEALight()
             }
+
+            SoraEditor(
+                state = editorState,
+                scheme = scheme,
+                isReadOnly = true,
+                onSaveClick = {}
+            )
         }
     }
-}
-
-private enum class LicenseState {
-    /**
-     * 加载中
-     */
-    LOADING,
-
-    /**
-     * 加载完成
-     */
-    FINE
-}
-
-/**
- * 读取协议文本内容
- */
-private fun Int.readRawLicenseLines(context: Context): List<String> {
-    return context.resources.openRawResource(this)
-        .bufferedReader()
-        .readLines()
 }
