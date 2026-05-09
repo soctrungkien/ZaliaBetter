@@ -326,7 +326,7 @@ private fun <E: TitledNavKey> TopBar(
                 if (parent == null) {
                     if (festivals.isEmpty()) {
                         Text(
-                            text = InfoDistributor.LAUNCHER_IDENTIFIER,
+                            text = InfoDistributor.LAUNCHER_IDENTIFIER + " (Unofficial)",
                             style = style,
                             softWrap = softWarp,
                             maxLines = maxLines
