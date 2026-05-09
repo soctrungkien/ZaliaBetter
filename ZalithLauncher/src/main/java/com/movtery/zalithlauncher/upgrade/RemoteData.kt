@@ -4,23 +4,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import com.movtery.zalithlauncher.utils.device.Architecture
 
-/**
- * Remote update data (BACKWARD + GITHUB COMPATIBLE)
- */
 @Serializable
 data class RemoteData(
+
     @SerialName("code")
-    val code: Int,
+    val code: Int = 0,
 
     @SerialName("version")
-    val version: String,
+    val version: String = "",
 
     @SerialName("created_at")
-    val createdAt: String,
-
-    // =========================
-    // OLD SYSTEM (KEEP SAFE)
-    // =========================
+    val createdAt: String = "",
 
     @SerialName("default_cloud_drive")
     val defaultCloudDrive: CloudDrive? = null,
@@ -37,63 +31,98 @@ data class RemoteData(
     @SerialName("bodies")
     val bodies: List<RemoteBody> = emptyList(),
 
-    // =========================
-    // NEW OPTIONAL GITHUB FIELD
-    // (NOT BREAK OLD JSON)
-    // =========================
+    // GitHub release fields
 
     @SerialName("tag_name")
     val tagName: String? = null,
+
+    @SerialName("name")
+    val title: String? = null,
+
+    @SerialName("body")
+    val githubBody: String? = null,
+
+    @SerialName("html_url")
+    val htmlUrl: String? = null,
 
     @SerialName("assets")
     val assets: List<GithubAsset>? = null
 ) {
 
-    // =========================================================
-    // 🔥 COMPATIBILITY LAYER (AUTO APK SELECTOR)
-    // =========================================================
+    fun hasGithubRelease(): Boolean {
+        return !tagName.isNullOrBlank()
+    }
 
-    /**
-     * Lấy APK phù hợp (ưu tiên GitHub assets nếu có)
-     */
+    fun getVersionName(): String {
+        return tagName ?: version
+    }
+
+    fun getReleaseTitle(): String {
+        return title ?: getVersionName()
+    }
+
+    fun getReleaseBody(): String {
+        return githubBody
+            ?: defaultBody?.markdown
+            ?: ""
+    }
+
+    fun getReleasePage(): String {
+        return htmlUrl ?: URL_RELEASE_PAGE
+    }
+
     fun getCompatibleApkUrl(): String? {
 
-        // 1. PRIORITY: GitHub Releases format
         assets?.let { list ->
-            val arch = getDeviceArchTag()
+
+            val tags = getCompatibleTags()
+
+            for (tag in tags) {
+
+                val apk = list.firstOrNull {
+                    it.name.endsWith(".apk", true) &&
+                    it.name.contains(tag, true) &&
+                    !it.name.contains("debug", true)
+                }
+
+                if (apk != null) {
+                    return apk.downloadUrl
+                }
+            }
 
             return list.firstOrNull {
-                it.name.contains(arch, ignoreCase = true)
+                it.name.endsWith(".apk", true)
             }?.downloadUrl
-                ?: list.firstOrNull { it.name.contains("universal", true) }
-                ?.downloadUrl
         }
 
-        // 2. FALLBACK: old system (RemoteFile)
-        val file = files.firstOrNull {
+        val arch = getDeviceArchEnum()
+
+        return files.firstOrNull {
             it.arch == RemoteFile.Arch.ALL ||
-                    it.arch.name.equals(getDeviceArchEnum().name, true)
-        }
-
-        return file?.uri
+                    it.arch == arch
+        }?.uri
     }
 
-    /**
-     * Device arch → string (GitHub filename style)
-     */
-    private fun getDeviceArchTag(): String {
+    private fun getCompatibleTags(): List<String> {
         return when (Architecture.getDeviceArchitecture()) {
-            Architecture.ARM64 -> "arm64-v8a"
-            Architecture.ARM -> "armeabi-v7a"
-            Architecture.X86 -> "x86"
-            Architecture.X86_64 -> "x86_64"
-            else -> "universal"
+
+            Architecture.ARM64 ->
+                listOf("arm64-v8a", "armeabi-v7a", "universal", "all")
+
+            Architecture.ARM ->
+                listOf("armeabi-v7a", "universal", "all")
+
+            Architecture.X86_64 ->
+                listOf("x86_64", "x86", "universal", "all")
+
+            Architecture.X86 ->
+                listOf("x86", "universal", "all")
+
+            else ->
+                listOf("universal", "all")
         }
     }
 
-    /**
-     * Device arch → enum (old system)
-     */
     private fun getDeviceArchEnum(): RemoteFile.Arch {
         return when (Architecture.getDeviceArchitecture()) {
             Architecture.ARM64 -> RemoteFile.Arch.ARM64
@@ -104,23 +133,31 @@ data class RemoteData(
         }
     }
 
-    // =========================================================
-    // OLD MODELS (UNCHANGED)
-    // =========================================================
+    @Serializable
+    data class GithubAsset(
+        val name: String,
+
+        @SerialName("browser_download_url")
+        val downloadUrl: String
+    )
 
     @Serializable
     data class CloudDrive(
         @SerialName("language")
         val language: String,
+
         @SerialName("link")
         val link: String,
+
         @SerialName("links")
         val links: List<Link> = emptyList()
     ) {
+
         @Serializable
         data class Link(
             @SerialName("name")
             val name: String,
+
             @SerialName("link")
             val link: String
         )
@@ -130,20 +167,33 @@ data class RemoteData(
     data class RemoteFile(
         @SerialName("file_name")
         val fileName: String,
+
         @SerialName("uri")
         val uri: String,
+
         @SerialName("arch")
         val arch: Arch,
+
         @SerialName("size")
         val size: Long = 0L
     ) {
+
         @Serializable
         enum class Arch {
-            @SerialName("all") ALL,
-            @SerialName("arm") ARM,
-            @SerialName("arm64") ARM64,
-            @SerialName("x86") X86,
-            @SerialName("x86_64") X86_64
+            @SerialName("all")
+            ALL,
+
+            @SerialName("arm")
+            ARM,
+
+            @SerialName("arm64")
+            ARM64,
+
+            @SerialName("x86")
+            X86,
+
+            @SerialName("x86_64")
+            X86_64
         }
     }
 
@@ -151,18 +201,8 @@ data class RemoteData(
     data class RemoteBody(
         @SerialName("language")
         val language: String,
+
         @SerialName("markdown")
         val markdown: String
-    )
-
-    // =========================================================
-    // GITHUB MODEL (OPTIONAL)
-    // =========================================================
-
-    @Serializable
-    data class GithubAsset(
-        val name: String,
-        @SerialName("browser_download_url")
-        val downloadUrl: String
     )
 }
