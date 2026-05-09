@@ -123,7 +123,7 @@ fun AboutInfoScreen(
                         ButtonIconItem(
                             icon = painterResource(R.drawable.img_movtery),
                             title = stringResource(R.string.about_launcher_author_movtery_title),
-                            text = stringResource(R.string.about_launcher_author_movtery_text, InfoDistributor.LAUNCHER_NAME),
+                            text = stringResource(R.string.about_launcher_author_movtery_text, "Zalith Launcher 2"),
                             button = {
                                 Button(
                                     onClick = { openLink(URL_SUPPORT) }
@@ -131,6 +131,12 @@ fun AboutInfoScreen(
                                     Text(text = stringResource(R.string.about_sponsor))
                                 }
                             }
+                        )
+
+                        ButtonIconItem(
+                            icon = painterResource(R.drawable.img_soctrungkien),
+                            title = "soctrungkien",
+                            text = stringResource(R.string.about_launcher_author_movtery_text, InfoDistributor.LAUNCHER_NAME)
                         )
                     }
                 }
