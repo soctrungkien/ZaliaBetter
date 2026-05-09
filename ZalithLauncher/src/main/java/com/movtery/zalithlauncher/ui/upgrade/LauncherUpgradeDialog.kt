@@ -100,7 +100,7 @@ fun UpgradeDialog(
                         pattern = stringResource(R.string.date_format)
                     )
                 )
-                val markdownBody = "$versionStr  \n$dateStr  \n\n${body.markdown}"
+                val markdownBody = "$versionStr  \n$dateStr  \n\n${body?.markdown ?: ""}"
 
                 CompositionLocalProvider(
                     LocalUriHandler provides object : UriHandler {
