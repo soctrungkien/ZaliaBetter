@@ -57,6 +57,9 @@ const val URL_CLOUD_NATIVE_LIB_PLUGINS = "https://www.123865.com/s/YLIUVv-Hae0v"
 const val URL_RELEASE =
     "https://api.github.com/repos/soctrungkien/ZaliaBetter/releases/latest"
 
+const val URL_RELEASE_PAGE =
+    "https://github.com/soctrungkien/ZaliaBetter/releases/"
+
 val GLOBAL_JSON = Json {
     ignoreUnknownKeys = true
     explicitNulls = true
