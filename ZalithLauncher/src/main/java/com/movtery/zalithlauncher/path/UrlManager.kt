@@ -54,6 +54,9 @@ const val URL_CLOUD_RENDERER_PLUGINS = "https://www.123865.com/s/YLIUVv-hae0v"
 const val URL_CLOUD_DRIVE_DRIVER_PLUGINS = "https://www.123865.com/s/YLIUVv-3ae0v"
 const val URL_CLOUD_NATIVE_LIB_PLUGINS = "https://www.123865.com/s/YLIUVv-Hae0v"
 
+const val URL_RELEASE =
+    "https://api.github.com/repos/soctrungkien/ZaliaBetter/releases/latest"
+
 val GLOBAL_JSON = Json {
     ignoreUnknownKeys = true
     explicitNulls = true
