@@ -2,11 +2,14 @@ package com.movtery.zalithlauncher.upgrade
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import com.movtery.zalithlauncher.path.URL_RELEASE_PAGE
 import com.movtery.zalithlauncher.utils.device.Architecture
 
+/**
+ * Remote update data
+ */
 @Serializable
 data class RemoteData(
-
     @SerialName("code")
     val code: Int = 0,
 
@@ -15,6 +18,10 @@ data class RemoteData(
 
     @SerialName("created_at")
     val createdAt: String = "",
+
+    // =========================
+    // OLD SYSTEM
+    // =========================
 
     @SerialName("default_cloud_drive")
     val defaultCloudDrive: CloudDrive? = null,
@@ -31,13 +38,12 @@ data class RemoteData(
     @SerialName("bodies")
     val bodies: List<RemoteBody> = emptyList(),
 
-    // GitHub release fields
+    // =========================
+    // GITHUB RELEASE
+    // =========================
 
     @SerialName("tag_name")
     val tagName: String? = null,
-
-    @SerialName("name")
-    val title: String? = null,
 
     @SerialName("body")
     val githubBody: String? = null,
@@ -49,97 +55,87 @@ data class RemoteData(
     val assets: List<GithubAsset>? = null
 ) {
 
-    fun hasGithubRelease(): Boolean {
-        return !tagName.isNullOrBlank()
-    }
-
-    fun getVersionName(): String {
+    /**
+     * Latest version string
+     */
+    fun getLatestVersion(): String {
         return tagName ?: version
     }
 
-    fun getReleaseTitle(): String {
-        return title ?: getVersionName()
+    /**
+     * Release page url
+     */
+    fun getReleasePage(): String {
+        return htmlUrl ?: URL_RELEASE_PAGE
     }
 
+    /**
+     * Release body
+     */
     fun getReleaseBody(): String {
         return githubBody
             ?: defaultBody?.markdown
             ?: ""
     }
 
-    fun getReleasePage(): String {
-        return htmlUrl ?: URL_RELEASE_PAGE
-    }
-
+    /**
+     * Compatible apk url
+     */
     fun getCompatibleApkUrl(): String? {
 
+        // GitHub assets priority
         assets?.let { list ->
-
-            val tags = getCompatibleTags()
-
-            for (tag in tags) {
-
-                val apk = list.firstOrNull {
-                    it.name.endsWith(".apk", true) &&
-                    it.name.contains(tag, true) &&
-                    !it.name.contains("debug", true)
-                }
-
-                if (apk != null) {
-                    return apk.downloadUrl
-                }
-            }
+            val arch = getDeviceArchTag()
 
             return list.firstOrNull {
-                it.name.endsWith(".apk", true)
+                it.name.contains(arch, ignoreCase = true)
             }?.downloadUrl
+                ?: list.firstOrNull {
+                    it.name.contains("universal", ignoreCase = true)
+                }?.downloadUrl
+                ?: list.firstOrNull {
+                    it.name.endsWith(".apk", ignoreCase = true)
+                }?.downloadUrl
         }
 
-        val arch = getDeviceArchEnum()
-
-        return files.firstOrNull {
+        // Old update system fallback
+        val file = files.firstOrNull {
             it.arch == RemoteFile.Arch.ALL ||
-                    it.arch == arch
-        }?.uri
+                    it.arch == getDeviceArchEnum()
+        }
+
+        return file?.uri
     }
 
-    private fun getCompatibleTags(): List<String> {
+    /**
+     * Device architecture string
+     */
+    private fun getDeviceArchTag(): String {
         return when (Architecture.getDeviceArchitecture()) {
-
-            Architecture.ARM64 ->
-                listOf("arm64-v8a", "armeabi-v7a", "universal", "all")
-
-            Architecture.ARM ->
-                listOf("armeabi-v7a", "universal", "all")
-
-            Architecture.X86_64 ->
-                listOf("x86_64", "x86", "universal", "all")
-
-            Architecture.X86 ->
-                listOf("x86", "universal", "all")
-
-            else ->
-                listOf("universal", "all")
+            Architecture.ARCH_ARM64 -> "arm64-v8a"
+            Architecture.ARCH_ARM -> "armeabi-v7a"
+            Architecture.ARCH_X86 -> "x86"
+            Architecture.ARCH_X86_64 -> "x86_64"
+            else -> "universal"
         }
     }
 
+    /**
+     * Device architecture enum
+     */
     private fun getDeviceArchEnum(): RemoteFile.Arch {
         return when (Architecture.getDeviceArchitecture()) {
-            Architecture.ARM64 -> RemoteFile.Arch.ARM64
-            Architecture.ARM -> RemoteFile.Arch.ARM
-            Architecture.X86 -> RemoteFile.Arch.X86
-            Architecture.X86_64 -> RemoteFile.Arch.X86_64
+            Architecture.ARCH_ARM64 -> RemoteFile.Arch.ARM64
+            Architecture.ARCH_ARM -> RemoteFile.Arch.ARM
+            Architecture.ARCH_X86 -> RemoteFile.Arch.X86
+            Architecture.ARCH_X86_64 -> RemoteFile.Arch.X86_64
             else -> RemoteFile.Arch.ALL
         }
     }
 
-    @Serializable
-    data class GithubAsset(
-        val name: String,
-
-        @SerialName("browser_download_url")
-        val downloadUrl: String
-    )
+    // =========================================================
+    // OLD MODELS
+    // =========================================================
 
     @Serializable
     data class CloudDrive(
@@ -204,5 +200,18 @@ data class RemoteData(
 
         @SerialName("markdown")
         val markdown: String
+    )
+
+    // =========================================================
+    // GITHUB ASSET
+    // =========================================================
+
+    @Serializable
+    data class GithubAsset(
+        @SerialName("name")
+        val name: String,
+
+        @SerialName("browser_download_url")
+        val downloadUrl: String
     )
 }
