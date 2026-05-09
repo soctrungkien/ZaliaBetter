@@ -1,62 +1,113 @@
-/*
- * Zalith Launcher 2
- * Copyright (C) 2025 MovTery <movtery228@qq.com> and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/gpl-3.0.txt>.
- */
-
 package com.movtery.zalithlauncher.upgrade
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import com.movtery.zalithlauncher.utils.device.Architecture
 
 /**
- * 远端返回的最新版本的启动器的信息，用于与本地启动器版本进行检查并更新
- * @param code 最新启动器的版本号
- * @param version 最新启动器的版本名称
- * @param createdAt 发布时间
- * @param defaultCloudDrive 默认的网盘链接
- * @param cloudDrives 可用的网盘链接
- * @param files 可下载安装包文件
- * @param defaultBody 默认更新日志，当 [bodies] 中没有匹配的语言日志时使用
- * @param bodies 针对不同语言的更新日志列表
+ * Remote update data (BACKWARD + GITHUB COMPATIBLE)
  */
 @Serializable
 data class RemoteData(
     @SerialName("code")
     val code: Int,
+
     @SerialName("version")
     val version: String,
+
     @SerialName("created_at")
     val createdAt: String,
+
+    // =========================
+    // OLD SYSTEM (KEEP SAFE)
+    // =========================
+
     @SerialName("default_cloud_drive")
     val defaultCloudDrive: CloudDrive? = null,
+
     @SerialName("cloud_drives")
     val cloudDrives: List<CloudDrive> = emptyList(),
+
     @SerialName("files")
-    val files: List<RemoteFile>,
+    val files: List<RemoteFile> = emptyList(),
+
     @SerialName("default_body")
-    val defaultBody: RemoteBody,
+    val defaultBody: RemoteBody? = null,
+
     @SerialName("bodies")
-    val bodies: List<RemoteBody>
+    val bodies: List<RemoteBody> = emptyList(),
+
+    // =========================
+    // NEW OPTIONAL GITHUB FIELD
+    // (NOT BREAK OLD JSON)
+    // =========================
+
+    @SerialName("tag_name")
+    val tagName: String? = null,
+
+    @SerialName("assets")
+    val assets: List<GithubAsset>? = null
 ) {
+
+    // =========================================================
+    // 🔥 COMPATIBILITY LAYER (AUTO APK SELECTOR)
+    // =========================================================
+
     /**
-     * 网盘链接，按语言区分
-     * @param language 语言标识
-     * @param link 网盘链接
-     * @param links 同时支持的所有网盘列检
+     * Lấy APK phù hợp (ưu tiên GitHub assets nếu có)
      */
+    fun getCompatibleApkUrl(): String? {
+
+        // 1. PRIORITY: GitHub Releases format
+        assets?.let { list ->
+            val arch = getDeviceArchTag()
+
+            return list.firstOrNull {
+                it.name.contains(arch, ignoreCase = true)
+            }?.downloadUrl
+                ?: list.firstOrNull { it.name.contains("universal", true) }
+                ?.downloadUrl
+        }
+
+        // 2. FALLBACK: old system (RemoteFile)
+        val file = files.firstOrNull {
+            it.arch == RemoteFile.Arch.ALL ||
+                    it.arch.name.equals(getDeviceArchEnum().name, true)
+        }
+
+        return file?.uri
+    }
+
+    /**
+     * Device arch → string (GitHub filename style)
+     */
+    private fun getDeviceArchTag(): String {
+        return when (Architecture.getDeviceArchitecture()) {
+            Architecture.ARM64 -> "arm64-v8a"
+            Architecture.ARM -> "armeabi-v7a"
+            Architecture.X86 -> "x86"
+            Architecture.X86_64 -> "x86_64"
+            else -> "universal"
+        }
+    }
+
+    /**
+     * Device arch → enum (old system)
+     */
+    private fun getDeviceArchEnum(): RemoteFile.Arch {
+        return when (Architecture.getDeviceArchitecture()) {
+            Architecture.ARM64 -> RemoteFile.Arch.ARM64
+            Architecture.ARM -> RemoteFile.Arch.ARM
+            Architecture.X86 -> RemoteFile.Arch.X86
+            Architecture.X86_64 -> RemoteFile.Arch.X86_64
+            else -> RemoteFile.Arch.ALL
+        }
+    }
+
+    // =========================================================
+    // OLD MODELS (UNCHANGED)
+    // =========================================================
+
     @Serializable
     data class CloudDrive(
         @SerialName("language")
@@ -66,11 +117,6 @@ data class RemoteData(
         @SerialName("links")
         val links: List<Link> = emptyList()
     ) {
-        /**
-         * 单个支持的网盘链接
-         * @param name 网盘名称
-         * @param link 网盘分享链接
-         */
         @Serializable
         data class Link(
             @SerialName("name")
@@ -80,13 +126,6 @@ data class RemoteData(
         )
     }
 
-    /**
-     * 最新版本的启动器的安装包文件
-     * @param fileName 可直接展示的文件名称
-     * @param uri 可直接在浏览器下载的链接
-     * @param arch 该安装包的架构
-     * @param size 该安装包文件的大小 (bytes)
-     */
     @Serializable
     data class RemoteFile(
         @SerialName("file_name")
@@ -100,29 +139,30 @@ data class RemoteData(
     ) {
         @Serializable
         enum class Arch {
-            @SerialName("all")
-            ALL,
-            @SerialName("arm")
-            ARM,
-            @SerialName("arm64")
-            ARM64,
-            @SerialName("x86")
-            X86,
-            @SerialName("x86_64")
-            X86_64
+            @SerialName("all") ALL,
+            @SerialName("arm") ARM,
+            @SerialName("arm64") ARM64,
+            @SerialName("x86") X86,
+            @SerialName("x86_64") X86_64
         }
     }
 
-    /**
-     * 最新版本的启动器的更新日志，按语言区分
-     * @param language 语言标识
-     * @param markdown Markdown 内容
-     */
     @Serializable
     data class RemoteBody(
         @SerialName("language")
         val language: String,
         @SerialName("markdown")
         val markdown: String
+    )
+
+    // =========================================================
+    // GITHUB MODEL (OPTIONAL)
+    // =========================================================
+
+    @Serializable
+    data class GithubAsset(
+        val name: String,
+        @SerialName("browser_download_url")
+        val downloadUrl: String
     )
 }
