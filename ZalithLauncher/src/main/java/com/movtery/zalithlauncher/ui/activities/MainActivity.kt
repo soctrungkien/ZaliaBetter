@@ -68,6 +68,7 @@ import com.movtery.zalithlauncher.utils.festival.getTodayFestivals
 import com.movtery.zalithlauncher.utils.file.shareFile
 import com.movtery.zalithlauncher.utils.isChinese
 import com.movtery.zalithlauncher.utils.logging.Logger.lInfo
+import com.movtery.zalithlauncher.utils.logging.Logger.lWarning
 import com.movtery.zalithlauncher.utils.network.openLink
 import com.movtery.zalithlauncher.utils.network.openLinkInternal
 import com.movtery.zalithlauncher.utils.string.getMessageOrToString
@@ -481,7 +482,22 @@ class MainActivity : BaseAppCompatActivity() {
             //检查启动器更新
             "check_update" -> checkUpdate()
             //启动当前选中的游戏版本
-            "launch_game" -> launchGameViewModel.tryLaunch()
+            "launch_game" -> {
+                if (data != null) {
+                    runCatching {
+                        val parms = data.split("=")
+                        if (parms.size == 2 && parms[0] == "server") {
+                            //指定快速启动的服务器ip
+                            val serverIp = parms[1].trim()
+                            launchGameViewModel.tryLaunchServer(serverIp)
+                            return
+                        }
+                    }.onFailure { e ->
+                        lWarning("Failed to parse quick join server parameters: $data", e)
+                    }
+                }
+                launchGameViewModel.tryLaunch()
+            }
             //复制指定文本
             "copy" -> {
                 if (data != null) {
