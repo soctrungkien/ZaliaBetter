@@ -164,7 +164,7 @@ fun TouchpadLayout(
                                     val isMoveOnly = isMoveOnlyPointer(pointerId)
 
                                     //仅在未被父级消费且未被占用的情况下，尝试占用指针
-                                    if (!change.isConsumed && pointerId !in occupiedPointers) {
+                                    if (!isMoveOnly && !change.isConsumed && pointerId !in occupiedPointers) {
                                         onOccupiedPointer(pointerId)
                                         occupiedPointers.add(pointerId)
                                     }
@@ -290,7 +290,7 @@ fun TouchpadLayout(
                                         activePointer = null
                                     }
 
-                                    if (pointerId in occupiedPointers) {
+                                    if (!isMoveOnly && pointerId in occupiedPointers) {
                                         occupiedPointers.remove(pointerId)
                                         onReleasePointer(pointerId)
                                     }
