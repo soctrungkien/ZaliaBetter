@@ -86,9 +86,11 @@ Creates a clickable button.
 - `event`: The event to trigger, optional. The value must be wrapped in double quotes, and event data is wrapped in curly braces.
     - `url{...}`: Opens a link in the browser.
     - `check_update`: Triggers the launcher to check for updates.
-    - `launch_game`: Launches the currently selected version.
+    - `launch_game{server=...}`: Launches the currently selected version.
+      - Parameter `server`: Specifies the server to quick-join after launch, optional.
     - `copy{...}`: Copies the specified content.
-    - For more events, please refer to the launcher's actual supported list.
+    - `refresh_page`: Refreshes the current homepage.
+    - `share_game_log`: Shares the log of the current game version.
 - `width`: The width of the button, optional.
     - You can use a percentage width, calculated based on the actual width of the homepage and the containing layout component: `50%` (only integer percentages supported).
     - You can use DP units to set a more specific width: `200dp` (supports integers and decimals).
