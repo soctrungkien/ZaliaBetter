@@ -470,58 +470,82 @@ class MainActivity : BaseAppCompatActivity() {
         key: String,
         data: String?
     ) {
-        when (key) {
-            //浏览器内打开指定链接
-            "url" -> {
-                if (data != null) {
-                    withContext(Dispatchers.Main) {
-                        this@MainActivity.openLink(data)
-                    }
-                }
-            }
-            //检查启动器更新
-            "check_update" -> checkUpdate()
-            //启动当前选中的游戏版本
-            "launch_game" -> {
-                if (data != null) {
-                    runCatching {
-                        val parms = data.split("=")
-                        if (parms.size == 2 && parms[0] == "server") {
-                            //指定快速启动的服务器ip
-                            val serverIp = parms[1].trim()
-                            launchGameViewModel.tryPlayServer(serverIp)
-                            return
+        runCatching {
+            when (key) {
+                //浏览器内打开指定链接
+                "url" -> {
+                    data?.let { url ->
+                        val trimmed = url.trim()
+                        //防止 file://、intent:// 等危险 scheme
+                        if (trimmed.startsWith("http://", ignoreCase = true) ||
+                            trimmed.startsWith("https://", ignoreCase = true)
+                        ) {
+                            withContext(Dispatchers.Main) {
+                                this@MainActivity.openLink(trimmed)
+                            }
+                        } else {
+                            lWarning("Blocked unsafe URL from homepage event: $trimmed")
                         }
-                    }.onFailure { e ->
-                        lWarning("Failed to parse quick join server parameters: $data", e)
                     }
                 }
-                launchGameViewModel.tryLaunch()
-            }
-            //复制指定文本
-            "copy" -> {
-                if (data != null) {
-                    withContext(Dispatchers.Main) {
-                        copyText(
-                            null,
-                            data,
-                            this@MainActivity,
-                            showToast = true
-                        )
+                //检查启动器更新
+                "check_update" -> checkUpdate()
+                //启动当前选中的游戏版本
+                "launch_game" -> {
+                    val serverIp = data?.let { raw ->
+                        runCatching {
+                            val parms = raw.split("=", limit = 2)
+                            if (parms.size == 2 && parms[0] == "server") {
+                                parms[1].trim()
+                            } else null
+                        }.onFailure { e ->
+                            lWarning("Failed to parse quick join server parameters: $raw", e)
+                        }.getOrNull()
+                    }
+                    if (!serverIp.isNullOrEmpty()) {
+                        //禁止控制字符与换行，防止注入命令行参数或配置文件
+                        if (serverIp.none { it.code < 32 }) {
+                            launchGameViewModel.tryPlayServer(serverIp)
+                        } else {
+                            lWarning("Invalid server address from homepage event: $serverIp")
+                        }
+                    } else {
+                        launchGameViewModel.tryLaunch()
                     }
                 }
-            }
-            //刷新主页
-            "refresh_page" -> homePageViewModel.reloadPage(true)
-            //分享游戏日志
-            "share_game_log" -> {
-                VersionsManager.currentVersion.value?.let { version ->
-                    VersionsManager.getLatestLog(version).takeIf { it.exists() }
-                }?.let { logFile ->
-                    logsUploadViewModel.check(logFile)
-                    logShareViewModel.openMenu(logFile)
+                //复制指定文本
+                "copy" -> {
+                    data?.let { text ->
+                        val trimmed = text.trim()
+                        withContext(Dispatchers.Main) {
+                            copyText(
+                                null,
+                                trimmed.take(10_000), //限制复制内容长度
+                                this@MainActivity,
+                                showToast = true
+                            )
+                        }
+                    }
+                }
+                //刷新主页
+                "refresh_page" -> homePageViewModel.reloadPage(true)
+                //分享游戏日志
+                "share_game_log" -> {
+                    VersionsManager.currentVersion.value?.let { version ->
+                        VersionsManager.getLatestLog(version).takeIf { it.exists() }
+                    }?.let { logFile ->
+                        withContext(Dispatchers.Main) {
+                            logsUploadViewModel.check(logFile)
+                            logShareViewModel.openMenu(logFile)
+                        }
+                    }
+                }
+                else -> {
+                    lWarning("Unknown homepage event: key=$key, data=$data")
                 }
             }
+        }.onFailure { e ->
+            lWarning("Failed to handle homepage event: key=$key, data=$data", e)
         }
     }
 
