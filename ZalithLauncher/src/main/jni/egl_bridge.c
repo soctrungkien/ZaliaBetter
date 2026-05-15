@@ -192,7 +192,7 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
             /* Nothing to do: initialization is handled in Java-side */
             // pojavInitVulkan();
             break;
-        case GLFW_OPENGL_API:
+        case GLFW_OPENGL_API: {
             const char *renderer = getenv("POJAV_RENDERER");
             if (!strncmp("opengles", renderer, 8)) {
                 pojav_environ->config_renderer = RENDERER_GL4ES;
@@ -202,6 +202,7 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
             /* Nothing to do: initialization is called in pojavCreateContext */
             // pojavInitOpenGL();
             break;
+        }
         default:
             printf("GLFW: Unimplemented API 0x%x\n", value);
             abort();
