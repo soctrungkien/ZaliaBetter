@@ -40,9 +40,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.context.COPY_LABEL_LINK
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.control.ControlManager
+import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.notification.NotificationManager
 import com.movtery.zalithlauncher.path.URL_SUPPORT
 import com.movtery.zalithlauncher.setting.AllSettings
@@ -52,15 +54,21 @@ import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.Background
 import com.movtery.zalithlauncher.ui.screens.content.elements.LaunchGameOperation
+import com.movtery.zalithlauncher.ui.screens.content.navigateToLogView
 import com.movtery.zalithlauncher.ui.screens.main.MainScreen
+import com.movtery.zalithlauncher.ui.screens.main.crashlogs.LogShareMenu
+import com.movtery.zalithlauncher.ui.screens.main.crashlogs.LogShareMenuOperation
+import com.movtery.zalithlauncher.ui.screens.main.crashlogs.ShareLinkOperation
 import com.movtery.zalithlauncher.ui.theme.ZalithLauncherTheme
 import com.movtery.zalithlauncher.ui.theme.feativals.FestivalEffects
 import com.movtery.zalithlauncher.upgrade.TooFrequentOperationException
 import com.movtery.zalithlauncher.utils.compareLangTag
 import com.movtery.zalithlauncher.utils.copyText
 import com.movtery.zalithlauncher.utils.festival.getTodayFestivals
+import com.movtery.zalithlauncher.utils.file.shareFile
 import com.movtery.zalithlauncher.utils.isChinese
 import com.movtery.zalithlauncher.utils.logging.Logger.lInfo
+import com.movtery.zalithlauncher.utils.logging.Logger.lWarning
 import com.movtery.zalithlauncher.utils.network.openLink
 import com.movtery.zalithlauncher.utils.network.openLinkInternal
 import com.movtery.zalithlauncher.utils.string.getMessageOrToString
@@ -73,6 +81,8 @@ import com.movtery.zalithlauncher.viewmodel.LaunchGameViewModel
 import com.movtery.zalithlauncher.viewmodel.LauncherUpgradeOperation
 import com.movtery.zalithlauncher.viewmodel.LauncherUpgradeViewModel
 import com.movtery.zalithlauncher.viewmodel.LocalHomePageViewModel
+import com.movtery.zalithlauncher.viewmodel.LogShareViewModel
+import com.movtery.zalithlauncher.viewmodel.LogsUploadViewModel
 import com.movtery.zalithlauncher.viewmodel.ModpackConfirmUseMobileDataOperation
 import com.movtery.zalithlauncher.viewmodel.ModpackImportOperation
 import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
@@ -125,6 +135,16 @@ class MainActivity : BaseAppCompatActivity() {
      * 启动器自定义主页 ViewModel
      */
     val homePageViewModel: HomePageViewModel by viewModels()
+
+    /**
+     * 游戏日志分享菜单 ViewModel
+     */
+    private val logShareViewModel: LogShareViewModel by viewModels()
+
+    /**
+     * 游戏日志上传 ViewModel
+     */
+    private val logsUploadViewModel: LogsUploadViewModel by viewModels()
 
     /**
      * 是否开启捕获按键模式
@@ -197,6 +217,13 @@ class MainActivity : BaseAppCompatActivity() {
                     }
                     is EventViewModel.Event.Launch.PlaySave -> {
                         launchGameViewModel.quickPlaySave(event.version, event.saveName)
+                    }
+                    is EventViewModel.Event.LogShare.ShareGameLog -> {
+                        val file = event.logFile
+                        if (file.exists()) {
+                            logsUploadViewModel.check(file)
+                            logShareViewModel.openMenu(file)
+                        }
                     }
                     is EventViewModel.Event.HomePage.Reload -> {
                         homePageViewModel.reloadPage(true)
@@ -345,6 +372,48 @@ class MainActivity : BaseAppCompatActivity() {
                     }
                 )
 
+                //游戏日志分享菜单
+                val logFile = logShareViewModel.currentLogFile
+                if (logShareViewModel.showMenu && logFile != null) {
+                    LogShareMenu(
+                        operation = LogShareMenuOperation.ShowMenu,
+                        onChange = { operation ->
+                            if (operation == LogShareMenuOperation.None) {
+                                logShareViewModel.closeMenu()
+                            }
+                        },
+                        onView = {
+                            screenBackStackModel.mainScreen.backStack.navigateToLogView(
+                                logPath = logFile.absolutePath
+                            )
+                            logShareViewModel.closeMenu()
+                        },
+                        onShare = {
+                            shareFile(this@MainActivity, logFile)
+                            logShareViewModel.closeMenu()
+                        },
+                        canUpload = logsUploadViewModel.canUpload,
+                        onUpload = {
+                            logsUploadViewModel.operation = ShareLinkOperation.Tip
+                            logShareViewModel.closeMenu()
+                        }
+                    )
+                }
+
+                ShareLinkOperation(
+                    operation = logsUploadViewModel.operation,
+                    onChange = { logsUploadViewModel.operation = it },
+                    onUploadChancel = { logsUploadViewModel.cancel() },
+                    onUpload = {
+                        logFile?.let { file ->
+                            logsUploadViewModel.upload(file) { link ->
+                                openLink(link)
+                                copyText(COPY_LABEL_LINK, link, this@MainActivity)
+                            }
+                        }
+                    }
+                )
+
                 //检查更新操作流程
                 LauncherUpgradeOperation(
                     operation = launcherUpgradeViewModel.operation,
@@ -401,29 +470,82 @@ class MainActivity : BaseAppCompatActivity() {
         key: String,
         data: String?
     ) {
-        when (key) {
-            "url" -> {
-                if (data != null) {
-                    withContext(Dispatchers.Main) {
-                        this@MainActivity.openLink(data)
+        runCatching {
+            when (key) {
+                //浏览器内打开指定链接
+                "url" -> {
+                    data?.let { url ->
+                        val trimmed = url.trim()
+                        //防止 file://、intent:// 等危险 scheme
+                        if (trimmed.startsWith("http://", ignoreCase = true) ||
+                            trimmed.startsWith("https://", ignoreCase = true)
+                        ) {
+                            withContext(Dispatchers.Main) {
+                                this@MainActivity.openLink(trimmed)
+                            }
+                        } else {
+                            lWarning("Blocked unsafe URL from homepage event: $trimmed")
+                        }
                     }
                 }
-            }
-            "check_update" -> checkUpdate()
-            "launch_game" -> launchGameViewModel.tryLaunch()
-            "copy" -> {
-                if (data != null) {
-                    withContext(Dispatchers.Main) {
-                        copyText(
-                            null,
-                            data,
-                            this@MainActivity,
-                            showToast = true
-                        )
+                //检查启动器更新
+                "check_update" -> checkUpdate()
+                //启动当前选中的游戏版本
+                "launch_game" -> {
+                    val serverIp = data?.let { raw ->
+                        runCatching {
+                            val parms = raw.split("=", limit = 2)
+                            if (parms.size == 2 && parms[0] == "server") {
+                                parms[1].trim()
+                            } else null
+                        }.onFailure { e ->
+                            lWarning("Failed to parse quick join server parameters: $raw", e)
+                        }.getOrNull()
+                    }
+                    if (!serverIp.isNullOrEmpty()) {
+                        //禁止控制字符与换行，防止注入命令行参数或配置文件
+                        if (serverIp.none { it.code < 32 }) {
+                            launchGameViewModel.tryPlayServer(serverIp)
+                        } else {
+                            lWarning("Invalid server address from homepage event: $serverIp")
+                        }
+                    } else {
+                        launchGameViewModel.tryLaunch()
                     }
                 }
+                //复制指定文本
+                "copy" -> {
+                    data?.let { text ->
+                        val trimmed = text.trim()
+                        withContext(Dispatchers.Main) {
+                            copyText(
+                                null,
+                                trimmed.take(10_000), //限制复制内容长度
+                                this@MainActivity,
+                                showToast = true
+                            )
+                        }
+                    }
+                }
+                //刷新主页
+                "refresh_page" -> homePageViewModel.reloadPage(true)
+                //分享游戏日志
+                "share_game_log" -> {
+                    VersionsManager.currentVersion.value?.let { version ->
+                        VersionsManager.getLatestLog(version).takeIf { it.exists() }
+                    }?.let { logFile ->
+                        withContext(Dispatchers.Main) {
+                            logsUploadViewModel.check(logFile)
+                            logShareViewModel.openMenu(logFile)
+                        }
+                    }
+                }
+                else -> {
+                    lWarning("Unknown homepage event: key=$key, data=$data")
+                }
             }
-            "refresh_page" -> homePageViewModel.reloadPage(true)
+        }.onFailure { e ->
+            lWarning("Failed to handle homepage event: key=$key, data=$data", e)
         }
     }
 
