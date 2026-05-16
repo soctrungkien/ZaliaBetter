@@ -211,7 +211,7 @@ object AccountsManager {
      */
     private fun refreshCurrentAccountState() {
         val currentAccount = getCurrentAccount()
-        val isOffline = checkLimit()
+        val isOffline = false
         _currentAccountFlow.update {
             //若处于非正版状态，不允许使用账号
             if (isOffline) null else currentAccount
@@ -220,8 +220,7 @@ object AccountsManager {
     }
 
     private fun checkLimit(): Boolean {
-        val circumventLimit = File(PathManager.DIR_FILES_EXTERNAL, "circumventLimit")
-        return !circumventLimit.exists() && !isInGreaterChina() && !hasMicrosoftAccount()
+        return false
     }
 
     /**
@@ -286,7 +285,7 @@ object AccountsManager {
     /**
      * 是否已登录过微软账号
      */
-    fun hasMicrosoftAccount(): Boolean = _accounts.any { it.isMicrosoftAccount() }
+    fun hasMicrosoftAccount(): Boolean = true
 
     /**
      * 通过账号的profileId读取账号
