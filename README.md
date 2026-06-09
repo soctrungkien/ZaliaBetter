@@ -31,6 +31,10 @@ Thank you to every language contributor for helping make Zalith Launcher 2 more 
   * **Minimum API level**: 26
   * **Target API level**: 35
 * JDK 11
+WHATS NEW IN THIS FORK?
+
++MULTI BINDING
+
 
 ### Build Steps
 
