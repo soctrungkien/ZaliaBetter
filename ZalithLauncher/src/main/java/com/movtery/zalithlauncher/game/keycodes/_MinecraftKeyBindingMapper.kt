@@ -71,9 +71,21 @@ const val SPRING_VALUE = "key.keyboard.left.control"
  * 将字符串键映射到其对应的键码
  * @return 如果找到映射则返回键码，否则返回 `null`
  */
-fun mapToKeycode(bindingKey: String?, defaultValue: String): Int? {
-    val binding = bindingKey?.let { MCOptions.get(it) } ?: defaultValue
-
+fun mapToKeycode(bindingKey: String?, defaultValue: String): List<Int?> {
+    val bindingStr = bindingKey?.let { MCOptions.get(it) } ?: defaultValue
+    // Split multiple keys by comma
+    val bindings = bindingStr.split(",")
+    
+    return bindings.map { binding ->
+        if (binding.startsWith("key.")) {
+            MinecraftKeyBindingMapper.getGlfwKeycode(binding)?.toInt()
+        } else {
+            binding.toIntOrNull()?.let { lwjgl2Code ->
+                Lwjgl2Keycode.lwjgl2ToGlfw(lwjgl2Code)
+            }
+        }
+    }
+}
     return if (binding.startsWith("key.")) {
         //新版MC键绑定映射
         MinecraftKeyBindingMapper.getGlfwKeycode(binding)?.toInt()
