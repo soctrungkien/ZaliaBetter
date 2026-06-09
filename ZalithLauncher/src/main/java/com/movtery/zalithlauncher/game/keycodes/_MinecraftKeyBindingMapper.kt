@@ -85,7 +85,6 @@ fun mapToKeycode(bindingKey: String?, defaultValue: String): List<Int?> {
             }
         }
     }
-}
     return if (binding.startsWith("key.")) {
         //新版MC键绑定映射
         MinecraftKeyBindingMapper.getGlfwKeycode(binding)?.toInt()
