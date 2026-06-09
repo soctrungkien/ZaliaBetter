@@ -115,3 +115,20 @@ fun mapToControlEvent(bindingKey: String?, defaultValue: String): String? {
         }
     }
 }
+/**
+ * Supports multiple keys separated by comma
+ * Example: "key.keyboard.w,key.keyboard.up,key.mouse.4"
+ */
+fun mapToKeycodes(bindingKey: String?, defaultValue: String): List<Int> {
+    val bindingStr = bindingKey?.let { MCOptions.get(it) } ?: defaultValue
+    return bindingStr.split(",").mapNotNull { binding ->
+        val b = binding.trim()
+        if (b.startsWith("key.")) {
+            MinecraftKeyBindingMapper.getGlfwKeycode(b)?.toInt()
+        } else {
+            b.toIntOrNull()?.let { lwjgl2Code ->
+                Lwjgl2Keycode.lwjgl2ToGlfw(lwjgl2Code)
+            }
+        }
+    }
+}
