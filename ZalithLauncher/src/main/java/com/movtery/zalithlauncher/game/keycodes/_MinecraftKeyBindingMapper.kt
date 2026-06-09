@@ -85,18 +85,7 @@ fun mapToKeycode(bindingKey: String?, defaultValue: String): List<Int?> {
             }
         }
     }
-    return if (binding.startsWith("key.")) {
-        //新版MC键绑定映射
-        MinecraftKeyBindingMapper.getGlfwKeycode(binding)?.toInt()
-    } else {
-        binding.toIntOrNull()?.let { lwjgl2Code ->
-            //MC旧版本直接存了LWJGL2的键值
-            //将旧版本LWJGL2的键码转换为GLFW
-            Lwjgl2Keycode.lwjgl2ToGlfw(lwjgl2Code)
-        }
-    }
-}
-
+    
 /**
  * 将字符串键映射到其对应的控制布局事件标识
  * @return 如果找到映射则返回对应的标识，否则返回 `null`
