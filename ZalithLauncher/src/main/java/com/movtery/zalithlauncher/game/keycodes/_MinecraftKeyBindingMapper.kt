@@ -71,21 +71,21 @@ const val SPRING_VALUE = "key.keyboard.left.control"
  * 将字符串键映射到其对应的键码
  * @return 如果找到映射则返回键码，否则返回 `null`
  */
-fun mapToKeycode(bindingKey: String?, defaultValue: String): Int? {
-    val binding = bindingKey?.let { MCOptions.get(it) } ?: defaultValue
-
-    return if (binding.startsWith("key.")) {
-        //新版MC键绑定映射
-        MinecraftKeyBindingMapper.getGlfwKeycode(binding)?.toInt()
-    } else {
-        binding.toIntOrNull()?.let { lwjgl2Code ->
-            //MC旧版本直接存了LWJGL2的键值
-            //将旧版本LWJGL2的键码转换为GLFW
-            Lwjgl2Keycode.lwjgl2ToGlfw(lwjgl2Code)
+fun mapToKeycode(bindingKey: String?, defaultValue: String): List<Int?> {
+    val bindingStr = bindingKey?.let { MCOptions.get(it) } ?: defaultValue
+    // Split multiple keys by comma
+    val bindings = bindingStr.split(",")
+    
+    return bindings.map { binding ->
+        if (binding.startsWith("key.")) {
+            MinecraftKeyBindingMapper.getGlfwKeycode(binding)?.toInt()
+        } else {
+            binding.toIntOrNull()?.let { lwjgl2Code ->
+                Lwjgl2Keycode.lwjgl2ToGlfw(lwjgl2Code)
+            }
         }
     }
-}
-
+    
 /**
  * 将字符串键映射到其对应的控制布局事件标识
  * @return 如果找到映射则返回对应的标识，否则返回 `null`
@@ -100,6 +100,23 @@ fun mapToControlEvent(bindingKey: String?, defaultValue: String): String? {
             //MC旧版本直接存了LWJGL2的键值
             //将旧版本LWJGL2的键码转换为控制事件标识
             Lwjgl2Keycode.lwjgl2ToControlEvent(lwjgl2Code)
+        }
+    }
+}
+/**
+ * Supports multiple keys separated by comma
+ * Example: "key.keyboard.w,key.keyboard.up,key.mouse.4"
+ */
+fun mapToKeycodes(bindingKey: String?, defaultValue: String): List<Int> {
+    val bindingStr = bindingKey?.let { MCOptions.get(it) } ?: defaultValue
+    return bindingStr.split(",").mapNotNull { binding ->
+        val b = binding.trim()
+        if (b.startsWith("key.")) {
+            MinecraftKeyBindingMapper.getGlfwKeycode(b)?.toInt()
+        } else {
+            b.toIntOrNull()?.let { lwjgl2Code ->
+                Lwjgl2Keycode.lwjgl2ToGlfw(lwjgl2Code)
+            }
         }
     }
 }

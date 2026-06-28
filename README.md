@@ -1,4 +1,4 @@
-# Zalith Launcher 2
+# ZALITH LAUNCHER 2 REBORN 
 ![Downloads](https://img.shields.io/github/downloads/ZalithLauncher/ZalithLauncher2/total)
 [![Sponsor](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors)](https://afdian.com/a/MovTery)
 
@@ -31,6 +31,10 @@ Thank you to every language contributor for helping make Zalith Launcher 2 more 
   * **Minimum API level**: 26
   * **Target API level**: 35
 * JDK 11
+WHATS NEW IN THIS FORK?
+
++MULTI BINDING
+
 
 ### Build Steps
 
