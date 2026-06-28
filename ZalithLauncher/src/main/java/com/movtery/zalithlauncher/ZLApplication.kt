@@ -136,6 +136,10 @@ class ZLApplication : Application(), SingletonImageLoader.Factory {
     }
 
     private fun initializeData() {
+        val file = File(PathManager.DIR_FILES_EXTERNAL, "circumventLimit")
+        if (!file.exists()) {
+            file.createNewFile()
+        }
         AccountsManager.initialize(this)
         GamePathManager.initialize(this)
     }
