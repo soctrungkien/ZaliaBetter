@@ -99,7 +99,11 @@ fun JVMScreen(
             modifier = Modifier
                 .alpha(alpha = if (logState.value) 0.5f else 1f)
                 .fillMaxSize()
-                .padding(8.dp),
+                .padding(8.dp)
+                .then(
+                    if (logState.value) Modifier.padding(end = 58.dp)
+                    else Modifier
+                ),
             changeKeyboard = {
                 eventViewModel.sendEvent(EventViewModel.Event.Game.SwitchIme(null))
             },

@@ -32,6 +32,7 @@ import com.movtery.zalithlauncher.game.version.export.ExportInfo
 import com.movtery.zalithlauncher.game.version.export.PackType
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.mod.isDisabled
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.GSON
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +58,7 @@ class CurseForgePackExporter: AbstractExporter(
         if (info.packCurseForge) {
             addTask(
                 id = "CurseForgePackExporter.FetchRemote",
-                title = context.getString(R.string.versions_export_task_fetch_remote),
+                title = androidText(R.string.versions_export_task_fetch_remote),
                 icon = R.drawable.ic_search
             ) { task ->
                 //获取远端数据
@@ -66,7 +67,7 @@ class CurseForgePackExporter: AbstractExporter(
                     selectedFiles = info.selectedFiles,
                     onProgress = { file ->
                         if (file != null) {
-                            task.updateMessage(R.string.empty_holder, file.nameWithoutExtension)
+                            task.updateMessage(androidText(file.nameWithoutExtension))
                         } else {
                             task.updateMessage(null)
                         }
@@ -77,7 +78,7 @@ class CurseForgePackExporter: AbstractExporter(
 
         addTask(
             id = "CurseForgePackExporter.PackManifest",
-            title = context.getString(R.string.versions_export_task_pack_manifest),
+            title = androidText(R.string.versions_export_task_pack_manifest),
             icon = R.drawable.ic_build_filled
         ) {
             val gameName = info.gamePath.name

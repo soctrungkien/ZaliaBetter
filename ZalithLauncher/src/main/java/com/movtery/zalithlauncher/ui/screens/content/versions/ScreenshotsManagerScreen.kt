@@ -27,7 +27,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
@@ -97,6 +96,7 @@ import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionFolders
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
 import com.movtery.zalithlauncher.ui.components.EdgeDirection
@@ -120,6 +120,8 @@ import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.string.getMessageOrToString
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
+import com.movtery.zalithlauncher.viewmodel.EventViewModel
+import com.movtery.zalithlauncher.viewmodel.sendToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
@@ -412,6 +414,7 @@ fun ScreenshotsManagerScreen(
     versionsScreenKey: TitledNavKey?,
     version: Version,
     backToMainScreen: () -> Unit,
+    eventViewModel: EventViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
     if (!version.isValid()) {
@@ -438,8 +441,6 @@ fun ScreenshotsManagerScreen(
             viewModel.initDirectory(screenshotDir)
         }
 
-        val context = LocalContext.current
-
         DeleteAllOperation(
             operation = viewModel.deleteAllOperation,
             changeOperation = { viewModel.deleteAllOperation = it },
@@ -447,8 +448,6 @@ fun ScreenshotsManagerScreen(
             onRefresh = { viewModel.refresh() }
         )
 
-        val successToast = stringResource(R.string.screenshots_manage_export_success)
-        val failedMessage = stringResource(R.string.screenshots_manage_export_failed)
         ExportDialogHandler(
             operation = viewModel.exportOperation,
             updateOperation = { viewModel.exportOperation = it },
@@ -457,14 +456,14 @@ fun ScreenshotsManagerScreen(
                 viewModel.exports(
                     onSuccess = {
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(context, successToast, Toast.LENGTH_SHORT).show()
+                            eventViewModel.sendToast(androidText(R.string.generic_saved))
                         }
                     },
                     onFailed = { e ->
                         submitError(
                             ErrorViewModel.ThrowableMessage(
-                                title = failedMessage,
-                                message = e.getMessageOrToString()
+                                title = androidText(R.string.screenshots_manage_export_failed),
+                                message = androidText(e.getMessageOrToString())
                             )
                         )
                     }

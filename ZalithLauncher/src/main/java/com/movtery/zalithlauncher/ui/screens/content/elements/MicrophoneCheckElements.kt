@@ -19,7 +19,6 @@
 package com.movtery.zalithlauncher.ui.screens.content.elements
 
 import android.Manifest
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
@@ -60,6 +59,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.itemColor
@@ -75,13 +76,16 @@ sealed interface MicrophoneCheckState {
 fun MicrophoneCheckOperation(
     state: MicrophoneCheckState,
     changeState: (MicrophoneCheckState) -> Unit,
-    dialogTitle: String = stringResource(R.string.microphone_check_title)
+    onShowToast: (AndroidStringText) -> Unit,
 ) {
     when (state) {
         is MicrophoneCheckState.None -> {}
         is MicrophoneCheckState.Start -> {
             MicrophoneCheckDialog(
-                title = dialogTitle,
+                title = stringResource(R.string.microphone_check_title),
+                noPermissions = {
+                    onShowToast(androidText(R.string.microphone_check_no_permissions))
+                },
                 onDismissRequest = {
                     changeState(MicrophoneCheckState.None)
                 }
@@ -93,7 +97,7 @@ fun MicrophoneCheckOperation(
 @Composable
 fun MicrophoneCheckDialog(
     title: String = stringResource(R.string.microphone_check_title),
-    noPermissionsText: String = stringResource(R.string.microphone_check_no_permissions),
+    noPermissions: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -116,7 +120,7 @@ fun MicrophoneCheckDialog(
             } else {
                 //用户拒绝授权，停止麦克风测试
                 micMeter.stop()
-                Toast.makeText(context, noPermissionsText, Toast.LENGTH_SHORT).show()
+                noPermissions()
                 onDismissRequest()
             }
         }

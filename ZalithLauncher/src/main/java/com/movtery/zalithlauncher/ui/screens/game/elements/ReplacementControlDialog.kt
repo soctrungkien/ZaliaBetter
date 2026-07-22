@@ -18,9 +18,11 @@
 
 package com.movtery.zalithlauncher.ui.screens.game.elements
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,6 +31,7 @@ import com.movtery.zalithlauncher.game.control.ControlData
 import com.movtery.zalithlauncher.game.control.ControlManager
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.SimpleListDialog
+import com.movtery.zalithlauncher.ui.components.SimpleListItem
 import java.io.File
 
 sealed interface ReplacementControlState {
@@ -79,10 +82,17 @@ private fun ReplacementControlDialog(
         SimpleListDialog(
             title = stringResource(R.string.game_menu_option_replacement_control),
             items = controls,
-            itemTextProvider = { it.controlLayout.info.name.translate(locale) },
             current = current,
             onItemSelected = onLayoutSelected,
-            onDismissRequest = onDismissRequest
+            onDismissRequest = onDismissRequest,
+            itemLayout = { item, isCurrent, onClick ->
+                SimpleListItem(
+                    selected = isCurrent,
+                    itemName = item.controlLayout.info.name.translate(locale),
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onClick
+                )
+            }
         )
     } else {
         SimpleAlertDialog(

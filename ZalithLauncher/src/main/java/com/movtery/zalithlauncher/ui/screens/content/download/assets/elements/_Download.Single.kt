@@ -46,6 +46,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.scrollbar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -157,6 +159,16 @@ fun DownloadSingleOperation(
 }
 
 @Composable
+private fun rememberValidVersions(): State<List<Version>> {
+    val vers by VersionsManager.versions.collectAsStateWithLifecycle()
+    return remember(vers) {
+        derivedStateOf {
+            vers.filter { it.isValid() }
+        }
+    }
+}
+
+@Composable
 private fun DownloadDialog(
     dependencyProjects: List<Pair<PlatformVersion.PlatformDependency, PlatformProject>>,
     classes: PlatformClasses,
@@ -164,7 +176,7 @@ private fun DownloadDialog(
     onInstall: (List<Version>) -> Unit,
     onDependencyClicked: (PlatformVersion.PlatformDependency, PlatformClasses) -> Unit
 ) {
-    val versions = remember { VersionsManager.versions.filter { it.isValid() } }
+    val versions by rememberValidVersions()
     val version by VersionsManager.currentVersion.collectAsStateWithLifecycle()
     val version0 = version
 

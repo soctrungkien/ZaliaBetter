@@ -87,6 +87,8 @@ import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchDa
 import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcmodTitle
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.buildAppendedText
 import com.movtery.zalithlauncher.ui.components.ScalingLabel
 import com.movtery.zalithlauncher.ui.components.SmallOutlinedEditField
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
@@ -99,24 +101,7 @@ import com.movtery.zalithlauncher.utils.string.isEmptyOrBlank
 sealed interface SearchAssetsState {
     data object Searching: SearchAssetsState
     data class Success(val page: AssetsPage): SearchAssetsState
-    data class Error(val message: Int, val args: Array<Any>? = null): SearchAssetsState {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Error
-
-            if (message != other.message) return false
-            if (!args.contentEquals(other.args)) return false
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = message
-            result = 31 * result + (args?.contentHashCode() ?: 0)
-            return result
-        }
-    }
+    data class Error(val message: AndroidStringText): SearchAssetsState
 }
 
 /**
@@ -212,15 +197,16 @@ fun ResultListLayout(
         }
         is SearchAssetsState.Error -> {
             Box(modifier.padding(all = 12.dp)) {
-                val message = if (searchState.args != null) {
-                    stringResource(searchState.message, *searchState.args)
-                } else {
-                    stringResource(searchState.message)
-                }
-
                 ScalingLabel(
                     modifier = Modifier.align(Alignment.Center),
-                    text = stringResource(R.string.download_assets_failed_to_get_result, message),
+                    text = {
+                        AndroidStringText(
+                            text = buildAppendedText {
+                                append(R.string.download_assets_failed_to_get_result)
+                                append(searchState.message)
+                            }
+                        )
+                    },
                     onClick = onReload
                 )
             }
@@ -267,6 +253,7 @@ private fun PageController(
                         .width(72.dp),
                     value = numberText,
                     onValueChange = onValueChange@ { value ->
+                        if (page.totalPage <= 0) return@onValueChange
                         val number0 = if (value.isEmptyOrBlank()) {
                             1 //为了编辑体验，留空时视为1
                         } else {
@@ -320,7 +307,7 @@ private fun PageController(
         ) {
             Row(
                 modifier = Modifier
-                    .clickable(enabled = !editPageNumber) {
+                    .clickable(enabled = !editPageNumber && page.totalPage > 0) {
                         editPageNumber = true
                     },
                 verticalAlignment = Alignment.CenterVertically

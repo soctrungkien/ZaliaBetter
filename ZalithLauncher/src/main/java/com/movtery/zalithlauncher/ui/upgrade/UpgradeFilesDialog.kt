@@ -71,9 +71,6 @@ fun UpgradeFilesDialog(
     SimpleListDialog(
         title = stringResource(R.string.upgrade_files),
         items = data.files,
-        itemTextProvider = { file ->
-            file.fileName
-        },
         onItemSelected = { file ->
             onFileSelected(file)
         },
@@ -81,7 +78,7 @@ fun UpgradeFilesDialog(
             onDismissRequest()
         },
         current = current,
-        itemLayout = { item, isCurrent, _, onClick ->
+        itemLayout = { item, isCurrent, onClick ->
             UpgradeFileLayout(
                 modifier = Modifier.fillMaxWidth(),
                 file = item,

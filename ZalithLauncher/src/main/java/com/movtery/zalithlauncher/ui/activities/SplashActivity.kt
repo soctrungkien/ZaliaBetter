@@ -64,7 +64,7 @@ const val IMPORT_TYPE_UNKNOWN = "unknown"
 
 @SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
-class SplashActivity : BaseAppCompatActivity(refreshData = false) {
+class SplashActivity : BaseAppCompatActivity() {
     private val unpackItems: MutableList<InstallableItem> = ArrayList()
     private val finishedTaskCount = AtomicInteger(0)
 

@@ -88,6 +88,7 @@ import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.setting.enums.applyLanguage
 import com.movtery.zalithlauncher.setting.unit.floatRange
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedColumn
 import com.movtery.zalithlauncher.ui.components.IconTextButton
@@ -105,6 +106,7 @@ import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
+import com.movtery.zalithlauncher.ui.screens.content.elements.DisabledAlpha
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.CardPosition
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.EnumSettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.IntSliderSettingsCard
@@ -302,10 +304,13 @@ fun LauncherSettingsScreen(
                                     colors = IconButtonDefaults.iconButtonColors(
                                         containerColor = MaterialTheme.colorScheme.primary,
                                         contentColor = MaterialTheme.colorScheme.onPrimary,
+                                        disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = DisabledAlpha),
+                                        disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = DisabledAlpha),
                                     ),
                                     onClick = {
                                         unit.save(state.switch())
-                                    }
+                                    },
+                                    enabled = backgroundViewModel.isValid,
                                 ) {
                                     Crossfade(
                                         targetState = state
@@ -615,10 +620,12 @@ fun LauncherSettingsScreen(
                                 Task.runTask(
                                     id = "ZIP_LOGS",
                                     task = { task ->
-                                        task.updateProgress(-1f, R.string.settings_launcher_log_share_packing)
+                                        task.updateProgress(-1f)
+                                        task.updateMessage(androidText(R.string.settings_launcher_log_share_packing))
                                         val logsFile = File(PathManager.DIR_CACHE, "logs.zip")
                                         Logger.pack(logsFile)
-                                        task.updateProgress(1f, null)
+                                        task.updateProgress(1f)
+                                        task.updateMessage(null)
                                         //分享压缩包
                                         shareFile(
                                             context = context,
@@ -941,15 +948,15 @@ private fun CustomBackground(
                 Task.runTask(
                     dispatcher = Dispatchers.IO,
                     task = { task ->
-                        task.updateMessage(R.string.settings_launcher_background_importing)
+                        task.updateMessage(androidText(R.string.settings_launcher_background_importing))
                         backgroundViewModel.import(context, result[0] /* 取决于上面的allowMultiple，此处一定会是单个元素的列表 */)
                     },
                     onError = { th ->
                         backgroundViewModel.delete()
                         submitError(
                             ErrorViewModel.ThrowableMessage(
-                                title = importErrorText,
-                                message = th.getMessageOrToString()
+                                title = androidText(importErrorText),
+                                message = androidText(th.getMessageOrToString())
                             )
                         )
                     }

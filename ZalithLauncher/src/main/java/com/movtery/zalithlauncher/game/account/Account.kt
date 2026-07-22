@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.game.account
 
 import android.os.Parcelable
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.movtery.zalithlauncher.game.account.wardrobe.CapeFileDownloader
@@ -38,6 +39,7 @@ import java.util.UUID
 
 private const val TAG = "Account"
 
+@Keep
 @Parcelize
 @Entity(tableName = "accounts")
 data class Account(

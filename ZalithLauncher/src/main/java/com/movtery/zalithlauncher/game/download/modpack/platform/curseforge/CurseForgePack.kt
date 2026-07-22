@@ -33,6 +33,7 @@ import com.movtery.zalithlauncher.game.download.modpack.install.ModPackInfo
 import com.movtery.zalithlauncher.game.download.modpack.install.ModPackInfoTask
 import com.movtery.zalithlauncher.game.download.modpack.platform.PackPlatform
 import com.movtery.zalithlauncher.game.version.installed.VersionFolders
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.copyDirectoryContents
 import com.movtery.zalithlauncher.utils.logging.Logger
 import java.io.File
@@ -116,9 +117,13 @@ class CurseForgePack(
                 )
             }
             task.updateProgress(
-                percentage = index.toFloat() / totalCount.toFloat(),
-                message =  R.string.download_modpack_install_get_mod_url,
-                index, totalCount
+                index.toFloat() / totalCount.toFloat()
+            )
+            task.updateMessage(
+                androidText(
+                    R.string.download_modpack_install_get_mod_url,
+                    index, totalCount
+                )
             )
             modFile
         }
@@ -136,7 +141,8 @@ class CurseForgePack(
         }
 
         //提取覆盖包到目标目录
-        task.updateProgress(-1f, R.string.download_modpack_install_overrides)
+        task.updateProgress(-1f)
+        task.updateMessage(androidText(R.string.download_modpack_install_overrides))
         extractFiles(manifest.overrides ?: "overrides", targetFolder)
 
         return ModPackInfo(

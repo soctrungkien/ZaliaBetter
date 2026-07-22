@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
@@ -92,8 +93,31 @@ fun ScalingLabel(
 @Composable
 fun ScalingLabel(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
     text: String,
+    onClick: () -> Unit,
+    influencedByBackground: Boolean = true,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
+    color: Color = itemColor(influencedByBackground = influencedByBackground),
+    contentColor: Color = onItemColor(),
+) {
+    ScalingLabel(
+        modifier = modifier,
+        onClick = onClick,
+        text = {
+            Text(text = text)
+        },
+        influencedByBackground = influencedByBackground,
+        shape = shape,
+        color = color,
+        contentColor = contentColor,
+    )
+}
+
+@Composable
+fun ScalingLabel(
+    modifier: Modifier = Modifier,
+    text: @Composable RowScope.() -> Unit,
+    onClick: () -> Unit,
     influencedByBackground: Boolean = true,
     shape: Shape = MaterialTheme.shapes.extraLarge,
     color: Color = itemColor(influencedByBackground = influencedByBackground),
@@ -112,9 +136,8 @@ fun ScalingLabel(
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-        ) {
-            Text(text = text)
-        }
+            content = text,
+        )
     }
 }
 

@@ -72,7 +72,9 @@ import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcMod
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcmodTitle
 import com.movtery.zalithlauncher.game.download.assets.utils.getTranslations
+import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
+import com.movtery.zalithlauncher.ui.buildAppendedText
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.OwnOutlinedTextField
 import com.movtery.zalithlauncher.ui.components.ScalingLabel
@@ -113,25 +115,7 @@ private sealed interface SearchIdOperation {
     data object Unsupported : SearchIdOperation
 
     /** 获取过程中出现异常 */
-    data class Error(val message: Int, val args: Array<Any>? = null) : SearchIdOperation {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Error
-
-            if (message != other.message) return false
-            if (!args.contentEquals(other.args)) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = message
-            result = 31 * result + (args?.contentHashCode() ?: 0)
-            return result
-        }
-    }
+    data class Error(val message: AndroidStringText) : SearchIdOperation
 }
 
 private class SearchIdViewModel: ViewModel() {
@@ -194,8 +178,7 @@ private class SearchIdViewModel: ViewModel() {
 
     private fun onError(throwable: Throwable) {
         Logger.error(TAG, "An exception occurred while searching for assets.", throwable)
-        val pair = mapExceptionToMessage(throwable)
-        operation = SearchIdOperation.Error(pair.first, pair.second)
+        operation = SearchIdOperation.Error(mapExceptionToMessage(throwable))
     }
 }
 
@@ -340,15 +323,16 @@ private fun ContentResult(
             }
             is SearchIdOperation.Error -> {
                 Box(modifier.padding(all = 12.dp)) {
-                    val message = if (operation.args != null) {
-                        stringResource(operation.message, *operation.args)
-                    } else {
-                        stringResource(operation.message)
-                    }
-
                     ScalingLabel(
                         modifier = Modifier.align(Alignment.Center),
-                        text = stringResource(R.string.download_assets_failed_to_get_result, message),
+                        text = {
+                            AndroidStringText(
+                                text = buildAppendedText {
+                                    append(R.string.download_assets_failed_to_get_result)
+                                    append(operation.message)
+                                }
+                            )
+                        },
                         onClick = onReload
                     )
                 }

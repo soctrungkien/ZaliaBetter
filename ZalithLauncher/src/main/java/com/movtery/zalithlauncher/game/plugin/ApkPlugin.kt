@@ -24,7 +24,7 @@ package com.movtery.zalithlauncher.game.plugin
  * @param appName 软件名称
  * @param appVersion 应用版本
  */
-abstract class ApkPlugin(
+open class ApkPlugin(
     val packageName: String,
     val appName: String,
     val appVersion: String

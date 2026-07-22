@@ -67,6 +67,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.terracotta.TerracottaState
 import com.movtery.zalithlauncher.terracotta.profile.TerracottaProfile
+import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
@@ -115,7 +116,8 @@ fun MultiplayerDialog(
     onHostCopyCode: (TerracottaState.HostOK) -> Unit,
     onGuestPositive: (roomCode: String) -> Unit,
     onGuestCopyUrl: (TerracottaState.GuestOK) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onShowToast: (AndroidStringText) -> Unit = {}
 ) {
     Dialog(
         onDismissRequest = {},
@@ -169,7 +171,8 @@ fun MultiplayerDialog(
                                         modifier = commonModifier,
                                         onHostClick = onHostRoleClick,
                                         onGuestPositive = onGuestPositive,
-                                        isInteractive = isWaitingInteractive
+                                        isInteractive = isWaitingInteractive,
+                                        onShowToast = onShowToast
                                     )
                                 }
                                 is TerracottaState.HostScanning -> {
@@ -313,6 +316,7 @@ private fun WaitingUI(
     onHostClick: () -> Unit,
     onGuestPositive: (roomCode: String) -> Unit,
     modifier: Modifier = Modifier,
+    onShowToast: (AndroidStringText) -> Unit = {},
     scrollState: ScrollState = rememberScrollState()
 ) {
     var guestOperation by remember { mutableStateOf<GuestWaitingOperation>(GuestWaitingOperation.None) }
@@ -357,7 +361,8 @@ private fun WaitingUI(
     GuestWaitingOperation(
         operation = guestOperation,
         onChange = { guestOperation = it },
-        onPositive = onGuestPositive
+        onPositive = onGuestPositive,
+        onShowToast = onShowToast
     )
 }
 

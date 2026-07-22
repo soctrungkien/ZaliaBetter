@@ -39,7 +39,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -56,6 +55,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.movtery.zalithlauncher.R
@@ -73,7 +73,6 @@ import com.movtery.zalithlauncher.game.addons.modloader.forgelike.neoforge.NeoFo
 import com.movtery.zalithlauncher.game.addons.modloader.optifine.OptiFineVersion
 import com.movtery.zalithlauncher.game.addons.modloader.optifine.OptiFineVersions
 import com.movtery.zalithlauncher.game.download.game.GameDownloadInfo
-import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager.isVersionExists
 import com.movtery.zalithlauncher.ui.base.BaseScreen
@@ -641,18 +640,7 @@ private fun ScreenHeader(
                 }
             }
 
-            var versions by remember { mutableStateOf(VersionsManager.versions) }
-            DisposableEffect(Unit) {
-                val listener: suspend (List<Version>) -> Unit = { versions0 ->
-                    versions = versions0
-                }
-
-                VersionsManager.registerListener(listener)
-                onDispose {
-                    VersionsManager.unregisterListener(listener)
-                }
-            }
-
+            val versions by VersionsManager.versions.collectAsStateWithLifecycle()
             if (versions.isNotEmpty()) {
                 Row {
                     //不使用viewModel存储，防止版本刷新这里状态不同步

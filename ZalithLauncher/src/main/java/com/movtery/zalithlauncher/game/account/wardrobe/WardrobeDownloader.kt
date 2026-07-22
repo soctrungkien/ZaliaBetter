@@ -20,11 +20,11 @@ package com.movtery.zalithlauncher.game.account.wardrobe
 
 import com.google.gson.JsonObject
 import com.movtery.zalithlauncher.path.createOkHttpClient
+import com.movtery.zalithlauncher.path.createRequestBuilder
 import com.movtery.zalithlauncher.utils.GSON
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.fetchStringFromUrl
 import com.movtery.zalithlauncher.utils.string.decodeBase64
-import okhttp3.Request
 import java.io.File
 import java.io.FileOutputStream
 
@@ -52,9 +52,7 @@ abstract class WardrobeDownloader {
             if (!exists()) mkdirs()
         }
 
-        val request = Request.Builder()
-            .url(url)
-            .build()
+        val request = createRequestBuilder(url).build()
 
         mClient.newCall(request).execute().use { response ->
             if (!response.isSuccessful) {

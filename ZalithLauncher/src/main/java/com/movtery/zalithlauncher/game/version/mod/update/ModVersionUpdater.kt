@@ -23,6 +23,7 @@ import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.download.assets.platform.mcim.mapMCIMMirrorUrls
 import com.movtery.zalithlauncher.game.version.download.DownloadFailedException
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.formatFileSize
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.downloadFromMirrorListSuspend
@@ -74,7 +75,8 @@ class ModVersionUpdater(
         }
         if (downloadFailedTasks.isNotEmpty()) throw DownloadFailedException()
         //清除任务信息
-        task.updateProgress(1f, null)
+        task.updateProgress(1f)
+        task.updateMessage(null)
     }
 
     private suspend fun downloadAll(
@@ -121,10 +123,14 @@ class ModVersionUpdater(
                     ensureActive()
                     val currentFileCount = downloadedFileCount.get()
                     task.updateProgress(
-                        (currentFileCount.toFloat() / totalFileCount.toFloat()).coerceIn(0f, 1f),
-                        taskMessageRes,
-                        downloadedFileCount.get(), totalFileCount,
-                        formatFileSize(downloadedFileSize.get())
+                        (currentFileCount.toFloat() / totalFileCount.toFloat()).coerceIn(0f, 1f)
+                    )
+                    task.updateMessage(
+                        androidText(
+                            taskMessageRes,
+                            downloadedFileCount.get(), totalFileCount,
+                            formatFileSize(downloadedFileSize.get())
+                        )
                     )
                     delay(100L.milliseconds)
                 }

@@ -18,11 +18,12 @@
 
 package com.movtery.zalithlauncher.game.account.microsoft
 
-import android.content.Context
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.BLOCKED_IP
 import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.FREQUENT
 import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.PROFILE_NOT_EXISTS
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 
 /**
  * Minecraft 配置获取异常
@@ -46,10 +47,12 @@ class MinecraftProfileException(val status: ExceptionStatus) : RuntimeException(
     }
 }
 
-fun MinecraftProfileException.toLocal(context: Context): String {
-    return when (status) {
-        FREQUENT -> context.getString(R.string.account_logging_frequent)
-        BLOCKED_IP -> context.getString(R.string.account_logging_blocked_ip)
-        PROFILE_NOT_EXISTS -> context.getString(R.string.account_logging_profile_not_exists)
-    }
+fun MinecraftProfileException.toLocal(): AndroidStringText {
+    return androidText(
+        when (status) {
+            FREQUENT -> R.string.account_logging_frequent
+            BLOCKED_IP -> R.string.account_logging_blocked_ip
+            PROFILE_NOT_EXISTS -> R.string.account_logging_profile_not_exists
+        }
+    )
 }

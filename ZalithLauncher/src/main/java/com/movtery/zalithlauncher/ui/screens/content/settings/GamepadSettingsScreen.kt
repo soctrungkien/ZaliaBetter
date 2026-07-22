@@ -18,7 +18,6 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.settings
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -52,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.unit.floatRange
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedLazyColumn
 import com.movtery.zalithlauncher.ui.components.CheckChip
@@ -74,11 +73,12 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCa
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSettingsCard
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.string.isEmptyOrBlank
+import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.GAMEPAD_CONFIG_NAME_LENGTH
 import com.movtery.zalithlauncher.viewmodel.GamepadViewModel
+import com.movtery.zalithlauncher.viewmodel.sendToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private sealed interface BindKeyOperation {
     data object None : BindKeyOperation
@@ -98,7 +98,8 @@ private sealed interface CreateNewConfigOperation {
 fun GamepadSettingsScreen(
     key: NestedNavKey.Settings,
     settingsScreenKey: TitledNavKey?,
-    mainScreenKey: TitledNavKey?
+    mainScreenKey: TitledNavKey?,
+    eventViewModel: EventViewModel,
 ) {
     val viewModel: GamepadViewModel = viewModel()
 
@@ -180,9 +181,7 @@ fun GamepadSettingsScreen(
                         .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
                 ) {
                     val scope = rememberCoroutineScope()
-                    val context = LocalContext.current
 
-                    val resetFinishedText = stringResource(R.string.settings_gamepad_remapping_reset_finished)
                     SettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Top,
@@ -192,13 +191,9 @@ fun GamepadSettingsScreen(
                             scope.launch(Dispatchers.IO) {
                                 val mmkv = remapperMMKV()
                                 mmkv.clearAll()
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(
-                                        context,
-                                        resetFinishedText,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                                eventViewModel.sendToast(
+                                    androidText(R.string.settings_gamepad_remapping_reset_finished)
+                                )
                             }
                         }
                     )

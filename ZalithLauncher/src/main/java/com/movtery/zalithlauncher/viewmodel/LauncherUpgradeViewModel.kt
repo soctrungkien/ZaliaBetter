@@ -300,9 +300,6 @@ fun LauncherUpgradeOperation(
             SimpleListDialog(
                 title = stringResource(R.string.upgrade_cloud_drive),
                 items = operation.cloudDrive.links,
-                itemTextProvider = { link ->
-                    link.link
-                },
                 onItemSelected = { link ->
                     onLinkClick(link.link)
                 },
@@ -310,7 +307,7 @@ fun LauncherUpgradeOperation(
                     onChanged(LauncherUpgradeOperation.None)
                 },
                 current = current,
-                itemLayout = { item, isCurrent, _, onClick ->
+                itemLayout = { item, isCurrent, onClick ->
                     CloudDriveLayout(
                         link = item,
                         selected = isCurrent,

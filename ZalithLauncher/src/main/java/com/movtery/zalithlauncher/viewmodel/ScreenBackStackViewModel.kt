@@ -21,7 +21,6 @@ package com.movtery.zalithlauncher.viewmodel
 import androidx.lifecycle.ViewModel
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
-import com.movtery.zalithlauncher.ui.screens.addIfEmpty
 
 class ScreenBackStackViewModel : ViewModel() {
     /** 主屏幕 */
@@ -43,18 +42,6 @@ class ScreenBackStackViewModel : ViewModel() {
     val downloadSavesScreen = NestedNavKey.DownloadSaves()
     /** 下载光影包屏幕 */
     val downloadShadersScreen = NestedNavKey.DownloadShaders()
-
-    init {
-        mainScreen.backStack.addIfEmpty(NormalNavKey.LauncherMain)
-        settingsScreen.backStack.addIfEmpty(NormalNavKey.Settings.Renderer)
-        //下载嵌套子屏幕
-        downloadGameScreen.backStack.addIfEmpty(NormalNavKey.DownloadGame.SelectGameVersion)
-        downloadModPackScreen.backStack.addIfEmpty(NormalNavKey.SearchModPack)
-        downloadModScreen.backStack.addIfEmpty(NormalNavKey.SearchMod)
-        downloadResourcePackScreen.backStack.addIfEmpty(NormalNavKey.SearchResourcePack)
-        downloadSavesScreen.backStack.addIfEmpty(NormalNavKey.SearchSaves)
-        downloadShadersScreen.backStack.addIfEmpty(NormalNavKey.SearchShaders)
-    }
 
     /**
      * 在跳转前，先将导航栈中所有属于 [clearBeforeNavKeys] 的页面全部移除

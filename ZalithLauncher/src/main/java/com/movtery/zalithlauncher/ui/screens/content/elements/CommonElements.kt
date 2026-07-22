@@ -74,13 +74,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.context.copyLocalFile
 import com.movtery.zalithlauncher.context.getFileName
 import com.movtery.zalithlauncher.contract.extensionToMimeType
 import com.movtery.zalithlauncher.coroutine.Task
-import com.movtery.zalithlauncher.coroutine.TaskState
+import com.movtery.zalithlauncher.coroutine.TaskStage
 import com.movtery.zalithlauncher.coroutine.TitledTask
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.IconTextButton
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.fadeEdge
@@ -222,11 +225,13 @@ fun rememberMultipleUriImportTaskBuilder(
                     id = id,
                     dispatcher = Dispatchers.IO,
                     task = { task ->
-                        task.updateProgress(-1f, null)
+                        task.updateProgress(-1f)
+                        task.updateMessage(null)
                         uris.forEach { uri ->
                             try {
                                 val fileName = context.getFileName(uri) ?: throw IOException("Failed to get file name")
-                                task.updateProgress(-1f, R.string.empty_holder, fileName)
+                                task.updateProgress(-1f)
+                                task.updateMessage(androidText(fileName))
                                 val outputFile = File(targetDir, fileName)
                                 if (checkExtension != null) {
                                     outputFile.checkExtensionOrThrow(checkExtension)
@@ -244,8 +249,8 @@ fun rememberMultipleUriImportTaskBuilder(
 
                                 cSubmitError(
                                     ErrorViewModel.ThrowableMessage(
-                                        title = cErrorTitle,
-                                        message = messageString
+                                        title = androidText(cErrorTitle),
+                                        message = androidText(messageString)
                                     )
                                 )
                             }
@@ -404,19 +409,24 @@ fun TitleTaskFlowDialog(
 @Composable
 private fun InstallingTaskItem(
     modifier: Modifier = Modifier,
-    title: String,
+    title: AndroidStringText,
     @DrawableRes
     runningIcon: Int? = null,
     task: Task
 ) {
+    val taskStage by task.stage.collectAsStateWithLifecycle()
+    val taskProgress by task.progress.collectAsStateWithLifecycle()
+    val taskMessage by task.message.collectAsStateWithLifecycle()
+    val rateBytesPerSec by task.rateBytesPerSec.collectAsStateWithLifecycle()
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        val icon = when (task.taskState) {
-            TaskState.PREPARING -> R.drawable.ic_schedule_outlined
-            TaskState.RUNNING -> runningIcon ?: R.drawable.ic_download
-            TaskState.COMPLETED -> R.drawable.ic_check
+        val icon = when (taskStage) {
+            TaskStage.PREPARING -> R.drawable.ic_schedule_outlined
+            TaskStage.RUNNING -> runningIcon ?: R.drawable.ic_download
+            TaskStage.COMPLETED -> R.drawable.ic_check
         }
         Icon(
             modifier = Modifier.size(24.dp),
@@ -425,26 +435,21 @@ private fun InstallingTaskItem(
         )
 
         Column(modifier = modifier.weight(1f)) {
-            Text(
+            AndroidStringText(
                 text = title,
                 style = MaterialTheme.typography.labelLarge
             )
-            if (task.taskState == TaskState.RUNNING) {
-                task.currentMessageRes?.let { messageRes ->
-                    val args = task.currentMessageArgs
-                    Text(
+            if (taskStage == TaskStage.RUNNING) {
+                taskMessage?.let { message ->
+                    AndroidStringText(
                         modifier = Modifier.padding(top = 4.dp),
-                        text = if (args != null) {
-                            stringResource(messageRes, *args)
-                        } else {
-                            stringResource(messageRes)
-                        },
-                        style = MaterialTheme.typography.labelMedium
+                        text = message,
+                        style = MaterialTheme.typography.labelMedium,
                     )
                 }
                 @Composable
                 fun RateBytesPerSecText() {
-                    task.currentRateBytesPerSec.takeIf { it >= 0L }?.let { bytes ->
+                    rateBytesPerSec?.let { bytes ->
                         val text = remember(bytes) { "${formatFileSize(bytes)}/s" }
                         Text(
                             text = text,
@@ -452,7 +457,7 @@ private fun InstallingTaskItem(
                         )
                     }
                 }
-                if (task.currentProgress < 0) { //负数则代表不确定
+                if (taskProgress < 0) { //负数则代表不确定
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -464,20 +469,22 @@ private fun InstallingTaskItem(
                         RateBytesPerSecText()
                     }
                 } else {
+                    val progressText = "${(taskProgress * 100).toInt()}%"
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         LinearProgressIndicator(
-                            progress = { task.currentProgress },
+                            progress = { taskProgress },
                             modifier = Modifier
                                 .weight(1f)
                                 .align(Alignment.CenterVertically)
                         )
                         RateBytesPerSecText()
                         Text(
-                            text = "${(task.currentProgress * 100).toInt()}%",
+                            text = progressText,
                             style = MaterialTheme.typography.labelMedium
                         )
                     }

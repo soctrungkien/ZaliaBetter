@@ -28,6 +28,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -74,6 +75,8 @@ import com.movtery.zalithlauncher.game.addons.modloader.forgelike.neoforge.NeoFo
 import com.movtery.zalithlauncher.game.addons.modloader.modlike.ModVersion
 import com.movtery.zalithlauncher.game.addons.modloader.optifine.OptiFineVersion
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.buildAppendedText
 import com.movtery.zalithlauncher.ui.components.influencedByBackgroundColor
 import com.movtery.zalithlauncher.ui.components.rememberMaxHeight
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
@@ -90,31 +93,9 @@ sealed interface AddonState {
     data object Loading : AddonState
     /**
      * 加载出现异常
-     * @param message 异常消息资源
-     * @param args 消息参数
+     * @param message 异常消息代理对象
      */
-    data class Error(val message: Int, val args: Array<Any>? = null): AddonState {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Error
-
-            if (message != other.message) return false
-            if (args != null) {
-                if (other.args == null) return false
-                if (!args.contentEquals(other.args)) return false
-            } else if (other.args != null) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = message
-            result = 31 * result + (args?.contentHashCode() ?: 0)
-            return result
-        }
-    }
+    data class Error(val message: AndroidStringText): AddonState
 }
 
 /**
@@ -126,6 +107,27 @@ private fun AddonTextLayout(
     title: String,
     summary: String
 ) {
+    AddonTextLayout(
+        modifier = modifier,
+        title = title,
+        summary = {
+            Text(
+                text = summary,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    )
+}
+
+/**
+ * 简易 Addon 文本占位
+ */
+@Composable
+private fun AddonTextLayout(
+    modifier: Modifier = Modifier,
+    title: String,
+    summary: @Composable ColumnScope.() -> Unit,
+) {
     Column(
         modifier = modifier.padding(all = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -134,10 +136,7 @@ private fun AddonTextLayout(
             text = title,
             style = MaterialTheme.typography.titleSmall
         )
-        Text(
-            text = summary,
-            style = MaterialTheme.typography.bodySmall
-        )
+        summary()
     }
 }
 
@@ -357,16 +356,17 @@ private fun <E> AddonListHeader(
                 )
             }
             is AddonState.Error -> {
-                val message = if (state.args != null) {
-                    stringResource(state.message, *state.args)
-                } else {
-                    stringResource(state.message)
-                }
-
                 AddonTextLayout(
                     modifier = Modifier.weight(1f),
                     title = title,
-                    summary = stringResource(R.string.download_game_addon_list_load_error, message),
+                    summary = {
+                        AndroidStringText(
+                            text = buildAppendedText {
+                                append(R.string.download_game_addon_list_load_error)
+                                append(state.message)
+                            }
+                        )
+                    },
                 )
                 IconButton(
                     modifier = Modifier

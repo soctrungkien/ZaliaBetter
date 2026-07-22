@@ -463,7 +463,6 @@ fun SimpleCheckEditDialog(
 /**
  * 一个很简单的列表Dialog
  * @param items 需要列出的items
- * @param itemTextProvider 提供单个item的展示文本
  * @param onItemSelected item被点击的回调
  * @param onDismissRequest dialog被关闭的回调
  * @param showConfirm 是否通过确认按钮来触发item的点击回调
@@ -472,23 +471,10 @@ fun SimpleCheckEditDialog(
 fun <T> SimpleListDialog(
     title: String,
     items: List<T>,
-    itemTextProvider: @Composable (T) -> String,
     onItemSelected: (T) -> Unit,
     onDismissRequest: (selected: Boolean) -> Unit,
     current: T? = null,
-    itemLayout: @Composable (
-        item: T,
-        isCurrent: Boolean,
-        text: String,
-        onClick: () -> Unit
-    ) -> Unit = { _, isCurrent, text, onClick ->
-        SimpleListItem(
-            selected = isCurrent,
-            itemName = text,
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onClick
-        )
-    },
+    itemLayout: @Composable (item: T, isCurrent: Boolean, onClick: () -> Unit) -> Unit,
     showConfirm: Boolean = false,
     confirmText: @Composable RowScope.() -> Unit = {
         MarqueeText(text = stringResource(R.string.generic_confirm))
@@ -536,14 +522,7 @@ fun <T> SimpleListDialog(
                     ) {
                         items(items) { item ->
                             val isCurrent = selectedItem == item
-
-                            val text = itemTextProvider(item)
-
-                            itemLayout(
-                                item,
-                                isCurrent,
-                                text
-                            ) {
+                            itemLayout(item, isCurrent) {
                                 selectedItem = item
                                 if (!showConfirm && !isCurrent) {
                                     onItemSelected(item)

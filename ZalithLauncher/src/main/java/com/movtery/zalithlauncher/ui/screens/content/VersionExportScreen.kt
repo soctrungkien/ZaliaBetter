@@ -435,8 +435,8 @@ fun VersionExportScreen(
 
     val cBackToMainScreen by rememberUpdatedState(backToMainScreen)
     DisposableEffect(key) {
-        val listener = object : suspend (List<Version>) -> Unit {
-            override suspend fun invoke(versions: List<Version>) {
+        val listener = object : suspend () -> Unit {
+            override suspend fun invoke() {
                 cBackToMainScreen()
             }
         }
@@ -658,8 +658,7 @@ private fun PackExportOperation(
                 is SerializationException, is JsonSyntaxException -> stringResource(R.string.error_parse_failed)
                 is DownloadFailedException -> stringResource(R.string.download_install_error_download_failed)
                 else -> {
-                    val errorMessage = th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
-                    stringResource(R.string.empty_holder, errorMessage)
+                    th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
                 }
             }
             val dismiss = {

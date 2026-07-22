@@ -20,6 +20,7 @@ package com.movtery.zalithlauncher.game.version.installed
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.support.touch_controller.VibrationHandler
@@ -33,6 +34,7 @@ import java.io.FileWriter
 
 private const val TAG = "VersionConfig"
 
+@Keep
 class VersionConfig(
     @Transient
     private var versionPath: File

@@ -33,6 +33,7 @@ import com.movtery.zalithlauncher.game.download.jvm_server.runJvmRetryRuntimes
 import com.movtery.zalithlauncher.game.download.jvm_server.stopAllNonMainProcesses
 import com.movtery.zalithlauncher.game.version.download.BaseMinecraftDownloader
 import com.movtery.zalithlauncher.notification.NoticeProgress
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.GSON
 import com.movtery.zalithlauncher.utils.file.ensureDirectory
 import com.movtery.zalithlauncher.utils.file.extractEntryToFile
@@ -130,7 +131,8 @@ private suspend fun installNewForgeHMCLWay(
         //解压版本Json
         zip.extractEntryToFile("version.json", tempVersionJson)
 
-        task.updateProgress(0.2f, R.string.download_game_install_forgelike_preparing_mapping_file, loaderName)
+        task.updateProgress(0.2f)
+        task.updateMessage(androidText(R.string.download_game_install_forgelike_preparing_mapping_file, loaderName))
         installProfile["data"].asJsonObject?.let { data ->
             for ((key, value) in data.entrySet()) {
                 if (value.isJsonObject) {
@@ -162,7 +164,10 @@ private suspend fun installNewForgeHMCLWay(
         installProfile
     }
 
-    task.updateProgress(1f, R.string.download_game_install_forgelike_preparing_mapping_file, loaderName)
+    task.updateProgress(1f)
+    task.updateMessage(androidText(
+        R.string.download_game_install_forgelike_preparing_mapping_file, loaderName
+    ))
 
     vars["SIDE"] = "client"
     vars["MINECRAFT_JAR"] = tempVanillaJar.absolutePath
@@ -362,7 +367,10 @@ private suspend fun runProcessors(
         ) {
             val jarPath = processor.getJar().toPath()
 
-            task.updateProgress(progress, R.string.download_game_install_base_installing, taskStr)
+            task.updateProgress(progress)
+            task.updateMessage(androidText(
+                R.string.download_game_install_base_installing, taskStr
+            ))
 
             Logger.info(TAG, "Start to run $jarPath with args: $jvmArgs")
         }

@@ -28,7 +28,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,6 +35,8 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.terracotta.Terracotta
 import com.movtery.zalithlauncher.terracotta.TerracottaVPNService
 import com.movtery.zalithlauncher.terracotta.fetchNodes
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +59,8 @@ sealed interface TerracottaOperation {
  */
 @Composable
 fun TerracottaOperation(
-    viewModel: TerracottaViewModel
+    viewModel: TerracottaViewModel,
+    onShowToast: (AndroidStringText, Int) -> Unit = { _, _ -> }
 ) {
     val scope = rememberCoroutineScope()
 
@@ -74,7 +76,7 @@ fun TerracottaOperation(
         } else {
             TerracottaAndroidAPI.getPendingVpnServiceRequest().reject()
             Terracotta.setWaiting(true)
-            Toast.makeText(context, context.getString(R.string.terracotta_permission_vpn), Toast.LENGTH_SHORT).show()
+            onShowToast(androidText(R.string.terracotta_permission_vpn), Toast.LENGTH_SHORT)
         }
     }
 
@@ -97,9 +99,6 @@ fun TerracottaOperation(
             //支持任何房间，实时展示所有玩家配置
             val profiles by viewModel.profiles.collectAsStateWithLifecycle()
 
-            val context = LocalContext.current
-
-            val invalidCodeText = stringResource(R.string.terracotta_status_waiting_guest_prompt_invalid)
             MultiplayerDialog(
                 onClose = { viewModel.operation = TerracottaOperation.None },
                 dialogState = viewModel.dialogState,
@@ -148,7 +147,7 @@ fun TerracottaOperation(
                             val success = Terracotta.setGuesting(roomCode, userName, nodeList)
                             viewModel.isWaitingInteractive = false
                             if (!success) {
-                                Toast.makeText(context, invalidCodeText, Toast.LENGTH_SHORT).show()
+                                onShowToast(androidText(R.string.terracotta_status_waiting_guest_prompt_invalid), Toast.LENGTH_SHORT)
                             }
                         }.onFailure { e ->
                             Logger.warning(TAG, "Error occurred at \"Terracotta.setGuesting(roomCode, userName)\", message = ${e.message}")
@@ -161,7 +160,8 @@ fun TerracottaOperation(
                 },
                 onBack = {
                     Terracotta.setWaiting(true)
-                }
+                },
+                onShowToast = { text -> onShowToast(androidText(text), Toast.LENGTH_SHORT) }
             )
         }
     }

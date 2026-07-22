@@ -26,6 +26,7 @@ import com.movtery.zalithlauncher.game.account.Account
 import com.movtery.zalithlauncher.game.account.AccountsManager
 import com.movtery.zalithlauncher.game.account.auth_server.data.AuthServer
 import com.movtery.zalithlauncher.game.account.auth_server.models.AuthResult
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.Dispatchers
 import java.util.Objects
@@ -83,7 +84,11 @@ class AuthServerHelper(
                 onFailed(e)
             },
             onFinally = onFinally
-        ).apply { updateMessage(R.string.account_logging_in, loggingString) }
+        ).apply {
+            updateMessage(
+                androidText(R.string.account_logging_in, loggingString)
+            )
+        }
     }
 
     private fun updateAccountInfo(
@@ -190,7 +195,11 @@ class AuthServerHelper(
                 Logger.error(TAG, "An exception was encountered while performing the refresh task.", e)
                 onFailed(e)
             }
-        ).apply { updateMessage(R.string.account_other_login_select_role_logging, account.username) }
+        ).apply {
+            updateMessage(
+                androidText(R.string.account_other_login_select_role_logging, account.username)
+            )
+        }
 
         TaskSystem.submitTask(task)
     }

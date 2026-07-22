@@ -80,7 +80,7 @@ private data class JvmCrash(
 ): Parcelable
 
 @AndroidEntryPoint
-class ErrorActivity : BaseAppCompatActivity(refreshData = false) {
+class ErrorActivity : BaseAppCompatActivity() {
 
     /**
      * 游戏崩溃日志上传逻辑管理 ViewModel

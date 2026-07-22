@@ -28,7 +28,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.context.COPY_LABEL_LINK
 import com.movtery.zalithlauncher.path.DOWNLOAD_OKHTTP_CLIENT
-import com.movtery.zalithlauncher.path.URL_USER_AGENT
 import com.movtery.zalithlauncher.path.createOkHttpClient
 import com.movtery.zalithlauncher.path.createRequestBuilder
 import com.movtery.zalithlauncher.ui.theme.showThemed
@@ -50,7 +49,6 @@ import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import okhttp3.Call
-import okhttp3.Request
 import org.apache.commons.io.FileUtils
 import java.io.BufferedOutputStream
 import java.io.File
@@ -120,10 +118,7 @@ fun downloadFileWithHttp(
         try {
             outputFile.ensureParentDirectory()
 
-            val request = Request.Builder()
-                .url(url)
-                .header("User-Agent", URL_USER_AGENT)
-                .build()
+            val request = createRequestBuilder(url).build()
 
             DOWNLOAD_OKHTTP_CLIENT
                 .newCall(request)

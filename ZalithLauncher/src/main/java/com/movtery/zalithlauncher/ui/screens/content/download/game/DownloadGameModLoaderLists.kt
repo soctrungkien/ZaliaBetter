@@ -41,6 +41,7 @@ import com.movtery.zalithlauncher.game.addons.modloader.forgelike.neoforge.NeoFo
 import com.movtery.zalithlauncher.game.addons.modloader.modlike.ModVersion
 import com.movtery.zalithlauncher.game.addons.modloader.optifine.OptiFineVersion
 import com.movtery.zalithlauncher.game.version.installed.utils.isBiggerVer
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.toLocal
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -287,24 +288,22 @@ suspend fun <T> ViewModel.runWithState(
                 //忽略，判定为不可用
                 AddonState.None
             }
-            is HttpRequestTimeoutException -> AddonState.Error(R.string.error_timeout)
+            is HttpRequestTimeoutException -> AddonState.Error(androidText(R.string.error_timeout))
             is UnknownHostException, is UnresolvedAddressException -> {
-                AddonState.Error(R.string.error_network_unreachable)
+                AddonState.Error(androidText(R.string.error_network_unreachable))
             }
             is ConnectException -> {
-                AddonState.Error(R.string.error_connection_failed)
+                AddonState.Error(androidText(R.string.error_connection_failed))
             }
             is SerializationException -> {
-                AddonState.Error(R.string.error_parse_failed)
+                AddonState.Error(androidText(R.string.error_parse_failed))
             }
-            is ResponseException -> {
-                val local = e.toLocal()
-                AddonState.Error(local.first, local.second)
-            }
+            is ResponseException -> AddonState.Error(e.toLocal())
             else -> {
                 Logger.error(TAG, "An unknown exception was caught!", e)
-                val errorMessage = e.localizedMessage ?: e.message ?: e::class.qualifiedName ?: "Unknown error"
-                AddonState.Error(R.string.empty_holder, arrayOf(errorMessage))
+                AddonState.Error(
+                    androidText(e.localizedMessage ?: e.message ?: e::class.qualifiedName ?: "Unknown error")
+                )
             }
         }
         updateState(state)

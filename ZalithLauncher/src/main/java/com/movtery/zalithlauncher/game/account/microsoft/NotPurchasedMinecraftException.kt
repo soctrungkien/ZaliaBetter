@@ -18,11 +18,12 @@
 
 package com.movtery.zalithlauncher.game.account.microsoft
 
-import android.content.Context
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 
 class NotPurchasedMinecraftException : RuntimeException()
 
-fun toLocal(context: Context): String {
-    return context.getString(R.string.account_logging_not_purchased_minecraft)
+fun toLocal(): AndroidStringText {
+    return androidText(R.string.account_logging_not_purchased_minecraft)
 }

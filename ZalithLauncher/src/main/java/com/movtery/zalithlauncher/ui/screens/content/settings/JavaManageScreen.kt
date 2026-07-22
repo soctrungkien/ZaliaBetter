@@ -66,6 +66,8 @@ import com.movtery.zalithlauncher.game.multirt.Runtime
 import com.movtery.zalithlauncher.game.multirt.RuntimesManager
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
 import com.movtery.zalithlauncher.ui.components.IconTextButton
@@ -86,6 +88,8 @@ import com.movtery.zalithlauncher.utils.file.checkExtensionOrThrow
 import com.movtery.zalithlauncher.utils.string.getMessageOrToString
 import com.movtery.zalithlauncher.utils.string.throwableToString
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
+import com.movtery.zalithlauncher.viewmodel.EventViewModel
+import com.movtery.zalithlauncher.viewmodel.sendToast
 import kotlinx.coroutines.Dispatchers
 
 private sealed interface RuntimeOperation {
@@ -99,6 +103,7 @@ fun JavaManageScreen(
     key: NestedNavKey.Settings,
     settingsScreenKey: TitledNavKey?,
     mainScreenKey: TitledNavKey?,
+    eventViewModel: EventViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
     val context = LocalContext.current
@@ -159,7 +164,7 @@ fun JavaManageScreen(
                         progressUris = { uris ->
                             uris[0].let { uri ->
                                 RuntimesManager.getExactJreName(8) ?: run {
-                                    Toast.makeText(context, R.string.multirt_no_java_8, Toast.LENGTH_LONG).show()
+                                    eventViewModel.sendToast(androidText(R.string.multirt_no_java_8), Toast.LENGTH_LONG)
                                     return@ImportSingleFileButton
                                 }
                                 (context as? Activity)?.let { activity ->
@@ -229,14 +234,16 @@ private fun RuntimeOperation(
                     id = runtime.name,
                     dispatcher = Dispatchers.IO,
                     task = { task ->
-                        task.updateMessage(R.string.multirt_runtime_deleting, runtime.name)
+                        task.updateMessage(androidText(
+                            R.string.multirt_runtime_deleting, runtime.name
+                        ))
                         RuntimesManager.removeRuntime(runtime.name)
                     },
                     onError = {
                         submitError(
                             ErrorViewModel.ThrowableMessage(
-                                title = failedMessage,
-                                message = it.getMessageOrToString()
+                                title = androidText(failedMessage),
+                                message = androidText(it.getMessageOrToString())
                             )
                         )
                     },
@@ -255,8 +262,8 @@ private fun progressRuntimeUri(
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
     fun showError(
-        title: String = context.getString(R.string.multirt_runtime_import_failed),
-        message: String
+        title: AndroidStringText = androidText(R.string.multirt_runtime_import_failed),
+        message: AndroidStringText
     ) {
         submitError(
             ErrorViewModel.ThrowableMessage(
@@ -267,7 +274,7 @@ private fun progressRuntimeUri(
     }
 
     val name = context.getFileName(uri) ?: run {
-        showError(message = context.getString(R.string.multirt_runtime_import_failed_file_name))
+        showError(message = androidText(R.string.multirt_runtime_import_failed_file_name))
         return
     }
     TaskSystem.submitTask(
@@ -278,7 +285,7 @@ private fun progressRuntimeUri(
                 name.checkExtensionOrThrow(listOf("xz"))
 
                 val inputStream = context.contentResolver.openInputStream(uri) ?: run {
-                    showError(message = context.getString(R.string.multirt_runtime_import_failed_input_stream))
+                    showError(message = androidText(R.string.multirt_runtime_import_failed_input_stream))
                     return@runTask
                 }
                 RuntimesManager.installRuntime(
@@ -286,12 +293,14 @@ private fun progressRuntimeUri(
                     inputStream = inputStream,
                     name = name,
                     updateProgress = { textRes, textArg ->
-                        task.updateMessage(textRes, *textArg)
+                        task.updateMessage(androidText(
+                            textRes, *textArg
+                        ))
                     }
                 )
             },
             onError = {
-                showError(message = throwableToString(it))
+                showError(message = androidText(throwableToString(it)))
             },
             onFinally = callRefresh,
             onCancel = {
@@ -300,8 +309,8 @@ private fun progressRuntimeUri(
                     callRefresh()
                 }.onFailure { t ->
                     showError(
-                        title = context.getString(R.string.multirt_runtime_delete_failed),
-                        message = t.getMessageOrToString()
+                        title = androidText(R.string.multirt_runtime_delete_failed),
+                        message = androidText(t.getMessageOrToString())
                     )
                 }
             }

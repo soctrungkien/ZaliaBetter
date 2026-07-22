@@ -107,7 +107,7 @@ class TaskFlowExecutor(
                 //执行阶段内的所有任务
                 for (task in phase.tasks) {
                     ensureActive()
-                    task.task.taskState = TaskState.RUNNING
+                    task.task.updateStage(TaskStage.RUNNING)
 
                     //为每个任务创建独立的Job，以便可以立即取消
                     //使用SupervisorJob确保任务内部的子协程异常不会影响其他任务
@@ -134,7 +134,7 @@ class TaskFlowExecutor(
                                 }
                             }
                         }
-                        task.task.taskState = TaskState.COMPLETED
+                        task.task.updateStage(TaskStage.COMPLETED)
                     } finally {
                         //确保taskJob被取消和清理，无论任务成功还是失败
                         taskJob.cancel()

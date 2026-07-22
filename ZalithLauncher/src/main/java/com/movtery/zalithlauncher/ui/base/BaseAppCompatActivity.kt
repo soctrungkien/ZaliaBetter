@@ -23,33 +23,18 @@ import androidx.annotation.CallSuper
 import com.movtery.zalithlauncher.context.refreshContext
 import com.movtery.zalithlauncher.game.account.AccountsManager
 import com.movtery.zalithlauncher.game.path.GamePathManager
-import com.movtery.zalithlauncher.game.plugin.PluginLoader
-import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.setting.loadAllSettings
 import com.movtery.zalithlauncher.utils.checkStoragePermissionsForInit
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-open class BaseAppCompatActivity(
-    /** 是否刷新数据 */
-    private val refreshData: Boolean = true
-) : FullScreenAppCompatActivity() {
-
+open class BaseAppCompatActivity : FullScreenAppCompatActivity() {
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         refreshContext(this)
         checkStoragePermissions()
-
-        if (refreshData) {
-            //加载渲染器
-            Renderers.init()
-            //加载插件
-            PluginLoader.loadAllPlugins(this, false)
-            //刷新其他内容
-            refreshData()
-        }
     }
 
     @CallSuper
@@ -59,7 +44,7 @@ open class BaseAppCompatActivity(
         checkStoragePermissions()
     }
 
-    private fun refreshData() {
+    protected fun refreshData() {
         AccountsManager.reloadAccounts()
         AccountsManager.reloadAuthServers()
         GamePathManager.reloadPath()

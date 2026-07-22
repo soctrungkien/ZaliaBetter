@@ -32,6 +32,7 @@ import com.movtery.zalithlauncher.game.path.GamePathManager
 import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.path.PathManager
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.extractFromZip
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.isUsingMobileData
@@ -122,7 +123,7 @@ class ModpackImporter(
                 //清除上一次安装的缓存（如果有的话，可能会影响这次的安装结果）
                 addTask(
                     id = "ImportModpack.Cleanup",
-                    title = context.getString(R.string.download_install_clear_temp),
+                    title = androidText(R.string.download_install_clear_temp),
                     icon = R.drawable.ic_auto_delete_outlined
                 ) { _ ->
                     GamePathManager.waitForRefresh()
@@ -139,7 +140,7 @@ class ModpackImporter(
                 //先导入文件
                 addTask(
                     id = "ImportModpack.ImportFile",
-                    title = context.getString(R.string.import_modpack_task_unpack),
+                    title = androidText(R.string.import_modpack_task_unpack),
                     dispatcher = Dispatchers.IO,
                     icon = R.drawable.ic_unarchive_outlined
                 ) { task ->
@@ -181,7 +182,7 @@ class ModpackImporter(
                 //解析整合包
                 addTask(
                     id = "ImportModpack.ParsePack",
-                    title = context.getString(R.string.import_modpack_task_parse),
+                    title = androidText(R.string.import_modpack_task_parse),
                     icon = R.drawable.ic_build_outlined
                 ) { task ->
                     task.updateProgress(-1f)

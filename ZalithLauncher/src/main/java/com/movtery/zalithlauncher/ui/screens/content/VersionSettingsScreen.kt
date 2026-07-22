@@ -75,6 +75,7 @@ import com.movtery.zalithlauncher.game.version.download.DownloadFailedException
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.notification.NotificationManager
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.NotificationCheck
@@ -105,6 +106,7 @@ import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
+import com.movtery.zalithlauncher.viewmodel.sendToast
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -207,8 +209,8 @@ fun VersionSettingsScreen(
 
     val cBackToMainScreen by rememberUpdatedState(backToMainScreen)
     DisposableEffect(key) {
-        val listener = object : suspend (List<Version>) -> Unit {
-            override suspend fun invoke(versions: List<Version>) {
+        val listener = object : suspend () -> Unit {
+            override suspend fun invoke() {
                 cBackToMainScreen()
             }
         }
@@ -326,9 +328,9 @@ private fun TabMenu(
                 onClick = {
                     if (item.key == NormalNavKey.Versions.UpdateLoader) {
                         if (isUpdateLoader) {
-                            NormalNavKey.Versions.UpdateLoader.title = R.string.versions_update_loader
+                            NormalNavKey.Versions.UpdateLoader.title = androidText(R.string.versions_update_loader)
                         } else {
-                            NormalNavKey.Versions.UpdateLoader.title = R.string.versions_install_loader
+                            NormalNavKey.Versions.UpdateLoader.title = androidText(R.string.versions_install_loader)
                         }
                     }
                     backStack.navigateOnce(item.key)
@@ -339,10 +341,10 @@ private fun TabMenu(
                 label = {
                     val text = if (item.key == NormalNavKey.Versions.UpdateLoader) {
                         if (isUpdateLoader) {
-                            NormalNavKey.Versions.UpdateLoader.title = R.string.versions_update_loader
+                            NormalNavKey.Versions.UpdateLoader.title = androidText(R.string.versions_update_loader)
                             stringResource(item.textRes)
                         } else {
-                            NormalNavKey.Versions.UpdateLoader.title = R.string.versions_install_loader
+                            NormalNavKey.Versions.UpdateLoader.title = androidText(R.string.versions_install_loader)
                             stringResource(R.string.versions_install_loader)
                         }
                     } else {
@@ -417,6 +419,9 @@ private fun NavigationUI(
                                 EventViewModel.Event.VulkanCheck
                             )
                         },
+                        showToast = { text ->
+                            eventViewModel.sendToast(text)
+                        },
                         submitError = submitError
                     )
                 }
@@ -451,12 +456,9 @@ private fun NavigationUI(
                             )
                         },
                         onSwapMoreInfo = { projectId, platform ->
-                            backScreenViewModel.navigateToDownload(
-                                targetScreen = backScreenViewModel.downloadModScreen.apply {
-                                    navigateTo(
-                                        NormalNavKey.DownloadAssets(platform, projectId, PlatformClasses.MOD)
-                                    )
-                                }
+                            backScreenViewModel.mainScreen.removeAndNavigateTo(
+                                NestedNavKey.AssetInfo::class,
+                                NestedNavKey.AssetInfo(platform, projectId, PlatformClasses.MOD)
                             )
                         },
                         eventViewModel = eventViewModel,
@@ -519,6 +521,7 @@ private fun NavigationUI(
                         versionsScreenKey = versionsScreenKey,
                         version = version,
                         backToMainScreen = backToMainScreen,
+                        eventViewModel = eventViewModel,
                         submitError = submitError
                     )
                 }
@@ -648,8 +651,7 @@ private fun UpdateLoaderOperation(
                 is JvmCrashException -> stringResource(R.string.download_install_error_jvm_crash, th.code)
                 is DownloadFailedException -> stringResource(R.string.download_install_error_download_failed)
                 else -> {
-                    val errorMessage = th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
-                    stringResource(R.string.empty_holder, errorMessage)
+                    th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
                 }
             }
             val dismiss = {

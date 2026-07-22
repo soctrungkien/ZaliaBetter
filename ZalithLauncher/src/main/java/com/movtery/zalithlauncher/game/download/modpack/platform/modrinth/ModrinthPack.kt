@@ -26,6 +26,7 @@ import com.movtery.zalithlauncher.game.download.modpack.install.ModFile
 import com.movtery.zalithlauncher.game.download.modpack.install.ModPackInfo
 import com.movtery.zalithlauncher.game.download.modpack.install.ModPackInfoTask
 import com.movtery.zalithlauncher.game.download.modpack.platform.PackPlatform
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.copyDirectoryContents
 import java.io.File
 
@@ -71,7 +72,8 @@ class ModrinthPack(
         }
 
         //提取覆盖包到目标目录
-        task.updateProgress(-1f, R.string.download_modpack_install_overrides)
+        task.updateProgress(-1f)
+        task.updateMessage(androidText(R.string.download_modpack_install_overrides))
         extractFiles("overrides", targetFolder)
         extractFiles("client-overrides", targetFolder)
 

@@ -18,7 +18,6 @@
 
 package com.movtery.zalithlauncher.game.version.installed.cleanup
 
-import android.content.Context
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskFlowExecutor
@@ -29,6 +28,7 @@ import com.movtery.zalithlauncher.game.path.getAssetsHome
 import com.movtery.zalithlauncher.game.version.download.BaseMinecraftDownloader
 import com.movtery.zalithlauncher.game.version.installed.VersionInfoParser
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.collectFiles
 import com.movtery.zalithlauncher.utils.file.findRedundantFiles
 import com.movtery.zalithlauncher.utils.file.formatFileSize
@@ -41,7 +41,6 @@ import org.apache.commons.io.FileUtils
 import java.io.File
 
 class GameAssetCleaner(
-    private val context: Context,
     scope: CoroutineScope
 ) {
     private val taskExecutor = TaskFlowExecutor(scope)
@@ -127,7 +126,7 @@ class GameAssetCleaner(
                 //获取全部文件
                 addTask(
                     id = "GameAssetCleaner.CollectFiles",
-                    title = context.getString(R.string.versions_manage_cleanup_collect_files),
+                    title = androidText(R.string.versions_manage_cleanup_collect_files),
                     icon = R.drawable.ic_article_outlined,
                 ) { task ->
                     task.updateProgress(-1f)
@@ -139,17 +138,18 @@ class GameAssetCleaner(
                 //收集所有版本所需的游戏文件
                 addTask(
                     id = "GameAssetCleaner.CollectGameFiles",
-                    title = context.getString(R.string.versions_manage_cleanup_collect_game_files),
+                    title = androidText(R.string.versions_manage_cleanup_collect_game_files),
                     icon = R.drawable.ic_article_outlined
                 ) { task ->
                     task.updateProgress(-1f)
 
-                    val allVersions = VersionsManager.versions.toList()
-
+                    val allVersions = VersionsManager.versions.value
                     allVersions.forEach { version ->
                         ensureActive()
 
-                        task.updateMessage(R.string.versions_manage_cleanup_progress_next_version, version.getVersionName())
+                        task.updateMessage(androidText(
+                            R.string.versions_manage_cleanup_progress_next_version, version.getVersionName()
+                        ))
 
                         //已启动游戏时所需的依赖为准
                         val gameManifest = VersionInfoParser(version)
@@ -162,7 +162,7 @@ class GameAssetCleaner(
                             if (allGameFiles.addIfNotContains(file)) {
                                 file.alsoProgress(task)
                             } else {
-                                task.updateMessage(R.string.versions_manage_cleanup_progress_collected)
+                                task.updateMessage(androidText(R.string.versions_manage_cleanup_progress_collected))
                             }
                         }
 
@@ -178,7 +178,7 @@ class GameAssetCleaner(
                 //对比出无用的文件
                 addTask(
                     id = "GameAssetCleaner.CompareFiles",
-                    title = context.getString(R.string.versions_manage_cleanup_compare_files),
+                    title = androidText(R.string.versions_manage_cleanup_compare_files),
                     icon = R.drawable.ic_build_outlined
                 ) { task ->
                     task.updateProgress(-1f)
@@ -192,7 +192,7 @@ class GameAssetCleaner(
                 //清理文件
                 addTask(
                     id = "GameAssetsCleaner.Cleanup",
-                    title = context.getString(R.string.versions_manage_cleanup_cleanup),
+                    title = androidText(R.string.versions_manage_cleanup_cleanup),
                     icon = R.drawable.ic_auto_delete_outlined,
                     dispatcher = Dispatchers.IO
                 ) { task ->
@@ -209,10 +209,11 @@ class GameAssetCleaner(
                             cleanedSize += size
                         }
                         task.updateProgress(
-                            percentage = index.toFloat() / totalSize.toFloat(),
-                            message = R.string.versions_manage_cleanup_progress,
-                            file.name
+                            index.toFloat() / totalSize.toFloat()
                         )
+                        task.updateMessage(androidText(
+                            R.string.versions_manage_cleanup_progress, file.name
+                        ))
                     }
 
                     task.updateProgress(-1f)
@@ -230,7 +231,10 @@ class GameAssetCleaner(
     }
 
     private fun File.alsoProgress(task: Task) = this.also {
-        task.updateProgress(-1f, R.string.versions_manage_cleanup_progress, it.name)
+        task.updateProgress(-1f)
+        task.updateMessage(androidText(
+            R.string.versions_manage_cleanup_progress, it.name
+        ))
     }
 
     /**

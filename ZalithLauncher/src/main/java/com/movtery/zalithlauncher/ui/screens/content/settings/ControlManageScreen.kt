@@ -101,6 +101,7 @@ import com.movtery.zalithlauncher.game.control.ControlManager
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.activities.startEditorActivity
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedRow
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
@@ -240,8 +241,8 @@ fun ControlManageScreen(
             viewModel.createNew(layout) { e ->
                 submitError(
                     ErrorViewModel.ThrowableMessage(
-                        title = context.getString(R.string.control_manage_failed_to_save),
-                        message = e.getMessageOrToString()
+                        title = androidText(R.string.control_manage_failed_to_save),
+                        message = androidText(e.getMessageOrToString())
                     )
                 )
             }
@@ -252,8 +253,8 @@ fun ControlManageScreen(
         onSave = { data ->
             ControlManager.saveControl(data) { e ->
                 ErrorViewModel.ThrowableMessage(
-                    title = context.getString(R.string.control_manage_failed_to_save),
-                    message = e.getMessageOrToString()
+                    title = androidText(R.string.control_manage_failed_to_save),
+                    message = androidText(e.getMessageOrToString())
                 )
             }
         }
@@ -290,8 +291,8 @@ fun ControlManageScreen(
                         viewModel.copyNew(data.controlLayout) { e ->
                             submitError(
                                 ErrorViewModel.ThrowableMessage(
-                                    title = context.getString(R.string.control_manage_failed_to_save),
-                                    message = e.getMessageOrToString()
+                                    title = androidText(R.string.control_manage_failed_to_save),
+                                    message = androidText(e.getMessageOrToString())
                                 )
                             )
                         }

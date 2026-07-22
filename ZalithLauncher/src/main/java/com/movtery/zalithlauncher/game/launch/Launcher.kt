@@ -269,6 +269,8 @@ abstract class Launcher(
         args.add("-Xms${ramAllocationString}M")
         args.add("-Xmx${ramAllocationString}M")
 
+        args.add("-Dorg.lwjgl.openal.libname=${PathManager.DIR_NATIVE_LIB}/libopenal.so")
+
         // Force LWJGL to use the Freetype library intended for it, instead of using the one
         // that we ship with Java (since it may be older than what's needed)
         args.add("-Dorg.lwjgl.freetype.libname=${PathManager.DIR_NATIVE_LIB}/libfreetype.so")
@@ -311,7 +313,7 @@ abstract class Launcher(
         return jvmLibDir
     }
 
-    protected fun getRuntimeLibraryPath(): String {
+    protected open fun getRuntimeLibraryPath(): String {
         val javaLibDir = getJavaLibDir()
         val jvmLibDir = getJvmLibDir()
 

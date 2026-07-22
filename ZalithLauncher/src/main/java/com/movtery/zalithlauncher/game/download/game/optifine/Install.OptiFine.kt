@@ -30,6 +30,7 @@ import com.movtery.zalithlauncher.game.download.jvm_server.stopAllNonMainProcess
 import com.movtery.zalithlauncher.game.version.download.parseTo
 import com.movtery.zalithlauncher.game.versioninfo.models.GameManifest
 import com.movtery.zalithlauncher.path.LibPath
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.extractEntryToFile
 import com.movtery.zalithlauncher.utils.file.readText
 import com.movtery.zalithlauncher.utils.logging.Logger
@@ -54,7 +55,10 @@ fun getOptiFineInstallTask(
     return Task.runTask(
         id = OPTIFINE_INSTALL_ID,
         task = { task ->
-            task.updateProgress(-1f, R.string.download_game_install_base_installing, ModLoader.OPTIFINE.displayName)
+            task.updateProgress(-1f)
+            task.updateMessage(androidText(
+                R.string.download_game_install_base_installing, ModLoader.OPTIFINE.displayName
+            ))
 
             if (isNewVersion) {
                 stopAllNonMainProcesses(GlobalContext)

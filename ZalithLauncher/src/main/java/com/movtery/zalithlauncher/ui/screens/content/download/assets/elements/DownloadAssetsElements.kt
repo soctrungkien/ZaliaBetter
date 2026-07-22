@@ -79,6 +79,7 @@ import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.components.IconTextButton
 import com.movtery.zalithlauncher.ui.components.LittleTextLabel
 import com.movtery.zalithlauncher.ui.components.ShimmerBox
@@ -96,25 +97,7 @@ import org.jackhuang.hmcl.util.versioning.GameVersionNumber
 sealed interface DownloadAssetsState<T> {
     class Getting<T> : DownloadAssetsState<T>
     data class Success<T>(val result: T) : DownloadAssetsState<T>
-    data class Error<T>(val message: Int, val args: Array<Any>? = null) : DownloadAssetsState<T> {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Error<*>
-
-            if (message != other.message) return false
-            if (!args.contentEquals(other.args)) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = message
-            result = 31 * result + (args?.contentHashCode() ?: 0)
-            return result
-        }
-    }
+    data class Error<T>(val message: AndroidStringText) : DownloadAssetsState<T>
 }
 
 sealed interface DownloadAssetsVersionLoading {

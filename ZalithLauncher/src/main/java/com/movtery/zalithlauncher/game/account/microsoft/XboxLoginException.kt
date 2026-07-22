@@ -18,7 +18,6 @@
 
 package com.movtery.zalithlauncher.game.account.microsoft
 
-import android.content.Context
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException.ExceptionStatus.BANNED
 import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException.ExceptionStatus.BLOCKED_REGION
@@ -28,6 +27,8 @@ import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException.Exce
 import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException.ExceptionStatus.RESTRICTED
 import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException.ExceptionStatus.UNDERAGE
 import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException.ExceptionStatus.UNREGISTERED
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 
 /**
  * Xbox 登陆出现的各种异常
@@ -76,15 +77,17 @@ class XboxLoginException(val status: ExceptionStatus) : RuntimeException() {
     }
 }
 
-fun XboxLoginException.toLocal(context: Context): String {
-    return when(status) {
-        BANNED -> context.getString(R.string.account_logging_xbox_banned)
-        RESTRICTED -> context.getString(R.string.account_logging_xbox_restricted)
-        UNREGISTERED -> context.getString(R.string.account_logging_xbox_unregistered)
-        NOT_ACCEPTED_SERVICE -> context.getString(R.string.account_logging_xbox_not_accepted_service)
-        BLOCKED_REGION -> context.getString(R.string.account_logging_xbox_blocked_region)
-        REQUIRES_PROOF_OF_AGE -> context.getString(R.string.account_logging_xbox_requires_proof_of_age)
-        REACHED_PLAYTIME_LIMIT -> context.getString(R.string.account_logging_xbox_reached_playtime_limit)
-        UNDERAGE -> context.getString(R.string.account_logging_xbox_underage)
-    }
+fun XboxLoginException.toLocal(): AndroidStringText {
+    return androidText(
+        when(status) {
+            BANNED -> R.string.account_logging_xbox_banned
+            RESTRICTED -> R.string.account_logging_xbox_restricted
+            UNREGISTERED -> R.string.account_logging_xbox_unregistered
+            NOT_ACCEPTED_SERVICE -> R.string.account_logging_xbox_not_accepted_service
+            BLOCKED_REGION -> R.string.account_logging_xbox_blocked_region
+            REQUIRES_PROOF_OF_AGE -> R.string.account_logging_xbox_requires_proof_of_age
+            REACHED_PLAYTIME_LIMIT -> R.string.account_logging_xbox_reached_playtime_limit
+            UNDERAGE -> R.string.account_logging_xbox_underage
+        }
+    )
 }

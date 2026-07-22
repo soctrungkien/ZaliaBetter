@@ -16,31 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/gpl-3.0.txt>.
  */
 
-package com.movtery.zalithlauncher.game.plugin.renderer
+package com.movtery.zalithlauncher.game.plugin.renderer_v2.data
 
-class ApkRendererPlugin(
-    id: String,
-    displayName: String,
-    summary: String? = null,
-    minMCVer: String? = null,
-    maxMCVer: String? = null,
-    uniqueIdentifier: String,
-    glName: String,
-    eglName: String,
-    path: String,
-    env: Map<String, String>,
-    dlopen: List<String>,
-    val packageName: String
-) : RendererPlugin(
-    id = id,
-    displayName = displayName,
-    summary = summary,
-    minMCVer = minMCVer,
-    maxMCVer = maxMCVer,
-    uniqueIdentifier = uniqueIdentifier,
-    glName = glName,
-    eglName = eglName,
-    path = path,
-    env = env,
-    dlopen = dlopen
-)
+import com.tencent.mmkv.MMKV
+
+/**
+ * 渲染器插件环境变量配置 MMKV，按包名隔离存储各可配置环境变量的值
+ */
+fun rendererEnvMMKV(): MMKV = MMKV.mmkvWithID("RendererEnvConfig", MMKV.MULTI_PROCESS_MODE)

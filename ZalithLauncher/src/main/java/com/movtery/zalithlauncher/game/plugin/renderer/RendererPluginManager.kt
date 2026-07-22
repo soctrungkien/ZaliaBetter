@@ -24,6 +24,7 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.plugin.ApkPlugin
 import com.movtery.zalithlauncher.game.plugin.ApkPluginManager
 import com.movtery.zalithlauncher.game.plugin.cacheAppIcon
+import com.movtery.zalithlauncher.game.plugin.renderer_v2.RendererV2PluginManager
 import com.movtery.zalithlauncher.game.renderer.Renderers
 
 /**
@@ -32,7 +33,6 @@ import com.movtery.zalithlauncher.game.renderer.Renderers
  */
 object RendererPluginManager: ApkPluginManager() {
     private val rendererPluginList: MutableList<RendererPlugin> = mutableListOf()
-    private val apkRendererPluginList: MutableList<ApkRendererPlugin> = mutableListOf()
 
     /**
      * 获取当前渲染器插件加载的所有渲染器
@@ -47,13 +47,6 @@ object RendererPluginManager: ApkPluginManager() {
     }
 
     /**
-     * @return 是可用的
-     */
-    fun isAvailable(): Boolean {
-        return rendererPluginList.isNotEmpty()
-    }
-
-    /**
      * 当前选择的渲染器插件所加载的渲染器
      * 根据总渲染器管理者选择的渲染器的渲染器唯一标识符进行判断
      */
@@ -62,7 +55,7 @@ object RendererPluginManager: ApkPluginManager() {
             val currentRenderer = runCatching {
                 Renderers.getCurrentRenderer().getUniqueIdentifier()
             }.getOrNull()
-            return rendererPluginList.find { it.uniqueIdentifier == currentRenderer }
+            return rendererPluginList.find { it.packageName == currentRenderer }
         }
 
     /**
@@ -70,7 +63,6 @@ object RendererPluginManager: ApkPluginManager() {
      */
     fun clearPlugin() {
         rendererPluginList.clear()
-        apkRendererPluginList.clear()
     }
 
     /**
@@ -78,12 +70,8 @@ object RendererPluginManager: ApkPluginManager() {
      */
     @JvmStatic
     fun isConfigurablePlugin(rendererUniqueIdentifier: String): Boolean {
-        val renderer = apkRendererPluginList.find { it.uniqueIdentifier == rendererUniqueIdentifier }
-        return renderer?.packageName in setOf(
-            "com.bzlzhh.plugin.ngg",
-            "com.bzlzhh.plugin.ngg.angleless",
-            "com.fcl.plugin.mobileglues"
-        )
+        val renderer = rendererPluginList.find { it.packageName == rendererUniqueIdentifier }
+        return renderer?.isConfigurable == true
     }
 
     /**
@@ -100,6 +88,17 @@ object RendererPluginManager: ApkPluginManager() {
                 metaData.getBoolean("fclPlugin", false) ||
                 metaData.getBoolean("zalithRendererPlugin", false)
             ) {
+                val packageManager = context.packageManager
+                val packageName = info.packageName
+                val appName = info.loadLabel(packageManager).toString()
+
+                // 如果已加载新架构渲染器插件，此处不再继续加载其提供的旧架构
+                if (
+                    RendererV2PluginManager.getRendererList().any { v2Plugin ->
+                        v2Plugin.packageName == packageName
+                    }
+                ) return
+
                 val rendererString = metaData.getString("renderer") ?: return
                 val des = metaData.getString("des") ?: return
                 val pojavEnvString = metaData.getString("pojavEnv") ?: return
@@ -127,35 +126,34 @@ object RendererPluginManager: ApkPluginManager() {
                     }
                 }
 
-                val packageManager = context.packageManager
-                val packageName = info.packageName
-                val appName = info.loadLabel(packageManager).toString()
-
-                val plugin = ApkRendererPlugin(
+                val plugin = RendererPlugin(
+                    packageName = packageName,
                     id = rendererId,
                     displayName = des,
                     summary = context.getString(R.string.settings_renderer_from_plugins, appName),
                     minMCVer = metaData.getVersionString("minMCVer"),
                     maxMCVer = metaData.getVersionString("maxMCVer"),
-                    uniqueIdentifier = packageName,
                     glName = renderer[1],
                     eglName = renderer[2].progressEglName(nativeLibraryDir),
                     path = nativeLibraryDir,
                     env = envList,
                     dlopen = dlopenList,
-                    packageName = packageName
+                    isConfigurable = packageName in setOf(
+                        "com.bzlzhh.plugin.ngg",
+                        "com.bzlzhh.plugin.ngg.angleless",
+                        "com.fcl.plugin.mobileglues"
+                    )
                 )
 
                 rendererPluginList.add(plugin)
-                apkRendererPluginList.add(plugin)
 
                 runCatching {
                     cacheAppIcon(context, info)
-                    object : ApkPlugin(
+                    ApkPlugin(
                         packageName = packageName,
                         appName = appName,
                         appVersion = packageManager.getPackageInfo(packageName, 0).versionName ?: ""
-                    ) {}
+                    )
                 }.getOrNull()?.let { loaded(it) }
             }
         }

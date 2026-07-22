@@ -275,3 +275,12 @@ fun Modifier.verticalScrollWithBar(
     flingBehavior = flingBehavior,
     reverseScrolling = reverseScrolling,
 )
+
+@Composable
+fun Modifier.lazyScrollWithBar(
+    state: LazyListState,
+    orientation: Orientation = Orientation.Vertical
+): Modifier = this.scrollbar(
+    state = state.scrollIndicatorState,
+    orientation = orientation
+)

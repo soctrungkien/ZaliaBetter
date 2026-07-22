@@ -58,6 +58,7 @@ import com.movtery.zalithlauncher.setting.enums.GestureActionType
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
 import com.movtery.zalithlauncher.setting.unit.ParcelableSettingUnit
 import com.movtery.zalithlauncher.setting.unit.floatRange
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedColumn
 import com.movtery.zalithlauncher.ui.components.IconTextButton
@@ -684,8 +685,8 @@ private fun MousePointerCard(
                         FileUtils.deleteQuietly(mousePointerFile)
                         submitError(
                             ErrorViewModel.ThrowableMessage(
-                                title = context.getString(R.string.error_import_image),
-                                message = th.getMessageOrToString()
+                                title = androidText(R.string.error_import_image),
+                                message = androidText(th.getMessageOrToString())
                             )
                         )
                     }

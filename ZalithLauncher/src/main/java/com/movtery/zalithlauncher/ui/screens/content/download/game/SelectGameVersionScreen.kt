@@ -76,7 +76,10 @@ import com.movtery.zalithlauncher.game.versioninfo.MinecraftVersion
 import com.movtery.zalithlauncher.game.versioninfo.MinecraftVersions
 import com.movtery.zalithlauncher.game.versioninfo.models.isType
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
+import com.movtery.zalithlauncher.ui.buildAppendedText
 import com.movtery.zalithlauncher.ui.components.CheckChip
 import com.movtery.zalithlauncher.ui.components.EdgeDirection
 import com.movtery.zalithlauncher.ui.components.LittleTextLabel
@@ -114,28 +117,7 @@ private sealed interface VersionState {
     /** 加载完成 */
     data class None(val versions: List<MinecraftVersion>) : VersionState
     /** 加载出现异常 */
-    data class Failure(val message: Int, val args: Array<Any>? = null) : VersionState {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Failure
-
-            if (message != other.message) return false
-            if (args != null) {
-                if (other.args == null) return false
-                if (!args.contentEquals(other.args)) return false
-            } else if (other.args != null) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = message
-            result = 31 * result + (args?.contentHashCode() ?: 0)
-            return result
-        }
-    }
+    data class Failure(val message: AndroidStringText) : VersionState
 }
 
 /**
@@ -180,18 +162,17 @@ private class VersionsViewModel: ViewModel() {
                 VersionState.None(allVersions.filterVersions(versionFilter))
             }.getOrElse { e ->
                 Logger.warning(TAG, "Failed to get version manifest!", e)
-                val message: Pair<Int, Array<Any>?> = when(e) {
-                    is HttpRequestTimeoutException -> R.string.error_timeout to null
-                    is UnknownHostException, is UnresolvedAddressException -> R.string.error_network_unreachable to null
-                    is ConnectException -> R.string.error_connection_failed to null
+                val message: AndroidStringText = when(e) {
+                    is HttpRequestTimeoutException -> androidText(R.string.error_timeout)
+                    is UnknownHostException, is UnresolvedAddressException -> androidText(R.string.error_network_unreachable)
+                    is ConnectException -> androidText(R.string.error_connection_failed)
                     is ResponseException -> e.toLocal()
                     else -> {
                         Logger.error(TAG, "An unknown exception was caught!", e)
-                        val errorMessage = e.localizedMessage ?: e.message ?: e::class.qualifiedName ?: "Unknown error"
-                        R.string.empty_holder to arrayOf(errorMessage)
+                        androidText(e.localizedMessage ?: e.message ?: e::class.qualifiedName ?: "Unknown error")
                     }
                 }
-                VersionState.Failure(message.first, message.second)
+                VersionState.Failure(message)
             }
         }
     }
@@ -252,15 +233,16 @@ fun SelectGameVersionScreen(
 
                 is VersionState.Failure -> {
                     Box(Modifier.fillMaxSize()) {
-                        val message = if (state.args != null) {
-                            stringResource(state.message, *state.args)
-                        } else {
-                            stringResource(state.message)
-                        }
-
                         ScalingLabel(
                             modifier = Modifier.align(Alignment.Center),
-                            text = stringResource(R.string.download_game_failed_to_get_versions, message),
+                            text = {
+                                AndroidStringText(
+                                    text = buildAppendedText {
+                                        append(R.string.download_game_failed_to_get_versions)
+                                        append(state.message)
+                                    }
+                                )
+                            },
                             onClick = {
                                 viewModel.refresh(true)
                             }

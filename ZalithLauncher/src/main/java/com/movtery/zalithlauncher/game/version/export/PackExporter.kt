@@ -32,6 +32,7 @@ import com.movtery.zalithlauncher.game.version.export.platform.ModrinthPackExpor
 import com.movtery.zalithlauncher.game.version.export.platform.MultiMCPackExporter
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.path.PathManager
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.zipDirectory
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -105,7 +106,7 @@ class PackExporter(
                 //清除上一次导出的缓存
                 addTask(
                     id = "ExportModpack.Cleanup",
-                    title = context.getString(R.string.download_install_clear_temp),
+                    title = androidText(R.string.download_install_clear_temp),
                     icon = R.drawable.ic_auto_delete_outlined
                 ) {
                     clearTempModPackDir()
@@ -123,7 +124,7 @@ class PackExporter(
 
                 addTask(
                     id = "ExportModpack.Pack",
-                    title = context.getString(R.string.versions_export_task_generate_pack),
+                    title = androidText(R.string.versions_export_task_generate_pack),
                     icon = R.drawable.ic_build_outlined
                 ) {
                     zipDirectory(
@@ -141,7 +142,7 @@ class PackExporter(
 
                 addTask(
                     id = "ExportModpack.Cleanup_Finished",
-                    title = context.getString(R.string.download_install_clear_temp),
+                    title = androidText(R.string.download_install_clear_temp),
                     icon = R.drawable.ic_auto_delete_outlined
                 ) {
                     clearTempModPackDir()

@@ -40,6 +40,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.absoluteOffset
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.ime
 import androidx.compose.runtime.Composable
@@ -81,11 +82,13 @@ import com.movtery.zalithlauncher.game.launch.handler.GameHandler
 import com.movtery.zalithlauncher.game.launch.handler.HandlerType
 import com.movtery.zalithlauncher.game.launch.handler.JVMHandler
 import com.movtery.zalithlauncher.game.multirt.RuntimesManager
+import com.movtery.zalithlauncher.game.plugin.PluginLoader
+import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.terracotta.TerracottaVPNService
 import com.movtery.zalithlauncher.ui.base.BaseAppCompatActivity
-import com.movtery.zalithlauncher.ui.base.applyFullscreen
+import com.movtery.zalithlauncher.ui.base.ObserveFullScreenSetting
 import com.movtery.zalithlauncher.ui.components.rememberBoxSize
 import com.movtery.zalithlauncher.ui.control.input.HidableInputLayout
 import com.movtery.zalithlauncher.ui.control.input.TextInputMode
@@ -313,6 +316,8 @@ class VMViewModel : ViewModel() {
 }
 
 class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolder.Callback {
+    override fun isIgnoreNotch(): Boolean = AllSettings.gameFullScreen.getValue()
+
     private val errorViewModel: ErrorViewModel by viewModels()
 
     private val eventViewModel: EventViewModel by viewModels()
@@ -335,6 +340,12 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //加载渲染器
+        Renderers.init()
+        //加载插件
+        PluginLoader.loadAllPlugins(this, false)
+        refreshData()
+
         //初始化物理鼠标连接检查器
         PhysicalMouseChecker.initChecker(this)
 
@@ -377,6 +388,7 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
         }
 
         val logFile = withLauncher { getLogFile() }
+        logFile.parentFile?.mkdirs() // 换过一次日志文件路径，此处创建父目录是必要的
         if (!logFile.exists() && !logFile.createNewFile()) throw IOException("Failed to create a new log file")
         LoggerBridge.start(logFile.absolutePath)
 
@@ -434,6 +446,7 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
         setContent {
             ZalithLauncherTheme {
+                ObserveFullScreenSetting(AllSettings.gameFullScreen.state)
                 Screen {
                     withHandler {
                         ComposableLayout(vmViewModel.textInputMode)
@@ -681,7 +694,7 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
         BoxWithConstraints(
             modifier = Modifier
-                .applyFullscreen(AllSettings.gameFullScreen.state)
+                .fillMaxSize()
                 .background(Color.Black)
         ) {
             val screenSize = rememberBoxSize()

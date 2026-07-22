@@ -19,10 +19,12 @@
 package com.movtery.zalithlauncher.game.version.download
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.game.versioninfo.models.GameManifest
 import com.movtery.zalithlauncher.game.versioninfo.models.VersionManifest
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.formatFileSize
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.withSpeedReport
@@ -81,7 +83,13 @@ class MinecraftDownloader(
     /** 用于速率监测的已写入大小记录 */
     private val mSpeedReport = AtomicLong(0L)
 
-    private fun getTaskMessage(download: Int, verify: Int): Int =
+    @StringRes
+    private fun getTaskMessage(
+        @StringRes
+        download: Int,
+        @StringRes
+        verify: Int
+    ): Int =
         when (mode) {
             DownloadMode.DOWNLOAD -> download
             DownloadMode.VERIFY_AND_REPAIR -> verify
@@ -98,7 +106,10 @@ class MinecraftDownloader(
             id = DOWNLOADER_TAG,
             dispatcher = Dispatchers.Default,
             task = { task ->
-                task.updateProgress(-1f, getTaskMessage(R.string.minecraft_download_stat_download_task, R.string.minecraft_download_stat_verify_task))
+                task.updateProgress(-1f)
+                task.updateMessage(androidText(
+                    getTaskMessage(R.string.minecraft_download_stat_download_task, R.string.minecraft_download_stat_verify_task)
+                ))
                 if (mode == DownloadMode.DOWNLOAD) {
                     progressNewDownloadTasks(clientName, clientVersionsDir)
                 } else {
@@ -118,7 +129,8 @@ class MinecraftDownloader(
                     if (downloadFailedTasks.isNotEmpty()) throw DownloadFailedException()
                 }
                 //清除任务信息
-                task.updateProgress(1f, null)
+                task.updateProgress(1f)
+                task.updateMessage(null)
 
                 onCompletion(task)
             },
@@ -166,10 +178,14 @@ class MinecraftDownloader(
                     val currentFileSize = downloadedFileSize.get()
                     val totalFileSize = totalFileSize.get().run { if (this < currentFileSize) currentFileSize else this }
                     task.updateProgress(
-                        (currentFileSize.toFloat() / totalFileSize.toFloat()).coerceIn(0f, 1f),
-                        taskMessageRes,
-                        downloadedFileCount.get(), totalFileCount.get(), //文件个数
-                        formatFileSize(currentFileSize), formatFileSize(totalFileSize) //文件大小
+                        (currentFileSize.toFloat() / totalFileSize.toFloat()).coerceIn(0f, 1f)
+                    )
+                    task.updateMessage(
+                        androidText(
+                            taskMessageRes,
+                            downloadedFileCount.get(), totalFileCount.get(), //文件个数
+                            formatFileSize(currentFileSize), formatFileSize(totalFileSize) //文件大小
+                        )
                     )
                     delay(100L.milliseconds)
                 }

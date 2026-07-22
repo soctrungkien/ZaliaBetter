@@ -133,6 +133,8 @@ import com.movtery.zalithlauncher.game.account.yggdrasil.findUsing
 import com.movtery.zalithlauncher.game.account.yggdrasil.getFile
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.path.URL_MINECRAFT_PURCHASE
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.BaseIconTextButton
 import com.movtery.zalithlauncher.ui.components.IconTextButton
 import com.movtery.zalithlauncher.ui.components.MarqueeText
@@ -1498,7 +1500,7 @@ fun ChangeSkinDialog(
                 addAll(availableCapes)
             },
             selectedCape = cape,
-            onSelected = { cape, _ ->
+            onSelected = { cape ->
                 //检查是否已经为正在使用的披风
                 val state = if (cape != currentUsingCape) {
                     ChangeCape.ChangeCapeData(cape)
@@ -1520,20 +1522,17 @@ fun ChangeSkinDialog(
 fun SelectCapeDialog(
     capes: List<PlayerProfile.Cape>,
     selectedCape: PlayerProfile.Cape?,
-    onSelected: (PlayerProfile.Cape, translatedName: String) -> Unit,
+    onSelected: (PlayerProfile.Cape) -> Unit,
     onDismiss: () -> Unit,
     capeSize: Dp = 32.dp,
 ) {
-    val context = LocalContext.current
     val density = LocalDensity.current
 
     val capeLocals = remember(capes) {
         buildMap {
             capes.forEach { cape ->
-                val translatedName = cape.capeLocalRes()
-                    ?.let { context.getString(it) }
-                if (translatedName != null) {
-                    put(cape, translatedName)
+                cape.capeLocalRes()?.let { local ->
+                    put(cape, androidText(local))
                 }
             }
         }
@@ -1542,20 +1541,17 @@ fun SelectCapeDialog(
     SimpleListDialog(
         title = stringResource(R.string.account_change_cape_select_cape),
         items = capes,
-        itemTextProvider = { cape ->
-            capeLocals[cape] ?: cape.alias
-        },
         onItemSelected = { cape ->
-            val name = capeLocals[cape] ?: cape.alias
-            onSelected(cape, name)
+            onSelected(cape)
         },
         current = selectedCape,
-        itemLayout = { cape, isCurrent, text, onClick ->
+        itemLayout = { cape, isCurrent, onClick ->
+            val name = capeLocals[cape] ?: androidText(cape.alias)
             CapeListItem(
                 modifier = Modifier.fillMaxWidth(),
                 selected = isCurrent,
                 cape = cape,
-                name = text,
+                name = name,
                 size = capeSize,
                 density = density,
                 onClick = onClick,
@@ -1574,7 +1570,7 @@ fun CapeListItem(
     modifier: Modifier = Modifier,
     selected: Boolean,
     cape: PlayerProfile.Cape,
-    name: String,
+    name: AndroidStringText,
     size: Dp,
     density: Density,
     onClick: () -> Unit,
@@ -1617,7 +1613,7 @@ fun CapeListItem(
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(
+            AndroidStringText(
                 text = name,
                 style = MaterialTheme.typography.labelMedium
             )

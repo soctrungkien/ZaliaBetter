@@ -18,7 +18,7 @@
 
 package com.movtery.zalithlauncher.coroutine
 
-enum class TaskState {
+enum class TaskStage {
     /** 预备 */
     PREPARING,
     /** 运行中 */

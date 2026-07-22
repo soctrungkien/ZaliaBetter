@@ -26,8 +26,9 @@ import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
 import com.movtery.zalithlauncher.game.plugin.ffmpeg.FFmpegPluginManager
 import com.movtery.zalithlauncher.game.plugin.natives.NativePluginManager
 import com.movtery.zalithlauncher.game.plugin.renderer.RendererPluginManager
+import com.movtery.zalithlauncher.game.plugin.renderer_v2.RendererV2PluginManager
 import com.movtery.zalithlauncher.game.renderer.Renderers
-import com.movtery.zalithlauncher.game.renderer.toInterface
+import com.movtery.zalithlauncher.utils.logging.Logger
 
 /**
  * 统一插件的加载，保证仅获取一次应用列表
@@ -53,30 +54,47 @@ object PluginLoader {
 
         DriverPluginManager.initDriver(context)
         RendererPluginManager.clearPlugin()
+        RendererV2PluginManager.clearPlugin()
         NativePluginManager.clearPlugin()
 
         val queryIntentActivities =
             context.packageManager.queryIntentActivities(
-                Intent("android.intent.action.MAIN"),
+                Intent(Intent.ACTION_MAIN),
                 PACKAGE_FLAGS
             )
         queryIntentActivities.forEach { resolve ->
             val applicationInfo = resolve.activityInfo.applicationInfo
-            DriverPluginManager.parseApkPlugin(context, applicationInfo) { apkPluginList.add(it) }
-            RendererPluginManager.parseApkPlugin(context, applicationInfo) { apkPluginList.add(it) }
-            NativePluginManager.parseApkPlugin(context, applicationInfo) { apkPluginList.add(it) }
+            runCatching {
+                DriverPluginManager.parseApkPlugin(context, applicationInfo) { apkPluginList.add(it) }
+                RendererV2PluginManager.parseApkPlugin(context, applicationInfo) { apkPluginList.add(it) }
+                RendererPluginManager.parseApkPlugin(context, applicationInfo) { apkPluginList.add(it) }
+                NativePluginManager.parseApkPlugin(context, applicationInfo) { apkPluginList.add(it) }
+            }.onFailure { e ->
+                Logger.error("PluginLoader", "An exception was encountered while importing the software plugin ${applicationInfo.packageName}", e)
+            }
         }
         FFmpegPluginManager.loadPlugin(context) { apkPluginList.add(it) }
 
-        if (RendererPluginManager.isAvailable()) {
-            RendererPluginManager.getRendererList().filter { plugin ->
-                !Renderers.addRenderer(plugin.toInterface())
-            }.takeIf {
-                it.isNotEmpty()
-            }?.let { failedToLoadList ->
-                RendererPluginManager.removeRenderer(failedToLoadList)
-            }
+        // 加载旧架构渲染器插件
+        RendererPluginManager.getRendererList().filter { plugin ->
+            !Renderers.addRenderer(plugin)
+        }.takeIf {
+            it.isNotEmpty()
+        }?.let { failedToLoadList ->
+            RendererPluginManager.removeRenderer(failedToLoadList)
         }
+        // 加载新架构渲染器插件
+        RendererV2PluginManager.getRendererList().filter { plugin ->
+            !Renderers.addRenderer(plugin)
+        }.takeIf {
+            it.isNotEmpty()
+        }?.let { failedToLoadList ->
+            RendererV2PluginManager.removeRenderer(failedToLoadList)
+        }
+
+        // 去重已加载的插件
+        val seenPackages = mutableSetOf<String>()
+        apkPluginList.removeAll { !seenPackages.add(it.packageName) }
 
         //全部已加载的插件
         allPlugins = apkPluginList.sortedBy { it.appName }

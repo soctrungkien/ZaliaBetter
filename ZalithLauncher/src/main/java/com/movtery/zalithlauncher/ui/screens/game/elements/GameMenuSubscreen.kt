@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
@@ -51,12 +52,15 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.GestureActionType
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
 import com.movtery.zalithlauncher.setting.unit.floatRange
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.DualMenuSubscreen
 import com.movtery.zalithlauncher.ui.components.MenuListLayout
 import com.movtery.zalithlauncher.ui.components.MenuSliderLayout
 import com.movtery.zalithlauncher.ui.components.MenuState
 import com.movtery.zalithlauncher.ui.components.MenuSwitchButton
 import com.movtery.zalithlauncher.ui.components.MenuTextButton
+import com.movtery.zalithlauncher.ui.components.lazyScrollWithBar
 import com.movtery.zalithlauncher.ui.control.HotbarRule
 import com.movtery.zalithlauncher.ui.control.gyroscope.isGyroscopeAvailable
 import com.movtery.zalithlauncher.ui.theme.cardColor
@@ -95,7 +99,8 @@ fun GameMenuSubscreen(
     onSendKeycode: () -> Unit,
     onReplacementControl: () -> Unit,
     onManageJoystick: () -> Unit,
-    onEditLayout: () -> Unit
+    onEditLayout: () -> Unit,
+    onShowToast: (AndroidStringText, Int) -> Unit
 ) {
     DualMenuSubscreen(
         state = state,
@@ -176,7 +181,8 @@ fun GameMenuSubscreen(
                 onSwitchLog = onSwitchLog,
                 enableTerracotta = enableTerracotta,
                 onOpenTerracottaMenu = onOpenTerracottaMenu,
-                onRefreshWindowSize = onRefreshWindowSize
+                onRefreshWindowSize = onRefreshWindowSize,
+                onShowToast = onShowToast
             )
         }
     )
@@ -189,15 +195,15 @@ private fun GameActionContent(
     enableTerracotta: Boolean,
     onOpenTerracottaMenu: () -> Unit,
     onRefreshWindowSize: () -> Unit,
+    onShowToast: (AndroidStringText, Int) -> Unit,
     modifier: Modifier = Modifier,
     color: Color = cardColor(false),
     contentColor: Color = onCardColor(),
 ) {
-    //检查陀螺仪是否可用
-    val context = LocalContext.current
-
+    val listState = rememberLazyListState()
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.lazyScrollWithBar(listState),
+        state = listState,
         contentPadding = PaddingValues(all = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -253,11 +259,10 @@ private fun GameActionContent(
                 onSwitch = { value ->
                     AllSettings.showMenuBall.save(value)
                     if (!value) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.game_menu_option_show_menu_hided),
+                        onShowToast(
+                            androidText(R.string.game_menu_option_show_menu_hided),
                             Toast.LENGTH_LONG
-                        ).show()
+                        )
                     }
                 },
                 color = color,
@@ -342,8 +347,10 @@ private fun ControlOverview(
     onManageJoystick: () -> Unit,
     onEditLayout: () -> Unit
 ) {
+    val listState = rememberLazyListState()
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.lazyScrollWithBar(listState),
+        state = listState,
         contentPadding = PaddingValues(all = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -436,8 +443,10 @@ private fun ControlMouse(
     color: Color = cardColor(false),
     contentColor: Color = onCardColor(),
 ) {
+    val listState = rememberLazyListState()
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.lazyScrollWithBar(listState),
+        state = listState,
         contentPadding = PaddingValues(all = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -544,8 +553,10 @@ private fun ControlGamepad(
     color: Color = cardColor(false),
     contentColor: Color = onCardColor(),
 ) {
+    val listState = rememberLazyListState()
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.lazyScrollWithBar(listState),
+        state = listState,
         contentPadding = PaddingValues(all = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -650,8 +661,10 @@ private fun ControlGesture(
     color: Color = cardColor(false),
     contentColor: Color = onCardColor(),
 ) {
+    val listState = rememberLazyListState()
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.lazyScrollWithBar(listState),
+        state = listState,
         contentPadding = PaddingValues(all = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -828,8 +841,10 @@ private fun ControlGyroscope(
         isGyroscopeAvailable(context = context)
     }
 
+    val listState = rememberLazyListState()
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.lazyScrollWithBar(listState),
+        state = listState,
         contentPadding = PaddingValues(all = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

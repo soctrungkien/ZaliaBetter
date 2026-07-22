@@ -31,6 +31,7 @@ import com.movtery.zalithlauncher.game.download.modpack.install.retrieveLoader
 import com.movtery.zalithlauncher.game.download.modpack.platform.AbstractPack
 import com.movtery.zalithlauncher.game.download.modpack.platform.PackPlatform
 import com.movtery.zalithlauncher.game.version.installed.VersionConfig
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.copyDirectoryContents
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,7 +69,7 @@ class MCBBSPack(
                 //等待用户输入预安装版本名称
                 addTask(
                     id = "ImportModpack.WaitUserForVersionName",
-                    title = context.getString(R.string.download_install_input_version_name),
+                    title = androidText(R.string.download_install_input_version_name),
                     icon = R.drawable.ic_edit_outlined
                 ) { task ->
                     task.updateProgress(-1f)
@@ -78,7 +79,7 @@ class MCBBSPack(
                 //提取整合包文件
                 addTask(
                     id = "ImportModpack.ExtractFiles",
-                    title = context.getString(R.string.import_modpack_task_extract_files),
+                    title = androidText(R.string.import_modpack_task_extract_files),
                     icon = R.drawable.ic_build_outlined
                 ) { task ->
                     task.updateProgress(-1f)
@@ -94,7 +95,7 @@ class MCBBSPack(
                 //分析并匹配模组加载器信息，并构造出游戏安装信息
                 addTask(
                     id = "ImportModpack.RetrieveLoader",
-                    title = context.getString(R.string.download_modpack_get_loaders),
+                    title = androidText(R.string.download_modpack_get_loaders),
                     icon = R.drawable.ic_build_outlined
                 ) {
                     val gameVersion = manifest.getMinecraftVersion()!!
@@ -127,7 +128,7 @@ class MCBBSPack(
                                 //已经完成游戏安装，开始最终任务
                                 //整合包临时文件安装任务
                                 val finalTask = TitledTask(
-                                    title = context.getString(R.string.download_modpack_final_move),
+                                    title = androidText(R.string.download_modpack_final_move),
                                     runningIcon = R.drawable.ic_build_outlined,
                                     task = createFinalInstallTask(
                                         targetClientDir = targetClientDir,
@@ -181,7 +182,8 @@ class MCBBSPack(
             }.save()
 
             //清理临时整合包目录
-            task.updateProgress(-1f, R.string.download_install_clear_temp)
+            task.updateProgress(-1f)
+            task.updateMessage(androidText(R.string.download_install_clear_temp))
             onClearTemp()
         }
     )

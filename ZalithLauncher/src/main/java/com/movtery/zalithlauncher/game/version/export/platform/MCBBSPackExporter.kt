@@ -29,6 +29,7 @@ import com.movtery.zalithlauncher.game.version.export.AbstractExporter
 import com.movtery.zalithlauncher.game.version.export.ExportInfo
 import com.movtery.zalithlauncher.game.version.export.PackType
 import com.movtery.zalithlauncher.game.version.installed.Version
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.GSON
 import com.movtery.zalithlauncher.utils.string.tokenize
 import org.jackhuang.hmcl.util.DigestUtils
@@ -48,7 +49,7 @@ class MCBBSPackExporter: AbstractExporter(
     ) {
         addTask(
             id = "MCBBSPackExporter.PackManifest",
-            title = context.getString(R.string.versions_export_task_pack_manifest),
+            title = androidText(R.string.versions_export_task_pack_manifest),
             icon = R.drawable.ic_build_filled
         ) {
             val gameName = info.gamePath.name

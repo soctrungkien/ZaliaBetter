@@ -93,6 +93,7 @@ import com.movtery.zalithlauncher.game.version.saves.SaveData
 import com.movtery.zalithlauncher.game.version.saves.isCompatible
 import com.movtery.zalithlauncher.game.version.saves.parseLevelDatFile
 import com.movtery.zalithlauncher.game.version.saves.unpackSaveZip
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
 import com.movtery.zalithlauncher.ui.components.ContentCheckBox
@@ -474,7 +475,10 @@ private fun SavesActionsHeader(
                         submitError = submitError,
                         onImported = refreshSaves,
                         onFileCopied = { task, file ->
-                            task.updateProgress(-1f, R.string.saves_manage_import_unpacking, file.name)
+                            task.updateProgress(-1f)
+                            task.updateMessage(androidText(
+                                R.string.saves_manage_import_unpacking, file.name
+                            ))
                             unpackSaveZip(file, savesDir)
                         }
                     )

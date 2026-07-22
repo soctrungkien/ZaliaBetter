@@ -20,6 +20,7 @@ package com.movtery.zalithlauncher.game.version.installed
 
 import android.content.Context
 import android.os.Parcelable
+import androidx.annotation.Keep
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -47,6 +48,7 @@ import kotlin.math.min
  * @param isValid 版本的有效性
  * @param versionType 版本的类型
  */
+@Keep
 @Parcelize
 class Version(
     private val versionName: String,

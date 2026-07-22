@@ -33,6 +33,7 @@ import com.movtery.zalithlauncher.game.version.installed.VersionConfig
 import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.path.PathManager
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.copyDirectoryContents
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.downloadFileSuspend
@@ -134,7 +135,7 @@ class ModPackInstaller(
                 //清除上一次安装的缓存（如果有的话，可能会影响这次的安装结果）
                 addTask(
                     id = "Download.ModPack.ClearTemp",
-                    title = context.getString(R.string.download_install_clear_temp),
+                    title = androidText(R.string.download_install_clear_temp),
                     icon = R.drawable.ic_auto_delete_outlined
                 ) { _ ->
                     clearTempModPackDir()
@@ -156,7 +157,7 @@ class ModPackInstaller(
                 //下载整合包安装包
                 addTask(
                     id = "Download.ModPack.Installer",
-                    title = context.getString(R.string.download_game_install_base_download_file2, version.platformDisplayName())
+                    title = androidText(R.string.download_game_install_base_download_file2, version.platformDisplayName())
                 ) { task ->
                     val totalFileSize = version.platformFileSize().toDouble()
                     var downloadedSize = 0L
@@ -185,7 +186,8 @@ class ModPackInstaller(
                         )
                     }
                     //下载icon图片
-                    task.updateProgress(-1f, null)
+                    task.updateProgress(-1f)
+                    task.updateMessage(null)
                     iconUrl?.let { iconUrl ->
                         downloadFileSuspend(
                             url = iconUrl,
@@ -197,7 +199,7 @@ class ModPackInstaller(
                 //解析整合包、解压整合包
                 addTask(
                     id = "Parse.ModPack",
-                    title = context.getString(R.string.download_modpack_install_parse),
+                    title = androidText(R.string.download_modpack_install_parse),
                     icon = R.drawable.ic_build_outlined
                 ) { task ->
                     modpackInfo = parserModPack(
@@ -211,7 +213,7 @@ class ModPackInstaller(
                 //等待用户输入预安装版本名称
                 addTask(
                     id = "Download.ModPack.WaitUserForVersionName",
-                    title = context.getString(R.string.download_install_input_version_name),
+                    title = androidText(R.string.download_install_input_version_name),
                     icon = R.drawable.ic_edit_outlined
                 ) { task ->
                     task.updateProgress(-1f)
@@ -222,7 +224,7 @@ class ModPackInstaller(
                 addTask(
                     id = "Download.ModPack.Mods",
                     dispatcher = Dispatchers.IO,
-                    title = context.getString(R.string.download_modpack_download)
+                    title = androidText(R.string.download_modpack_download)
                 ) { task ->
                     val downloadTask = ModDownloader(modpackInfo.files)
                     downloadTask.startDownload(task)
@@ -231,7 +233,7 @@ class ModPackInstaller(
                 //分析并匹配模组加载器信息，并构造出游戏安装信息
                 addTask(
                     id = "ModPack.Retrieve.Loader",
-                    title = context.getString(R.string.download_modpack_get_loaders),
+                    title = androidText(R.string.download_modpack_get_loaders),
                     icon = R.drawable.ic_build_outlined
                 ) { _ ->
                     //构建游戏安装信息
@@ -248,7 +250,7 @@ class ModPackInstaller(
                                 //已经完成游戏安装，开始最终任务
                                 //整合包临时文件安装任务
                                 val finalTask = TitledTask(
-                                    title = context.getString(R.string.download_modpack_final_move),
+                                    title = androidText(R.string.download_modpack_final_move),
                                     runningIcon = R.drawable.ic_build_outlined,
                                     task = createFinalInstallTask(
                                         targetClientDir = targetClientDir,
@@ -319,7 +321,8 @@ class ModPackInstaller(
             }.save()
 
             //清理临时整合包目录
-            task.updateProgress(-1f, R.string.download_install_clear_temp)
+            task.updateProgress(-1f)
+            task.updateMessage(androidText(R.string.download_install_clear_temp))
             clearTempModPackDir()
         }
     )

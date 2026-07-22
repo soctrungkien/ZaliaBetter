@@ -333,7 +333,8 @@ private fun RightMenuContent(
                 ),
                 shape = MaterialTheme.shapes.extraLarge
             ) {
-                VersionsManager.versions.forEach { version0 ->
+                val versions by VersionsManager.versions.collectAsStateWithLifecycle()
+                versions.forEach { version0 ->
                     DropdownMenuItem(
                         text = {
                             Row(
