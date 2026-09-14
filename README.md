@@ -1,4 +1,4 @@
-# Zalith Launcher 2
+# ZALITH LAUNCHER 2 REBORN 
 ![Downloads](https://img.shields.io/github/downloads/ZalithLauncher/ZalithLauncher2/total)
 [![Sponsor](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors)](https://afdian.com/a/MovTery)
 
@@ -35,6 +35,10 @@
     * **最低 API**：26
     * **目标 API**：35
 * JDK 11
+WHATS NEW IN THIS FORK?
+
++MULTI BINDING
+
 
 ### 构建步骤
 
