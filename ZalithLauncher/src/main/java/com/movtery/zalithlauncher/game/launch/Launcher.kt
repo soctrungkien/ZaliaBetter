@@ -213,6 +213,10 @@ abstract class Launcher(
 
             put("sodium.checks.issue2561", "false")
 
+            put("file.encoding", "UTF-8")
+            put("sun.stdout.encoding", "UTF-8")
+            put("sun.stderr.encoding", "UTF-8")
+
             put("cpu.name", getSocName())
 
             putJavaArgs()
