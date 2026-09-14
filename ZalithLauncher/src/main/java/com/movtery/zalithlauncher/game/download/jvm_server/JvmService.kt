@@ -114,6 +114,7 @@ class JvmService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Thread.sleep(500)
         android.os.Process.killProcess(android.os.Process.myPid())
     }
 
@@ -196,6 +197,10 @@ class JvmService : Service() {
                 screenSize = IntSize(1920, 1080) //fake
             )
         }.onFailure { e ->
+            runCatching {
+                LoggerBridge.appendTitle("JVM Service Crash")
+                LoggerBridge.append(e.stackTraceToString())
+            }
             Logger.warning(TAG, "jvm crashed!", e)
         }.getOrElse { 1 }
 

@@ -415,7 +415,12 @@ abstract class Launcher(
     }
 
     private fun setEnv(screenSize: IntSize) {
-        val envMap = initEnv(screenSize)
+        val envMap = runCatching {
+            initEnv(screenSize)
+        }.onFailure {
+            LoggerBridge.appendTitle("Init Env Failed")
+            LoggerBridge.append(it.stackTraceToString())
+        }.getOrThrow()
         envMap.forEach { (key, value) ->
             LoggerBridge.append("▷ $key = $value")
             runCatching {
