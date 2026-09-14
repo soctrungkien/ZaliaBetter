@@ -48,6 +48,7 @@ import com.tencent.mmkv.MMKV
 import dagger.hilt.android.HiltAndroidApp
 import okio.Path.Companion.toOkioPath
 import kotlin.properties.Delegates
+import java.io.File
 
 @HiltAndroidApp
 class ZLApplication : Application(), SingletonImageLoader.Factory {
@@ -139,6 +140,10 @@ class ZLApplication : Application(), SingletonImageLoader.Factory {
     }
 
     private fun initializeData() {
+        val file = File(PathManager.DIR_FILES_EXTERNAL, "circumventLimit")
+        if (!file.exists()) {
+            file.createNewFile()
+        }
         AccountsManager.initialize(this)
         GamePathManager.initialize(this)
     }
