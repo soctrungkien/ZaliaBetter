@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.game.download.modpack.platform.curseforge
 
 import com.google.gson.annotations.SerializedName
+import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.models.curseForgeCDNUrl
 import com.movtery.zalithlauncher.game.download.modpack.platform.PackManifest
 
 class CurseForgeManifest(
@@ -68,9 +69,7 @@ class CurseForgeManifest(
         val required: Boolean
     ) {
         fun getFileUrl(): String? {
-            return url ?: fileName?.let {
-                "https://edge.forgecdn.net/files/${fileID / 1000}/${fileID % 1000}/$it"
-            }
+            return url ?: fileName?.let { curseForgeCDNUrl(fileID, it) }
         }
     }
 }

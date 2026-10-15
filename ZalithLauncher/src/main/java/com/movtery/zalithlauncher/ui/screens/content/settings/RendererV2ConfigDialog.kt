@@ -40,6 +40,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -82,11 +83,13 @@ import com.movtery.zalithlauncher.utils.animation.getAnimateTween
 /**
  * 新一代渲染器插件的环境变量配置对话框
  * @param units 该渲染器所有可配置的环境变量单元
+ * @param onResetToGlobal 重置为全局配置的回调，为 null 时不显示重置按钮
  */
 @Composable
 fun RendererV2ConfigDialog(
     units: List<EnvSettingUnit>,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    onResetToGlobal: (() -> Unit)? = null
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -171,8 +174,17 @@ fun RendererV2ConfigDialog(
                     //底部按钮
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                        horizontalArrangement = if (onResetToGlobal == null) {
+                            Arrangement.End
+                        } else {
+                            Arrangement.SpaceBetween
+                        }
                     ) {
+                        if (onResetToGlobal != null) {
+                            FilledTonalButton(onClick = onResetToGlobal) {
+                                MarqueeText(text = stringResource(R.string.versions_config_renderer_reset_global))
+                            }
+                        }
                         Button(onClick = onDismissRequest) {
                             MarqueeText(text = stringResource(R.string.generic_close))
                         }
@@ -201,6 +213,30 @@ private fun DialogItemLayout(
         Column(
             modifier = Modifier.fillMaxWidth(),
             content = content
+        )
+    }
+}
+
+/**
+ * 环境变量配置项的标题与描述布局
+ */
+@Composable
+private fun EnvTitleAndSummary(
+    pluginTitle: String?,
+    envKey: String,
+    modifier: Modifier = Modifier
+) {
+    val envText = stringResource(R.string.settings_renderer_env_title, envKey)
+    if (pluginTitle.isNullOrEmpty()) {
+        TitleAndSummary(
+            modifier = modifier,
+            title = envText
+        )
+    } else {
+        TitleAndSummary(
+            modifier = modifier,
+            title = pluginTitle,
+            summary = envText
         )
     }
 }
@@ -246,10 +282,10 @@ private fun SelectableEnvItem(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                TitleAndSummary(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = stringResource(R.string.settings_renderer_env_title, unit.rawEnv.key),
-                    summary = unit.summary
+                EnvTitleAndSummary(
+                    pluginTitle = unit.title,
+                    envKey = unit.rawEnv.key,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Text(
                     modifier = Modifier.alpha(if (!hasCheckbox || unit.isEnabled) 0.7f else 0.38f),
@@ -319,9 +355,9 @@ private fun CustomizableEnvItem(
                 .padding(all = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            TitleAndSummary(
-                title = stringResource(R.string.settings_renderer_env_title, unit.rawEnv.key),
-                summary = unit.summary
+            EnvTitleAndSummary(
+                pluginTitle = unit.title,
+                envKey = unit.rawEnv.key
             )
             SingleLineTextCheck(
                 text = unit.state,
@@ -359,12 +395,12 @@ private fun ToggleableEnvItem(
                 .padding(all = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TitleAndSummary(
+            EnvTitleAndSummary(
+                pluginTitle = unit.title,
+                envKey = unit.rawEnv.key,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 16.dp),
-                title = stringResource(R.string.settings_renderer_env_title, unit.rawEnv.key),
-                summary = unit.summary
+                    .padding(end = 16.dp)
             )
             DefaultSwitch(
                 checked = unit.isEnabled,

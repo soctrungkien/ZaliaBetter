@@ -62,6 +62,7 @@ import com.movtery.zalithlauncher.game.version.export.data.getSelectedFiles
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.ui.base.BaseScreen
+import com.movtery.zalithlauncher.ui.base.VersionViewModelStoreScope
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.fadeEdge
@@ -421,7 +422,7 @@ private fun rememberExportModpackViewModel(
         mcVersion = info.minecraftVersion,
         versionName = version.getVersionName(),
         gamePath = version.getGameDir(),
-        loader = info.loaderInfo?.let { loader ->
+        loader = info.primaryLoader?.let { loader ->
             ExportInfo.LoaderVersion(loader.loader, loader.version)
         },
         gameArgs = version.getGameArgs(),
@@ -454,36 +455,38 @@ fun VersionExportScreen(
         }
     }
 
-    val viewModel = rememberExportModpackViewModel(version = key.version)
+    VersionViewModelStoreScope(version = key.version) {
+        val viewModel = rememberExportModpackViewModel(version = key.version)
 
-    val packExporter by viewModel.packExporter.collectAsStateWithLifecycle()
-    val exportOperation by viewModel.packExportOperation.collectAsStateWithLifecycle()
-    PackExportOperation(
-        operation = exportOperation,
-        onChange = { new ->
-            viewModel.updateOperation(new)
-        },
-        packExporter = packExporter,
-        onCancel = {
-            viewModel.cancelExport()
-        }
-    )
-
-    BaseScreen(
-        screenKey = key,
-        currentKey = backScreenViewModel.mainScreen.currentKey
-    ) {
-        NavigationUI(
-            modifier = Modifier.fillMaxSize(),
-            viewModel = viewModel,
-            key = key,
-            backScreenViewModel = backScreenViewModel,
-            eventViewModel = eventViewModel,
-            exportScreenKey = key.currentKey,
-            onCurrentKeyChange = { key.currentKey = it },
-            backToMainScreen = backToMainScreen,
-            version = key.version
+        val packExporter by viewModel.packExporter.collectAsStateWithLifecycle()
+        val exportOperation by viewModel.packExportOperation.collectAsStateWithLifecycle()
+        PackExportOperation(
+            operation = exportOperation,
+            onChange = { new ->
+                viewModel.updateOperation(new)
+            },
+            packExporter = packExporter,
+            onCancel = {
+                viewModel.cancelExport()
+            }
         )
+
+        BaseScreen(
+            screenKey = key,
+            currentKey = backScreenViewModel.mainScreen.currentKey
+        ) {
+            NavigationUI(
+                modifier = Modifier.fillMaxSize(),
+                viewModel = viewModel,
+                key = key,
+                backScreenViewModel = backScreenViewModel,
+                eventViewModel = eventViewModel,
+                exportScreenKey = key.currentKey,
+                onCurrentKeyChange = { key.currentKey = it },
+                backToMainScreen = backToMainScreen,
+                version = key.version
+            )
+        }
     }
 }
 

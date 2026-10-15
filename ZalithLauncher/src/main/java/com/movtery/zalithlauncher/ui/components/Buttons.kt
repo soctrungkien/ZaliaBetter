@@ -21,7 +21,6 @@ package com.movtery.zalithlauncher.ui.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -48,6 +47,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TooltipScope
@@ -305,7 +305,9 @@ fun TooltipIconButton(
 
     TooltipBox(
         modifier = modifier,
-        positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
         tooltip = tooltip,
         state = tooltipState,
         enableUserInput = false

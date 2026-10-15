@@ -62,7 +62,6 @@ data class ModData(
     ): PlatformVersion? {
         return withContext(Dispatchers.IO) {
             runCatching {
-                val datePublished = parseInstant(modFile.datePublished)
                 val projectId = project.id
                 val currentLoaderName = modLoader.displayName.lowercase()
                 val currentFileLoaders = modFile.loaders
@@ -91,24 +90,35 @@ data class ModData(
                     projectId,
                     project.platform
                 ).initAll(projectId)
-                    .filter { version ->
-                        if (version.platformId() == modFile.id) {
-                            // 当前版本，设置版本号
-                            currentVersion = version.platformVersion()
-                        }
-                        val loaderNames = version.platformLoaders()
-                            .map { it.getDisplayName().lowercase() }
-                            .toSet()
-                        // 是否支持当前MC版本
-                        minecraftVer in version.platformGameVersion() &&
-                        // 是否匹配目标加载器（当前加载器，或当前文件自身的加载器）
-                        loaderNames.any { it in targetLoaders } &&
-                        // 是否比当前版本更新
-                        version.platformDatePublished() > datePublished
-                    }
+
+                // 基准日期优先取实时列表中当前版本自身的发布日期
+                val currentEntry = versions.firstOrNull { it.platformId() == modFile.id }
+                if (currentEntry != null) {
+                    // 当前版本，设置版本号
+                    currentVersion = currentEntry.platformVersion()
+                }
+                val datePublished = currentEntry?.platformDatePublished() ?: run {
+                    Logger.debug(
+                        TAG,
+                        "Installed version ${modFile.id} not found in the fetched list of ${file.name}, falling back to the cached date"
+                    )
+                    parseInstant(modFile.datePublished)
+                }
+
+                val candidates = versions.filter { version ->
+                    val loaderNames = version.platformLoaders()
+                        .map { it.getDisplayName().lowercase() }
+                        .toSet()
+                    // 是否支持当前MC版本
+                    minecraftVer in version.platformGameVersion() &&
+                    // 是否匹配目标加载器（当前加载器，或当前文件自身的加载器）
+                    loaderNames.any { it in targetLoaders } &&
+                    // 是否比当前版本更新
+                    version.platformDatePublished() > datePublished
+                }
 
                 // 获取最新的版本
-                versions.firstOrNull()?.also { version ->
+                candidates.firstOrNull()?.also { version ->
                     Logger.info(TAG, "Detected update for mod ${file.name}: $currentVersion -> ${version.platformVersion()}")
                 }
             }.onFailure { th ->

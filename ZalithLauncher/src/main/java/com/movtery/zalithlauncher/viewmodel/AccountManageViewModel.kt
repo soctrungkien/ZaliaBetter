@@ -50,6 +50,7 @@ import com.movtery.zalithlauncher.game.account.yggdrasil.PlayerProfile
 import com.movtery.zalithlauncher.game.account.yggdrasil.cacheAllCapes
 import com.movtery.zalithlauncher.game.account.yggdrasil.changeCape
 import com.movtery.zalithlauncher.game.account.yggdrasil.executeWithAuthorization
+import com.movtery.zalithlauncher.game.account.yggdrasil.findUsing
 import com.movtery.zalithlauncher.game.account.yggdrasil.getFile
 import com.movtery.zalithlauncher.game.account.yggdrasil.getPlayerProfile
 import com.movtery.zalithlauncher.game.account.yggdrasil.uploadSkin
@@ -72,6 +73,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -250,14 +252,12 @@ class AccountManageViewModel @AssistedInject constructor(
         AccountsManager.currentAccountFlow,
         AccountsManager.authServersFlow,
         _accountCapeOpMap,
-        AccountsManager.isOffline
-    ) { accounts, currentAccount, authServers, accountCapeOpMap, isOffline ->
+    ) { accounts, currentAccount, authServers, accountCapeOpMap ->
         ProfileUiState(
             accounts = accounts,
             currentAccount = currentAccount,
             authServers = authServers,
             accountCapeOpMap = accountCapeOpMap,
-            isOffline = isOffline
         )
     }.stateIn(
         scope = viewModelScope,
@@ -270,7 +270,6 @@ class AccountManageViewModel @AssistedInject constructor(
         val currentAccount: Account? = null,
         val authServers: List<AuthServer> = emptyList(),
         val accountCapeOpMap: Map<String, List<PlayerProfile.Cape>> = emptyMap(),
-        val isOffline: Boolean = false
     )
 
     /**
@@ -572,8 +571,27 @@ class AccountManageViewModel @AssistedInject constructor(
                         task.updateMessage(androidText(R.string.account_change_cape_cache_all))
                         cacheAllCapes(profile)
                         //同时更新本地的皮肤/披风
-                        account.downloadYggdrasil()
+                        runCatching {
+                            account.downloadYggdrasil(refresh = false)
+                        }.onFailure { e ->
+                            if (e is CancellationException) throw e
+                        }
+
+                        val activeCape = profile.capes.findUsing()
+                        val targetCape = account.getCapeFile()
+                        if (activeCape != null) {
+                            val activeCapeFile = activeCape.getFile(PathManager.DIR_ACCOUNT_CAPE)
+                            if (activeCapeFile.exists()) {
+                                runCatching {
+                                    activeCapeFile.copyTo(targetCape, overwrite = true)
+                                }
+                            }
+                        } else {
+                            FileUtils.deleteQuietly(targetCape)
+                        }
+
                         _accountCapeOpMap.update { it + (account.uniqueUUID to profile.capes) }
+                        AccountsManager.refreshWardrobe()
                     }, onRefreshRequest = {
                         account.refreshMicrosoft(task = task, coroutineContext = coroutineContext)
                         AccountsManager.suspendSaveAccount(account)

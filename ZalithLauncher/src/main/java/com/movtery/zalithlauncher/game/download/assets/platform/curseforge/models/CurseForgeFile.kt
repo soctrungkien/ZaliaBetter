@@ -42,6 +42,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonArray
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.net.URLEncoder
 import java.time.Instant
 
 @Serializable
@@ -322,11 +323,15 @@ class CurseForgeFile(
  */
 fun CurseForgeFile.fixedFileUrl(): String? {
     return downloadUrl
-        ?: if (fileName != null) {
-            "https://edge.forgecdn.net/files/${id / 1000}/${id % 1000}/${fileName}"
-        } else {
-            null
-        }
+        ?: fileName?.let { curseForgeCDNUrl(id, it) }
+}
+
+/**
+ * 根据 CurseForge 的文件 ID 与文件名称拼出 CDN 下载链接
+ */
+fun curseForgeCDNUrl(fileId: Int, fileName: String): String {
+    val encoded = URLEncoder.encode(fileName, "UTF-8").replace("+", "%20")
+    return "https://edge.forgecdn.net/files/${fileId / 1000}/${fileId % 1000}/$encoded"
 }
 
 /**

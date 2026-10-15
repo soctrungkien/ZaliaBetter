@@ -37,6 +37,17 @@ sealed interface SavesOperation {
 }
 
 /**
+ * 存档压缩分享任务的操作状态
+ */
+sealed interface SavesCompressOperation {
+    data object None : SavesCompressOperation
+    /** 正在压缩存档 */
+    data class Compressing(val saveData: SaveData) : SavesCompressOperation
+    /** 压缩过程出现异常 */
+    data class Error(val throwable: Throwable) : SavesCompressOperation
+}
+
+/**
  * 存档过滤器
  */
 data class SavesFilter(val onlyShowCompatible: Boolean, val saveName: String = "")

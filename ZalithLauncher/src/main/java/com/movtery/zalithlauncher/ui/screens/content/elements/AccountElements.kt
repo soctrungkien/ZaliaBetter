@@ -61,6 +61,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -342,20 +344,6 @@ fun AccountItem(
                 )
             }
             Row {
-                //更换皮肤/披风
-                Row {
-                    IconButton(
-                        onClick = { openChangeSkinDialog() },
-                        enabled = account.isSkinChangeAllowed()
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            painter = painterResource(R.drawable.ic_checkroom),
-                            contentDescription = stringResource(R.string.account_change_skin)
-                        )
-                    }
-                }
-
                 //刷新
                 IconButton(
                     onClick = onRefreshClick,
@@ -368,26 +356,62 @@ fun AccountItem(
                     )
                 }
 
-                //复制 UUID
-                IconButton(
-                    onClick = onCopyUUID
-                ) {
-                    Icon(
-                        modifier = Modifier.size(22.dp),
-                        painter = painterResource(R.drawable.ic_copy_all_outlined),
-                        contentDescription = stringResource(R.string.account_local_uuid_copy)
-                    )
-                }
-
-                //删除
-                IconButton(
-                    onClick = onDeleteClick
-                ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_delete_outlined),
-                        contentDescription = stringResource(R.string.generic_delete)
-                    )
+                //更多操作
+                var menuExpanded by remember { mutableStateOf(false) }
+                Box {
+                    IconButton(onClick = { menuExpanded = true }) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.ic_more_vert),
+                            contentDescription = stringResource(R.string.generic_more)
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false },
+                        shape = MaterialTheme.shapes.large,
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.account_wardrobe)) },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_checkroom),
+                                    contentDescription = null
+                                )
+                            },
+                            enabled = account.isSkinChangeAllowed(),
+                            onClick = {
+                                menuExpanded = false
+                                openChangeSkinDialog()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.account_local_uuid_copy)) },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_copy_all_outlined),
+                                    contentDescription = null
+                                )
+                            },
+                            onClick = {
+                                menuExpanded = false
+                                onCopyUUID()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.generic_delete)) },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_delete_outlined),
+                                    contentDescription = null
+                                )
+                            },
+                            onClick = {
+                                menuExpanded = false
+                                onDeleteClick()
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -1278,7 +1302,7 @@ sealed interface ChangeCape {
 @Composable
 fun ChangeSkinDialog(
     account: Account,
-    availableCapes: List<PlayerProfile.Cape> = emptyList(),
+    availableCapes: List<PlayerProfile.Cape>? = null,
     skinState: ChangeSkin,
     onSkinStateChange: (ChangeSkin) -> Unit,
     capeState: ChangeCape,
@@ -1309,7 +1333,7 @@ fun ChangeSkinDialog(
 
     LaunchedEffect(availableCapes) {
         if (account.isMicrosoftAccount()) {
-            if (availableCapes.isNotEmpty()) {
+            if (availableCapes != null) {
                 isFetchingCapes = false
                 val currentUsingCape0 = availableCapes.findUsing() ?: EmptyCape
                 currentUsingCape = currentUsingCape0
@@ -1330,10 +1354,23 @@ fun ChangeSkinDialog(
      * 初始化账号设置的皮肤
      */
     fun loadSkin() {
-        playerSkin.loadSkin(
-            skinId = account.uniqueUUID.takeIf { account.hasSkinFile },
-            model = account.skinModelType
-        )
+        if (account.hasSkinFile) {
+            runCatching {
+                account.getSkinFile().inputStream().use { stream ->
+                    playerSkin.loadSkin(stream, account.skinModelType)
+                }
+            }.onFailure {
+                playerSkin.loadSkin(
+                    skinId = account.uniqueUUID,
+                    model = account.skinModelType
+                )
+            }
+        } else {
+            playerSkin.loadSkin(
+                skinId = null,
+                model = account.skinModelType
+            )
+        }
     }
 
     /**
@@ -1403,32 +1440,50 @@ fun ChangeSkinDialog(
                                         }
                                     )
                                 },
-                                update = {
-                                    if (pageFinished) {
-                                        when (skinState) {
-                                            ChangeSkin.None -> loadSkin()
-                                            is ChangeSkin.ChangeSkinData -> {
-                                                runCatching {
-                                                    skinState.cacheFile.inputStream().use { stream ->
-                                                        playerSkin.loadSkin(stream, skinState.skinModel)
-                                                    }
-                                                }.onFailure {
-                                                    playerSkin.loadSkin(
-                                                        skinId = null,
-                                                        skinState.skinModel
-                                                    )
-                                                }
-                                            }
-
-                                            is ChangeSkin.ResetSkin -> resetSkin()
-                                        }
-                                        if (account.isMicrosoftAccount()) {
-                                            playerSkin.loadCape(currentCapeToLoad)
-                                        }
-                                    }
-                                },
                                 modifier = Modifier.fillMaxSize()
                             )
+
+                            // 页面加载完成后立即展示皮肤预览，无需等待披风列表完成网络加载
+                            LaunchedEffect(pageFinished, skinState) {
+                                if (!pageFinished) return@LaunchedEffect
+                                when (skinState) {
+                                    ChangeSkin.None -> loadSkin()
+                                    is ChangeSkin.ChangeSkinData -> {
+                                        runCatching {
+                                            skinState.cacheFile.inputStream().use { stream ->
+                                                playerSkin.loadSkin(stream, skinState.skinModel)
+                                            }
+                                        }.onFailure {
+                                            playerSkin.loadSkin(
+                                                skinId = null,
+                                                skinState.skinModel
+                                            )
+                                        }
+                                    }
+
+                                    is ChangeSkin.ResetSkin -> resetSkin()
+                                }
+                            }
+
+                            // 独立加载披风：列表就绪前若本地有缓存披风则优先显示，列表加载完或切换时更新
+                            LaunchedEffect(pageFinished, currentCapeToLoad, availableCapes) {
+                                if (!pageFinished) return@LaunchedEffect
+                                if (account.isMicrosoftAccount()) {
+                                    if (currentCapeToLoad != EmptyCape) {
+                                        playerSkin.loadCape(currentCapeToLoad)
+                                    } else if (availableCapes == null && account.getCapeFile().exists()) {
+                                        runCatching {
+                                            account.getCapeFile().inputStream().use { stream ->
+                                                playerSkin.loadCape(stream)
+                                            }
+                                        }.onFailure {
+                                            playerSkin.loadCape(EmptyCape)
+                                        }
+                                    } else {
+                                        playerSkin.loadCape(EmptyCape)
+                                    }
+                                }
+                            }
                         }
 
                         Column(
@@ -1611,7 +1666,7 @@ fun ChangeSkinDialog(
         SelectCapeDialog(
             capes = buildList {
                 add(EmptyCape)
-                addAll(availableCapes)
+                addAll(availableCapes ?: emptyList())
             },
             selectedCape = cape,
             onSelected = { cape ->

@@ -25,8 +25,6 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
@@ -54,7 +52,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -93,6 +90,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -475,7 +474,8 @@ private class ModsUpdaterViewModel(
         onStop: () -> Unit = {}
     ) {
         val minecraftVer = version.getVersionInfo()!!.minecraftVersion
-        val modLoader = version.getVersionInfo()!!.loaderInfo!!.loader
+        //模组更新按主加载器过滤
+        val modLoader = version.getVersionInfo()!!.primaryLoader?.loader ?: ModLoader.UNKNOWN
 
         modsUpdater = ModUpdater(
             mods = mods,
@@ -571,7 +571,7 @@ fun ModsManagerScreen(
 
     //是否拥有模组加载器
     val hasModLoader = remember(version) {
-        version.getVersionInfo()?.loaderInfo?.loader?.isLoader == true
+        version.getVersionInfo()?.loaderInfos?.any { it.loader.isLoader } == true
     }
     val modsDir = remember(version) {
         VersionFolders.MOD.getDir(version.getGameDir())
@@ -1177,6 +1177,20 @@ private fun ModItemLayout(
                 iconSize = 48.dp
             )
 
+            val isDisabled = mod.localMod.file.isDisabled()
+
+            val titleDecoration = if (isDisabled) {
+                TextDecoration.LineThrough
+            } else {
+                null
+            }
+            val titleStyle = if (isDisabled) {
+                FontStyle.Italic
+            } else {
+                null
+            }
+            val titleAlpha = if (isDisabled) 0.8f else 1f
+
             //模组简要信息
             Crossfade(
                 modifier = Modifier
@@ -1194,11 +1208,16 @@ private fun ModItemLayout(
                         isUnknown -> {
                             //非模组，只展示文件名称
                             Text(
-                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                                modifier = Modifier
+                                    .alpha(titleAlpha)
+                                    .basicMarquee(iterations = Int.MAX_VALUE),
                                 text = localMod.file.name,
                                 style = MaterialTheme.typography.titleSmall,
+                                textDecoration = titleDecoration,
+                                fontStyle = titleStyle,
                                 maxLines = 1
                             )
+
                             if (localMod.loader != ModLoader.UNKNOWN) {
                                 LittleTextLabel(
                                     text = localMod.loader.displayName,
@@ -1208,7 +1227,7 @@ private fun ModItemLayout(
                         }
                         else -> {
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.height(IntrinsicSize.Max),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 val displayTitle = if (projectInfo != null) {
@@ -1219,21 +1238,26 @@ private fun ModItemLayout(
                                 }
                                 Text(
                                     modifier = Modifier
+                                        .alpha(titleAlpha)
                                         .weight(1f, fill = false)
                                         .basicMarquee(iterations = Int.MAX_VALUE)
                                         .animateContentSize(),
                                     text = displayTitle,
                                     style = MaterialTheme.typography.titleSmall,
+                                    textDecoration = titleDecoration,
+                                    fontStyle = titleStyle,
                                     maxLines = 1
                                 )
+
                                 Row(
                                     modifier = Modifier
+                                        .padding(start = 8.dp)
                                         .basicMarquee(iterations = Int.MAX_VALUE)
                                         .animateContentSize(),
                                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
                                     val remoteLoaders = mod.remoteFile?.loaders
-                                    if (remoteLoaders != null && remoteLoaders.isNotEmpty()) {
+                                    if (!remoteLoaders.isNullOrEmpty()) {
                                         remoteLoaders.forEach { loader ->
                                             LittleTextLabel(
                                                 text = loader.getDisplayName(),
@@ -1334,7 +1358,6 @@ private fun ModIcon(
     modifier: Modifier = Modifier,
     mod: RemoteMod,
     iconSize: Dp,
-    disableContainerSize: Dp = 28.dp
 ) {
     Box(modifier = modifier) {
         val colorMatrix = remember(mod, mod.localMod.file) { ColorMatrix() }
@@ -1367,28 +1390,6 @@ private fun ModIcon(
                 size = iconSize,
                 colorFilter = ColorFilter.colorMatrix(colorMatrix)
             )
-        }
-
-        AnimatedVisibility(
-            modifier = Modifier.align(Alignment.Center),
-            visible = mod.localMod.file.isDisabled(),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Surface(
-                modifier = Modifier
-                    .padding(all = 4.dp)
-                    .size(disableContainerSize),
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                shape = CircleShape,
-                shadowElevation = 4.dp
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_block_outlined),
-                    contentDescription = null
-                )
-            }
         }
     }
 }

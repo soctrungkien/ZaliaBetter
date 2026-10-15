@@ -33,8 +33,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -42,7 +40,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.nonInteractiveScrollbar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +55,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movtery.zalithlauncher.R
@@ -75,14 +71,13 @@ import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.MarqueeText
-import com.movtery.zalithlauncher.ui.components.ModelAnimation
-import com.movtery.zalithlauncher.ui.components.PlayerSkin
 import com.movtery.zalithlauncher.ui.components.ScalingActionButton
 import com.movtery.zalithlauncher.ui.components.ScalingLabel
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.SimpleEditDialog
 import com.movtery.zalithlauncher.ui.components.SimpleListDialog
 import com.movtery.zalithlauncher.ui.components.SimpleListItem
+import com.movtery.zalithlauncher.ui.components.SkinPreview3D
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountItem
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountOperation
@@ -241,7 +236,6 @@ private fun AccountManageContent(
                 .padding(all = 12.dp)
                 .weight(3f),
             currentAccount = profileUiState.currentAccount,
-            isOffline = profileUiState.isOffline,
             actions = actions
         )
 
@@ -253,7 +247,6 @@ private fun AccountManageContent(
                 .weight(7f),
             accounts = profileUiState.accounts,
             currentAccount = profileUiState.currentAccount,
-            isOffline = profileUiState.isOffline,
             accountOperation = operationUiState.accountOp,
             accountSkinOperation = operationUiState.accountSkinOp,
             accountSkinDialogState = operationUiState.accountSkinDialogState,
@@ -272,13 +265,11 @@ private fun AccountManageContent(
 /**
  * 左侧登录方式菜单组件
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ActionsLayout(
     isVisible: Boolean,
     modifier: Modifier = Modifier,
     currentAccount: Account?,
-    isOffline: Boolean,
     actions: AccountActions
 ) {
     val xOffset by swapAnimateDpAsState(
@@ -294,73 +285,28 @@ private fun ActionsLayout(
     ) {
         //玩家模型预览
         val refreshWardrobe by AccountsManager.refreshWardrobe.collectAsStateWithLifecycle()
-        val accountSkin = remember(currentAccount, refreshWardrobe) {
+        val skinFile = remember(currentAccount, refreshWardrobe) {
             currentAccount?.getSkinFile()?.takeIf { it.exists() }
         }
-        val accountCape = remember(currentAccount, refreshWardrobe) {
+        val capeFile = remember(currentAccount, refreshWardrobe) {
             currentAccount?.getCapeFile()?.takeIf { it.exists() }
         }
-        val context = LocalContext.current
-        val playerSkin = remember {
-            PlayerSkin(context)
-        }
-        var pageFinished by remember { mutableStateOf(false) }
-
-        DisposableEffect(Unit) {
-            onDispose {
-                playerSkin.destroy()
-            }
-        }
-
-        Box(
+        SkinPreview3D(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { context ->
-                    playerSkin.loadWebView(
-                        context = context,
-                        onPageFinished = {
-                            pageFinished = true
-                            playerSkin.startAnim(ModelAnimation.NewIdle)
-                            playerSkin.setAzimuthAndPitch(-35, 10)
-                        }
-                    )
-                },
-                update = {
-                    if (pageFinished) {
-                        runCatching {
-                            accountSkin?.inputStream().use { inputStream ->
-                                playerSkin.loadSkin(inputStream, currentAccount?.skinModelType)
-                            }
-                        }
-                        runCatching {
-                            accountCape?.inputStream().use { inputStream ->
-                                playerSkin.loadCape(inputStream)
-                            }
-                        }
-                    }
-                }
-            )
-            if (!pageFinished) {
-                LoadingIndicator()
-            }
-        }
+            skinFile = skinFile,
+            capeFile = capeFile,
+            modelType = currentAccount?.skinModelType,
+            refreshKey = listOf(currentAccount?.uniqueUUID, refreshWardrobe, skinFile?.lastModified() ?: 0L, capeFile?.lastModified() ?: 0L)
+        )
 
         //添加账号
         ScalingActionButton(
             modifier = Modifier
                 .fillMaxWidth(),
             onClick = {
-                if (isOffline) {
-                    //非正版状态下，只允许创建微软账号
-                    actions.onIntent(AccountManageIntent.UpdateMicrosoftLoginOp(MicrosoftLoginOperation.Tip))
-                } else {
-                    actions.onIntent(AccountManageIntent.UpdateLoginMenuOp(LoginMenuOperation.Login))
-                }
+                actions.onIntent(AccountManageIntent.UpdateLoginMenuOp(LoginMenuOperation.Login))
             }
         ) {
             MarqueeText(text = stringResource(R.string.account_add_new_account))
@@ -680,7 +626,6 @@ private fun AccountsLayout(
     modifier: Modifier = Modifier,
     accounts: List<Account>,
     currentAccount: Account?,
-    isOffline: Boolean,
     accountOperation: AccountOperation,
     accountSkinOperation: AccountSkinOperation,
     accountSkinDialogState: AccountManageViewModel.AccountSkinDialogState,
@@ -723,7 +668,6 @@ private fun AccountsLayout(
                             .padding(vertical = 6.dp),
                         currentAccount = currentAccount,
                         account = account,
-                        enabled = !isOffline, //非正版状态下不允许选择任何状态
                         onSelected = { AccountsManager.setCurrentAccount(it) },
                         openChangeSkinDialog = {
                             if (!account.isAuthServerAccount()) {
@@ -781,7 +725,7 @@ private fun AccountSkinOperation(
             val account = accountSkinOperation.account
             ChangeSkinDialog(
                 account = account,
-                availableCapes = accountCapes[account.uniqueUUID] ?: emptyList(),
+                availableCapes = accountCapes[account.uniqueUUID],
                 skinState = skinDialogState.pendingSkinData,
                 onSkinStateChange = { skinState ->
                     actions.onIntent(

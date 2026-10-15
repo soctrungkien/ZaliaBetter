@@ -171,6 +171,7 @@
     <string name="unpack_screen_jna">Enables Minecraft to directly call low-level OS functions</string>
     <!-- Main Menu -->
     <string name="main_launch_game">Launch</string>
+    <string name="launch_check_mods">Checking mods</string>
     <string name="main_task_menu">Task Menu</string>
     <!--  Download  -->
     <string name="download_category_game">Game</string>
@@ -189,9 +190,6 @@
     <string name="download_game_type_old_alpha">Alpha</string>
     <string name="download_game_type_old_beta">Beta</string>
     <string name="download_game_version_name">Version Name</string>
-    <string name="download_game_version_overwrite">Will overwrite existing version: %s</string>
-    <string name="download_game_version_overwrite_select">Version to overwrite</string>
-    <string name="download_game_version_overwrite_select_subtitle">Select the version to overwrite. You can use this feature to upgrade/downgrade the target version</string>
     <string name="download_game_addon_list_load_error">Failed to load list: %s</string>
     <string name="download_game_addon_available">Available</string>
     <string name="download_game_addon_unavailable">Unavailable</string>
@@ -212,6 +210,7 @@
     <string name="download_game_install_base_install">Install %s</string>
     <string name="download_game_install_base_installing">Installing %s in the foreground</string>
     <string name="download_game_install_optifine_fetch_download_url">Fetch download URL for OptiFine %s</string>
+    <string name="download_install_error_optifine_forge17_incompatible">This OptiFine (build %s) is incompatible with Forge 1.17+. OptiFine H1 Pre2 (20210924–190833) or newer is required.</string>
     <string name="download_game_install_forgelike_analyse">Analyze libraries for %s</string>
     <string name="download_game_install_forgelike_preparing_mapping_file">Preparing %s mapping file</string>
     <string name="download_game_install_game_files_progress">Install game files</string>
@@ -287,6 +286,7 @@
     <string name="download_modpack_install_overrides">Extract modpack files</string>
     <string name="download_modpack_download">Download modpack content</string>
     <string name="download_modpack_download_mods">Download all mods (%1$d/%2$d, %3$s)</string>
+    <string name="download_modpack_download_mods_retry">Retry downloading all mods (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">Retrieve loader information</string>
     <string name="download_modpack_final_move">Moving modpack files</string>
     <!--  Assets Category  -->
@@ -421,6 +421,9 @@
     <string name="game_menu_option_input_method">Switch Input Method</string>
     <string name="game_menu_option_auto_show_ime">Auto-show Input Method (SDL)</string>
     <string name="game_menu_option_switch_fps">FPS Display</string>
+    <string name="game_menu_option_fps_display_mode">FPS Display Mode</string>
+    <string name="game_menu_option_fps_display_mode_number">Number</string>
+    <string name="game_menu_option_fps_display_mode_chart">Chart</string>
     <string name="game_menu_option_switch_memory">Memory Display</string>
     <string name="game_menu_option_menu_ball_opacity">Menu Overlay Opacity</string>
     <string name="game_menu_option_send_keycode">Send Keycode</string>
@@ -499,6 +502,7 @@
     <string name="account_label_email">Email or Username</string>
     <string name="account_label_password">Password</string>
     <string name="account_change_skin">Change Skin</string>
+    <string name="account_wardrobe">Wardrobe</string>
     <string name="account_change_skin_arm_style">Arm Style</string>
     <string name="account_change_skin_arm_wide">Wide Arms</string>
     <string name="account_change_skin_arm_slim">Slim Arms</string>
@@ -563,7 +567,6 @@
     <string name="account_local_uuid_tip_4">This option is intended for advanced users and usually does not need to be adjusted.</string>
     <string name="account_local_uuid_invalid">Invalid UUID Format</string>
     <string name="account_local_uuid_copy">Copy UUID</string>
-    <string name="account_local_uuid_copied">Copied UUID of Account %s</string>
     <string name="account_other_login_baseurl_not_set">Base URL not set</string>
     <string name="account_other_login_getting_full_url">Resolving URL</string>
     <string name="account_other_login_getting_server_info">Fetching server info</string>
@@ -606,6 +609,9 @@
     <string name="cape_name_zombie_horse">Zombie Horse</string>
     <string name="cape_name_builder">Builder</string>
     <string name="cape_name_crafter">Crafter</string>
+    <string name="cape_name_twisted">Twisted</string>
+    <string name="cape_name_hero">Hero</string>
+    <string name="cape_name_aurora">Aurora</string>
     <!-- File Management -->
     <string name="files_back_to_parent">Back</string>
     <string name="files_create_dir">Create Folder</string>
@@ -647,6 +653,18 @@
     <string name="versions_manage_category_modloader">Moddable</string>
     <string name="versions_manage_pin">Pin</string>
     <string name="versions_manage_install_exists">Version name already exists!</string>
+    <string name="versions_modify_version">Modify Version</string>
+    <string name="versions_modify_start">Start Modify</string>
+    <string name="versions_modify_select_mc">Select Minecraft Version</string>
+    <string name="versions_modify_name_tip">You can rename this version here</string>
+    <string name="versions_modify_mc_changed_title">The Minecraft version has changed</string>
+    <string name="versions_modify_mc_changed_tip">Some mod loaders may not support this version; you can reselect the loaders for the new version.</string>
+    <string name="versions_modify_unrecognized_title">Installed components below cannot be matched automatically (possibly incompatible with the selected loaders) and will be kept as-is unless a new version is selected</string>
+    <string name="versions_modify_confirm_message">The following changes will be applied to the version:</string>
+    <string name="versions_modify_diff_remove">Remove %s</string>
+    <string name="versions_modify_diff_install">Install %1$s %2$s</string>
+    <string name="versions_modify_success">Version modified successfully!</string>
+    <string name="versions_modify_error_message">An error occurred while modifying the version:</string>
     <string name="versions_manage_invalid">Invalid version</string>
     <string name="home_add_version_card">Add card to Home screen</string>
     <string name="home_version_card_deleted">Version deleted</string>
@@ -701,6 +719,8 @@
     <string name="versions_config_isolation_title">Version Isolation</string>
     <string name="versions_config_isolation_summary">Isolate the current version so that its data does not interfere with any other versions</string>
     <string name="versions_config_renderer">Renderer</string>
+    <string name="versions_config_renderer_reset_global">Reset to Global</string>
+    <string name="versions_config_renderer_reset_global_message">The launcher will discard the configuration of this version for %s and reset to using the global configuration. This action cannot be undone.</string>
     <string name="versions_config_vulkan_driver">Vulkan Driver</string>
     <string name="versions_config_control">Control Layout</string>
     <string name="versions_config_java_runtime_summary">Specify the Java environment used by the current version</string>
@@ -715,15 +735,6 @@
     <string name="versions_config_failed_to_save">Failed to save version configuration</string>
     <string name="versions_config_microphone_check_title">Check Microphone</string>
     <string name="versions_config_microphone_check_summary">Check whether the system microphone is available or confirm that the launcher has been granted microphone permission. This check ensures that you can use mods like Simple Voice Chat that require a microphone.</string>
-    <string name="versions_install_loader">Install Loader</string>
-    <string name="versions_update_loader">Update Loader</string>
-    <string name="versions_update_loader_waiting_for_others">Waiting for other tasks to finish</string>
-    <string name="versions_update_loader_diff_message">Are you sure you want to change the current game\'s loader?</string>
-    <string name="versions_update_loader_diff_change">Change: %1$s %2$s → %3$s</string>
-    <string name="versions_update_loader_diff_remove">Remove: %s</string>
-    <string name="versions_update_loader_diff_load">Load: %1$s %2$s</string>
-    <string name="versions_update_loader_error_message">An error occurred while installing the loader:</string>
-    <string name="versions_update_loader_success_message">The game\'s loader version has been successfully updated!</string>
     <string name="versions_export">Export Modpack</string>
     <string name="versions_export_type_mcbbs">MCBBS Modpack</string>
     <string name="versions_export_type_mcbbs_summary">Can be imported by %s, HMCL, and other launchers</string>
@@ -828,6 +839,9 @@
     <string name="saves_manage_no_saves">No saves for this version</string>
     <string name="saves_manage_import_unpacking">Unpacking save: %s</string>
     <string name="saves_manage_import_failed">An error occurred while importing the save</string>
+    <string name="saves_manage_compress_share">Compress and Share Save</string>
+    <string name="saves_manage_compressing">Compressing save: %s</string>
+    <string name="saves_manage_export_failed">An error occurred while compressing the save</string>
     <string name="resource_pack_manage">Resource Packs</string>
     <string name="resource_pack_manage_info">Resource Pack Information</string>
     <string name="resource_pack_manage_invalid">Invalid Resource Pack Format</string>
@@ -848,7 +862,6 @@
     <string name="screenshots_manage_no_screenshots">No screenshots for this version</string>
     <string name="screenshots_manage_export">Export</string>
     <string name="screenshots_manage_export_title">Export Screenshots</string>
-    <string name="screenshots_manage_export_success">Export completed</string>
     <string name="screenshots_manage_export_failed">Export failed</string>
     <string name="screenshots_manage_export_all_message">Export all screenshots to the system gallery?</string>
     <string name="screenshots_manage_export_selected_message">Export %1$d selected screenshots to the system gallery?</string>
@@ -865,6 +878,12 @@
     <string name="servers_list_delete_server_text">Are you sure you want to delete server %s?</string>
     <string name="servers_list_edit_server">Edit Server</string>
     <string name="servers_list_copy_server_address">Copy Address</string>
+    <!-- Server card -->
+    <string name="home_server_card_settings">Server Card Settings</string>
+    <string name="home_server_card_quick_launch">Quick launch button</string>
+    <string name="home_server_card_version_current">Current selected version</string>
+    <string name="home_server_card_version_specific">Specific version</string>
+    <string name="home_server_card_refresh_failed">Failed to refresh server info</string>
     <!-- Game -->
     <string name="minecraft_download_stat_download_task">Preparing downloads</string>
     <string name="minecraft_download_stat_verify_task">Preparing verifications</string>
@@ -902,6 +921,8 @@
     <string name="settings_renderer_full_screen_summary">Enable fullscreen mode, ignoring safe areas like notches and punch-holes</string>
     <string name="settings_renderer_sustained_performance_title">Sustained Performance Mode</string>
     <string name="settings_renderer_sustained_performance_summary">When enabled, the system provides more stable performance for the game, suitable for long play sessions, but may slightly reduce device responsiveness to prevent overheating</string>
+    <string name="settings_renderer_max_refresh_rate_title">Request Max Refresh Rate</string>
+    <string name="settings_renderer_max_refresh_rate_summary">Request the display to switch to the highest refresh rate supported at the current resolution, lifting the frame rate cap on some devices</string>
     <string name="settings_renderer_shader_dump_title">Shader Logging</string>
     <string name="settings_renderer_shader_dump_summary">Output the converted shader code during game runtime to a log file for easier debugging and graphics rendering analysis</string>
     <string name="settings_renderer_vulkan_driver_system_title">Use System Vulkan Driver</string>
@@ -1311,6 +1332,8 @@
     <string name="vibrate_kind_tick">Tick</string>
     <string name="festivals_new_year">Happy New Year!</string>
     <string name="festivals_april_fools">Happy April Fools\' Day!</string>
+    <string name="festivals_halloween">Happy Halloween!</string>
+    <string name="festivals_valentines">Happy Valentine\'s Day!</string>
     <string name="festivals_christmas">Merry Christmas!</string>
 
     <!-- File Manager -->
@@ -1464,4 +1487,57 @@
     <string name="fm_property_folders">Folders</string>
     <string name="fm_calculating">Calculating…</string>
     <string name="fm_name_conflict">Name conflicts with an existing entry</string>
+    <!-- Guide -->
+    <!--
+        Texts of the main-screen onboarding guide. The guide dims the whole screen,
+        spotlights the referenced component and shows a text card near it.
+    -->
+    <!-- Welcome card shown centered on the screen at the very start of the main-screen guide; %s is the launcher name -->
+    <string name="guide_main_welcome_title">Welcome to %s!</string>
+    <!-- Second line of the centered welcome card that opens the main-screen guide -->
+    <string name="guide_main_welcome_text">Let\'s take a quick look at what the main screen can do.</string>
+    <!-- Guide text next to the account avatar on the action menu card; tapping it opens the account manager -->
+    <string name="guide_main_account">Tap here to open the account manager, where you can add or manage your Minecraft accounts</string>
+    <!-- Guide text next to the version entry on the action menu card; tapping it opens the version list -->
+    <string name="guide_main_version_list">Tap here to open the version list, where every game version you install will be listed</string>
+    <!-- Title of the guide card for the draggable action menu card -->
+    <string name="guide_main_card_drag_title">Not happy with where the action menu is?</string>
+    <!-- Body of the guide card explaining how to move the action menu card to the other side -->
+    <string name="guide_main_card_drag_text">Long-press the card to pick it up, then drag and drop it to dock on the other side</string>
+    <!-- Title of the guide card suggesting to pin content onto the main screen as cards -->
+    <string name="guide_main_card_tip_title">Looking a bit empty here?</string>
+    <!-- Body of the guide card about pinning contents as cards on the main screen; %s is the name of the pin-to-home option -->
+    <string name="guide_main_card_tip_text">Don\'t worry! You can pin content here as cards and arrange it freely, as long as it provides the “%s” option</string>
+    <!-- Welcome card shown centered on the screen at the very start of the control-editor guide -->
+    <string name="guide_editor_welcome_title">Welcome to the control layout editor!</string>
+    <!-- Second line of the centered welcome card that opens the control-editor guide -->
+    <string name="guide_editor_welcome_text">Let\'s take a quick look at how to use it.</string>
+    <!-- Title of the guide card for the floating menu button of the control-editor screen -->
+    <string name="guide_editor_menu_ball_title">This is the control layout editor\'s floating menu button</string>
+    <!-- Body of the guide card about the floating menu button; dragging repositions it, tapping opens the editor menu with the control layer list -->
+    <string name="guide_editor_menu_ball_text">Drag it to reposition it! Tap it to open the editor menu and the control layer list</string>
+    <!-- Title of the guide card for the control layer list in the right-hand editor menu card -->
+    <string name="guide_editor_layer_list_title">This is the control layer list</string>
+    <!-- Body explaining the concept: a control layer works like a graphics layer and acts as a container for controls -->
+    <string name="guide_editor_layer_list_text">A control layer works like a graphics layer: it is a container that holds controls. You can organize the controls you add by placing them on separate layers</string>
+    <!-- Closing line of the control-layer-list guide card; all created layers appear in this list -->
+    <string name="guide_editor_layer_list_note">Every control layer you add will be listed here</string>
+    <!-- Guide card for the button at the bottom of the control layer list that creates a new control layer -->
+    <string name="guide_editor_create_layer">Tap this button to create a new control layer</string>
+    <!-- Title of the guide card for the add-control buttons at the top of the editor menu -->
+    <string name="guide_editor_add_widgets_title">Add controls here!</string>
+    <!-- Body explaining that controls are added to the currently selected control layer -->
+    <string name="guide_editor_add_widgets_text">Once a control layer is selected, you can add any type of control to it</string>
+    <!-- Title of the guide card for the control and joystick appearance lists in the editor menu -->
+    <string name="guide_editor_styles_title">Want to change how your controls look?</string>
+    <!-- Body explaining control appearances, which can be created once and reused across controls -->
+    <string name="guide_editor_styles_text">You can create appearances for your controls so they can be quickly reused and switched between</string>
+    <!-- Guide card for the preview option in the editor menu; preview mode lets the user test the control layout -->
+    <string name="guide_editor_preview">Use the preview mode to test out your control layout</string>
+    <!-- Final guide card reminding the user to save the control layout -->
+    <string name="guide_editor_save">Once you\'re done editing, remember to save your control layout!</string>
+    <!-- Next-step hint shown near a screen corner during non-final guide steps; tapping any blank area advances to the next step -->
+    <string name="guide_tip_blank">Tap any blank area to continue to the next step</string>
+    <!-- Next-step hint shown near a screen corner during the final guide step; tapping any blank area finishes the whole guide -->
+    <string name="guide_tip_finish">Tap any blank area to finish the guide</string>
 </resources>

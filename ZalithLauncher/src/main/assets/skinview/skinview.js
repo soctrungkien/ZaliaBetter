@@ -284,3 +284,11 @@ function loadSkin(skinUrl, model = "auto-detect") {
 function loadCape(capeUrl) {
     skinViewer.loadCape(capeUrl);
 }
+
+function setInteractionEnabled(enabled) {
+    const interactive = enabled !== false;
+    skinViewer.controls.enableRotate = interactive;
+    container.style.pointerEvents = interactive ? 'auto' : 'none';
+}
+
+setInteractionEnabled(true);

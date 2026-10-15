@@ -193,6 +193,7 @@ fun MinecraftColorText(
     inputText: String,
     fontSize: TextUnit = TextUnit.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
+    softWrap: Boolean = false,
     style: TextStyle = LocalTextStyle.current,
 ) {
     val (foreground, background) = remember(inputText) {
@@ -207,6 +208,7 @@ fun MinecraftColorText(
         background = background,
         fontSize = fontSize,
         maxLines = maxLines,
+        softWrap = softWrap,
         style = style,
     )
 }

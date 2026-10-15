@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -43,7 +42,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -52,6 +50,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEventTimeoutCancellationException
@@ -83,15 +83,14 @@ private val GridFadeExtent = 72.dp
 /** 网格线的最大不透明度（卡片矩形处） */
 private const val GridLineMaxAlpha = 0.35f
 
-/** 调整态工具条的高度 */
-private val ToolbarHeight = 40.dp
-/** 工具条与卡片边缘的间隙 */
-private val ToolbarGap = 8.dp
+/** 会话卡幽灵的透明度 */
+private const val GhostAlpha = 0.5f
+/** 空槽描边的不透明度 */
+private const val SlotStrokeAlpha = 0.5f
 
 /**
  * 卡片网格容器
  * @param cardBackground 卡片内容的背景装饰，在卡片表面内部应用
- * @param adjustingBar 工具条 UI 组件
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -101,7 +100,6 @@ fun CardGrid(
     containerColor: Color = MaterialTheme.colorScheme.surfaceBright,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     cardBackground: (@Composable (Modifier) -> Modifier)? = null,
-    adjustingBar: (@Composable (Modifier, GridCard) -> Unit)? = null,
 ) {
     val hostDirection = LocalLayoutDirection.current
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
@@ -111,7 +109,6 @@ fun CardGrid(
             containerColor = containerColor,
             contentColor = contentColor,
             cardBackground = cardBackground,
-            adjustingBar = adjustingBar,
             contentDirection = hostDirection
         )
     }
@@ -125,7 +122,6 @@ private fun CardGridCanvas(
     containerColor: Color,
     contentColor: Color,
     cardBackground: (@Composable (Modifier) -> Modifier)?,
-    adjustingBar: (@Composable (Modifier, GridCard) -> Unit)?,
     contentDirection: LayoutDirection
 ) {
     val density = LocalDensity.current
@@ -247,7 +243,6 @@ private fun CardGridCanvas(
                     containerColor = containerColor,
                     contentColor = contentColor,
                     cardBackground = cardBackground,
-                    adjustingBar = adjustingBar,
                     contentDirection = contentDirection
                 )
             }
@@ -263,7 +258,6 @@ private fun CardSlot(
     containerColor: Color,
     contentColor: Color,
     cardBackground: (@Composable (Modifier) -> Modifier)?,
-    adjustingBar: (@Composable (Modifier, GridCard) -> Unit)?,
     contentDirection: LayoutDirection
 ) {
     val rectProvider: () -> Rect = { state.renderRectOf(card) }
@@ -282,7 +276,9 @@ private fun CardSlot(
     ) {
         CardSurface(
             interaction = interaction,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .then(if (state.isSessionCard(card.id)) Modifier.graphicsLayer { alpha = GhostAlpha } else Modifier),
             shape = card.type.shape ?: MaterialTheme.shapes.extraLarge,
             containerColor = containerColor,
             contentColor = contentColor,
@@ -292,33 +288,6 @@ private fun CardSlot(
             CompositionLocalProvider(LocalLayoutDirection provides contentDirection) {
                 card.type.content(state.cardStateOf(card), card.id)
             }
-        }
-
-        if (adjusting && adjustingBar != null) {
-            val density = LocalDensity.current
-            val barExtentPx = with(density) { (ToolbarHeight + ToolbarGap).toPx() }
-            val cardTopInViewport = state.areaOffsetInRoot.y +
-                state.rectFor(state.effectiveLayout(card)).top - state.viewportTopPx
-            val placeAbove = cardTopInViewport >= barExtentPx
-            val barOffset by animateDpAsState(
-                targetValue = if (placeAbove) {
-                    -(ToolbarHeight + ToolbarGap)
-                } else {
-                    with(density) { rectProvider().height.toDp() } + ToolbarGap
-                },
-                animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
-                label = "cardToolbarOffset"
-            )
-
-            adjustingBar(
-                Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(y = barOffset)
-                    .height(ToolbarHeight)
-                    .zIndex(1f)
-                    .gestureGuard(),
-                card
-            )
         }
     }
 }
@@ -366,22 +335,6 @@ private fun CardSurface(
 }
 
 /**
- * 消费落在自身范围内的全部指针事件：
- * 子节点先行处理，未被消费的事件在此标记为已消费，
- * 使手势在向上冒泡途中止于自身，不再触达祖先节点。
- */
-private fun Modifier.gestureGuard(): Modifier = pointerInput(Unit) {
-    awaitEachGesture {
-        awaitFirstDown(requireUnconsumed = false).consume()
-        while (true) {
-            val event = awaitPointerEvent()
-            event.changes.forEach { it.consume() }
-            if (event.changes.none { it.pressed }) return@awaitEachGesture
-        }
-    }
-}
-
-/**
  * 拖动/缩放期间显示网格线：以吸附预览矩形为中心，
  * 网格线随所在位置到卡片的距离增加而逐格淡化消失，如光晕般收敛于卡片周围。
  */
@@ -394,12 +347,19 @@ private fun CardGridGlowEffect(state: CardGridState, modifier: Modifier = Modifi
     val cell = state.cellPx
     val columns = state.geometry.columns
     Canvas(modifier = modifier.zIndex(0.1f)) {
-        // 吸附落点高亮
+        // 空槽落点：邻居让位后开出的空位，以浅色填充与淡描边表达
         drawRoundRect(
-            color = primary.copy(alpha = 0.08f),
+            color = primary.copy(alpha = 0.06f),
             topLeft = previewRect.topLeft,
             size = previewRect.size,
             cornerRadius = CornerRadius(16.dp.toPx())
+        )
+        drawRoundRect(
+            color = primary.copy(alpha = SlotStrokeAlpha),
+            topLeft = previewRect.topLeft,
+            size = previewRect.size,
+            cornerRadius = CornerRadius(16.dp.toPx()),
+            style = Stroke(width = 1.dp.toPx())
         )
 
         val fadePx = GridFadeExtent.toPx()

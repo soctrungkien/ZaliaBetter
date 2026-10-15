@@ -127,6 +127,7 @@ import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
+import com.movtery.zalithlauncher.ui.screens.content.home.server.ServerCardManager
 import com.movtery.zalithlauncher.ui.screens.content.versions.elements.ComponentText
 import com.movtery.zalithlauncher.ui.screens.content.versions.elements.MinecraftColorText
 import com.movtery.zalithlauncher.ui.screens.content.versions.elements.MinecraftColorTextNormal
@@ -587,6 +588,13 @@ fun ServerListScreen(
                             },
                             onDelete = { data ->
                                 viewModel.dataOperation = ServerDataOperation.DeleteServer(data)
+                            },
+                            onAddToHome = { server ->
+                                ServerCardManager.addCard(
+                                    name = server.name,
+                                    serverIp = server.originIp,
+                                    icon = server.icon
+                                )
                             }
                         )
                     }
@@ -679,6 +687,7 @@ private fun ServerListBody(
     onPlay: (String) -> Unit,
     onEdit: (ServerData) -> Unit,
     onDelete: (ServerData) -> Unit,
+    onAddToHome: (ServerData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     servers?.let { list ->
@@ -703,7 +712,8 @@ private fun ServerListBody(
                         onCopy = { onCopy(server.originIp) },
                         onPlay = { onPlay(server.originIp) },
                         onEdit = { onEdit(server) },
-                        onDelete = { onDelete(server) }
+                        onDelete = { onDelete(server) },
+                        onAddToHome = { onAddToHome(server) }
                     )
                 }
             }
@@ -738,6 +748,7 @@ private fun ServerItem(
     onPlay: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
+    onAddToHome: () -> Unit,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     shape: Shape = MaterialTheme.shapes.large,
@@ -973,6 +984,29 @@ private fun ServerItem(
                             }
                         )
 
+                        //添加到主页卡片
+                        val homeCards by ServerCardManager.cards.collectAsStateWithLifecycle()
+                        val addedToHome = remember(homeCards, item.originIp) {
+                            homeCards.any { it.record.cardId == item.originIp }
+                        }
+                        DropdownMenuItem(
+                            enabled = !addedToHome,
+                            text = {
+                                Text(text = stringResource(R.string.home_add_version_card))
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    painter = painterResource(R.drawable.ic_add_box_filled),
+                                    contentDescription = stringResource(R.string.home_add_version_card)
+                                )
+                            },
+                            onClick = {
+                                onAddToHome()
+                                expanded = false
+                            }
+                        )
+
                         //编辑服务器
                         DropdownMenuItem(
                             enabled = !isSavingServer,
@@ -1101,11 +1135,12 @@ private fun ServerIcon(
  * 服务器描述文本渲染，尝试模仿 Minecraft 原版对于 Component 文本组件的渲染
  */
 @Composable
-private fun DescriptionTextRender(
+fun DescriptionTextRender(
     description: ServerDescription,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
+    softWrap: Boolean = false,
 ) {
     when(description) {
         is ComponentDescriptionRoot -> {
@@ -1113,7 +1148,8 @@ private fun DescriptionTextRender(
                 modifier = modifier,
                 descriptions = description.values,
                 fontSize = fontSize,
-                maxLines = maxLines
+                maxLines = maxLines,
+                softWrap = softWrap
             )
         }
         is ComponentDescription -> {
@@ -1121,7 +1157,8 @@ private fun DescriptionTextRender(
                 modifier = modifier,
                 descriptions = listOf(description),
                 fontSize = fontSize,
-                maxLines = maxLines
+                maxLines = maxLines,
+                softWrap = softWrap
             )
         }
         is StringDescription -> {
@@ -1130,7 +1167,8 @@ private fun DescriptionTextRender(
                 modifier = modifier,
                 inputText = value,
                 fontSize = fontSize,
-                maxLines = maxLines
+                maxLines = maxLines,
+                softWrap = softWrap
             )
         }
     }
