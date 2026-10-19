@@ -45,6 +45,7 @@ import com.movtery.zalithlauncher.filemanager.viewmodel.controllers.PasteControl
 import com.movtery.zalithlauncher.filemanager.viewmodel.controllers.SearchController
 import com.movtery.zalithlauncher.filemanager.viewmodel.controllers.SelectionController
 import com.movtery.zalithlauncher.filemanager.viewmodel.controllers.TrashController
+import com.movtery.zalithlauncher.utils.file.shareFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,6 +53,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.inject.Inject
@@ -333,6 +335,12 @@ class FileManagerViewModel @Inject constructor(
     fun editorCancelExitConfirm() = editorCtr.cancelExitConfirm()
     /** 是否存在未保存的修改 */
     fun editorHasDirty(): Boolean = editorCtr.hasDirty()
+
+    /** 通过系统分享唤起其他文件管理器应用浏览当前目录 */
+    fun browseInExternalManager() {
+        val dir = store.stateValue().currentDir?.toString() ?: return
+        shareFile(context, File(dir))
+    }
 
     // ---------------- 对话框 / Snackbar ----------------
 

@@ -117,13 +117,13 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         return super.onKeyPreIme(keyCode, event);
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasWindowFocus) {
-        super.onWindowFocusChanged(hasWindowFocus);
-        if (!hasWindowFocus) {
-            disableKeyboard();
-        }
-    }
+//    @Override
+//    public void onWindowFocusChanged(boolean hasWindowFocus) {
+//        super.onWindowFocusChanged(hasWindowFocus);
+//        if (!hasWindowFocus) {
+//            disableKeyboard();
+//        }
+//    }
 
     /** This function deals with anything that has to be executed when the constructor is called */
     private void setup() {

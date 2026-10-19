@@ -214,7 +214,7 @@ private fun getPredefinedSeedColor(theme: ColorThemeType, darkTheme: Boolean): I
     }
 }
 
-fun MaterialAlertDialogBuilder.showThemed(): AlertDialog {
+fun MaterialAlertDialogBuilder.createThemed(): AlertDialog {
     val colors = getColorScheme(context)
     background?.setTint(colors.surfaceContainerHigh.toArgb())
 
@@ -240,5 +240,9 @@ fun MaterialAlertDialogBuilder.showThemed(): AlertDialog {
             getButton(AlertDialog.BUTTON_NEGATIVE)?.applyThemeColors(colors)
             getButton(AlertDialog.BUTTON_NEUTRAL)?.applyThemeColors(colors)
         }
-    }.also { it.show() }
+    }
+}
+
+fun MaterialAlertDialogBuilder.showThemed(): AlertDialog {
+    return createThemed().also { it.show() }
 }

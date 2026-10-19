@@ -1332,6 +1332,7 @@
     <string name="fm_count_files">檔案：%d</string>
     <string name="fm_count_folders">資料夾：%d</string>
     <string name="fm_count_selected">已選取 %d 項</string>
+    <string name="fm_browse_external">在其他管理器應用內瀏覽</string>
     <string name="fm_cut">剪下</string>
     <string name="fm_delete">是否刪除所選的 %d 項內容？</string>
     <string name="fm_empty_dir">空目錄</string>

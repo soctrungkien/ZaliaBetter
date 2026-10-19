@@ -1233,6 +1233,7 @@
     <string name="fm_import_file">Importar Arquivo</string>
     <string name="fm_import_dir">Importar Diretório</string>
     <string name="fm_import_empty">Nada para importar</string>
+    <string name="fm_browse_external">Navegar em Outros Gerenciadores</string>
     <string name="fm_sort_name">Nome</string>
     <string name="fm_sort_size">Tamanho</string>
     <string name="fm_sort_modified">Modificado</string>
@@ -1442,4 +1443,17 @@
     <string name="versions_modify_diff_install">Instalar %1$s %2$s</string>
     <string name="versions_modify_success">Versão modificada com sucesso!</string>
     <string name="versions_modify_error_message">Ocorreu um erro ao modificar a versão:</string>
+    <string name="account_wardrobe">Guarda-roupa</string>
+    <string name="home_server_card_settings">Configurações da placa de servidor</string>
+    <string name="home_server_card_quick_launch">Botão de inicialização rápida</string>
+    <string name="home_server_card_version_current">Versão selecionada atual</string>
+    <string name="home_server_card_version_specific">Versão específica</string>
+    <string name="home_server_card_refresh_failed">Falha ao atualizar as informações do servidor</string>
+    <string name="saves_manage_compress_share">Comprimir e Compartilhar o Save</string>
+    <string name="saves_manage_compressing">Comprimindo save: %s</string>
+    <string name="saves_manage_export_failed">Ocorreu um erro ao compactar o arquivo do save</string>
+    <string name="settings_renderer_max_refresh_rate_title">Solicitar os HZ máximos da tela</string>
+    <string name="settings_renderer_max_refresh_rate_summary">Solicita que a tela mude para a taxa de HZ mais alta compatível com a resolução atual, removendo o limite de FPS em alguns dispositivos</string>
+    <string name="versions_config_renderer_reset_global">Redefinir para Global</string>
+    <string name="versions_config_renderer_reset_global_message">O Launcher descartará a configuração desta versão para %s e redefinirá para usar a configuração global. Esta ação não pode ser desfeita.</string>
 </resources>

@@ -1248,6 +1248,7 @@
     <string name="fm_import_file">Impor Berkas</string>
     <string name="fm_import_dir">Impor Direktori</string>
     <string name="fm_import_empty">Tidak ada yang diimpor</string>
+    <string name="fm_browse_external">Telusuri di Aplikasi Pengelola Lain</string>
     <string name="fm_sort_name">Nama</string>
     <string name="fm_sort_size">Ukuran</string>
     <string name="fm_sort_modified">Dimodifikasi</string>
@@ -1425,4 +1426,6 @@
     <string name="cape_name_twisted">Twisted</string>
     <string name="cape_name_hero">Hero</string>
     <string name="cape_name_aurora">Aurora</string>
+    <string name="game_menu_option_fps_display_mode_number">Angka</string>
+    <string name="versions_modify_select_mc">Pilih versi Minecraft</string>
 </resources>

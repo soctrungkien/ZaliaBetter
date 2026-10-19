@@ -514,7 +514,6 @@
     <string name="settings_renderer_from_plugins">Từ plugin %s</string>
     <string name="settings_renderer_resolution_scale_title">Độ phân giải</string>
     <string name="settings_renderer_resolution_scale_summary">Càng thấp càng khỏe, càng cao càng đẹp</string>
-
     <string name="settings_renderer_resolution_rule_title">Quy tắc độ phân giải</string>
     <string name="settings_renderer_resolution_rule_summary">Chọn cách tính độ phân giải của cửa sổ trò chơi</string>
     <string name="settings_renderer_resolution_rule_percentage">Phần trăm</string>
@@ -1205,7 +1204,6 @@
     <string name="control_editor_edit_joystick_trigger_mode">Kiểu kích hoạt</string>
     <string name="control_editor_edit_joystick_trigger_mode_drag">Kéo để kích hoạt</string>
     <string name="control_editor_edit_joystick_trigger_mode_touch">Chạm để kích hoạt</string>
-
     <string name="guide_main_welcome_title">Chào mừng đến với %s!</string>
     <string name="guide_main_welcome_text">Cùng xem nhanh các tính năng của màn hình chính nhé.</string>
     <string name="guide_main_account">Chạm vào đây để mở trình quản lý tài khoản, nơi bạn có thể thêm hoặc quản lý tài khoản Minecraft</string>
@@ -1230,4 +1228,13 @@
     <string name="guide_editor_save">Sau khi chỉnh sửa xong, đừng quên lưu bố cục điều khiển!</string>
     <string name="guide_tip_blank">Chạm vào vùng trống để chuyển sang bước tiếp theo</string>
     <string name="guide_tip_finish">Chạm vào vùng trống để kết thúc hướng dẫn</string>
+    <string name="duration_format">%s Ngày %s Giờ %s Phút</string>
+    <string name="notification_task_service_name">Dịch vụ giữ cho tiến trình sống sót</string>
+    <string name="notification_task_service_running">Các nhiệm vụ đang chạy nền. Hãy giữ cho launcher chạy.</string>
+    <string name="launch_check_mods">Đang kiểm tra các bản mod</string>
+    <string name="download_category_favorites">Yêu thích</string>
+    <string name="download_install_error_optifine_forge17_incompatible">Phiên bản Optifine (build %s) này không tương thích với Forge 1.17+. Yêu cầu Optifine H1 Pre2 (20210924–190833) hoặc mới hơn.</string>
+    <string name="favorite_add">Yêu thích</string>
+    <string name="favorite_added">Được yêu thích</string>
+    <string name="favorites_empty">Bạn chưa yêu thích. Hãy đi tìm và yêu thích những tài nguyên bạn thích!</string>
 </resources>

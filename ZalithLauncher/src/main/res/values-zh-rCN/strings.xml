@@ -1339,6 +1339,7 @@
     <string name="fm_import_file">导入文件</string>
     <string name="fm_import_dir">导入完整目录</string>
     <string name="fm_import_empty">没有可导入的内容</string>
+    <string name="fm_browse_external">在其他管理器应用内浏览</string>
     <string name="fm_sort_name">名称</string>
     <string name="fm_sort_size">大小</string>
     <string name="fm_sort_modified">修改时间</string>

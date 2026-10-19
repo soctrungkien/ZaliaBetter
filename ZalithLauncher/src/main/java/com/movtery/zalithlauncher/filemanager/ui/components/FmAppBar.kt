@@ -72,6 +72,7 @@ fun FmAppBar(
     onRefresh: () -> Unit,
     onImportFile: () -> Unit,
     onImportDir: () -> Unit,
+    onBrowseExternal: () -> Unit,
     onSearch: () -> Unit,
     searchEnabled: Boolean = true,
     onSortChange: (SortConfig) -> Unit,
@@ -197,6 +198,22 @@ fun FmAppBar(
                     onClick = {
                         menuExpanded = false
                         onImportDir()
+                    }
+                )
+
+                DropdownMenuItem(
+                    text = {
+                        Text(stringResource(R.string.fm_browse_external))
+                    },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_document_search_filled),
+                            contentDescription = null
+                        )
+                    },
+                    onClick = {
+                        menuExpanded = false
+                        onBrowseExternal()
                     }
                 )
 

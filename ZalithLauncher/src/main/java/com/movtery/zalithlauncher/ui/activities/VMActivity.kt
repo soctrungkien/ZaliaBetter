@@ -830,6 +830,10 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
         }
         if (vmViewModel.isRunning) {
             ZLBridge.setupBridgeWindow(nativeSurface)
+            // surface 重建后新 SurfaceTexture 的渲染 buffer 回落视图尺寸，须重新恢复渲染状态；
+            // 复用分支若不重置销毁标记，后续尺寸回调会被持续阻塞，错位状态将无法自愈
+            withHandler { mIsSurfaceDestroyed = false }
+            requestRefreshWindowSize(screenSize = referenceScreenSize(fallback = IntSize(width, height)))
             return
         }
         vmViewModel.isRunning = true
@@ -884,6 +888,12 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
         SdlBridge.prepareSurface(this, surface, gameSurfaceView?.parent as? ViewGroup, holder)
         if (vmViewModel.isRunning) {
             ZLBridge.setupBridgeWindow(surface)
+            withHandler { mIsSurfaceDestroyed = false }
+            val viewWidth = gameSurfaceView?.width ?: 0
+            val viewHeight = gameSurfaceView?.height ?: 0
+            if (viewWidth > 0 && viewHeight > 0) {
+                requestRefreshWindowSize(screenSize = referenceScreenSize(fallback = IntSize(viewWidth, viewHeight)))
+            }
             return
         }
         vmViewModel.isRunning = true

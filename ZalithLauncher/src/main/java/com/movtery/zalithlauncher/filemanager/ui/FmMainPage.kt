@@ -171,6 +171,7 @@ fun FmMainPage(
                 onRefresh = { vm.refresh() },
                 onImportFile = { vm.showImportFilesDialog() },
                 onImportDir = { vm.showImportDirDialog() },
+                onBrowseExternal = { vm.browseInExternalManager() },
                 onSearch = { vm.showSearchDialog() },
                 searchEnabled = !searchUi.running,
                 onSortChange = { vm.setSortConfig(it) },

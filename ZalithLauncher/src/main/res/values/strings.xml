@@ -1359,6 +1359,7 @@
     <string name="fm_import_file">Import File</string>
     <string name="fm_import_dir">Import Directory</string>
     <string name="fm_import_empty">Nothing to import</string>
+    <string name="fm_browse_external">Browse in Other File Managers</string>
     <string name="fm_sort_name">Name</string>
     <string name="fm_sort_size">Size</string>
     <string name="fm_sort_modified">Modified</string>
