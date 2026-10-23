@@ -251,7 +251,7 @@ class ModrinthSearchResult(
 
     override fun getAssetsPage(classes: PlatformClasses): AssetsPage {
         val mcmodData = hits.map {
-            it to classes.getTranslations().getModBySlugId(it.slug)
+            it to classes.getTranslations()?.getInfoByCurseForgeId(it.slug)
         }
 
         return AssetsPage(

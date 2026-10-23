@@ -78,7 +78,6 @@ val libraryData = listOf(
     LibraryInfo("Reorderable", "Copyright © 2023 Calvin Liang", LICENSE_APACHE_2, "https://github.com/Calvin-LL/Reorderable"),
     LibraryInfo("sdl2-compat", "Copyright (C) 2026 Sam Lantinga <slouken@libsdl.org>", License("Zlib License", R.raw.sdl2_compat_license), "https://github.com/libsdl-org/sdl2-compat"),
     LibraryInfo("SDL3", "Copyright (C) 1997-2026 Sam Lantinga <slouken@libsdl.org>", License("Zlib License", R.raw.sdl3_license), "https://github.com/libsdl-org/SDL"),
-    LibraryInfo("skinview3d", "Copyright © 2014-2018 Kent Rasmussen; Copyright © 2017-2022 Haowei Wen, Sean Boult and contributors", License(LICENSE_MIT, R.raw.skinview3d_license), "https://github.com/bs-community/skinview3d"),
     LibraryInfo("sora-editor", "Copyright (C) 2020-2026  Rosemoe", License("LGPL-2.1 License", R.raw.sora_editor_license), "https://github.com/Rosemoe/sora-editor"),
     LibraryInfo("Terracotta", "Copyright © 2025 Burning_TNT", License(LICENSE_AGPL_3, net.burningtnt.terracotta.R.raw.terracotta_license), "https://github.com/burningtnt/Terracotta"),
     LibraryInfo("tm4e (TextMate for Eclipse)", "Copyright © Eclipse Foundation", License("EPL-2.0 License", R.raw.tm4e_license), "https://github.com/eclipse-tm4e/tm4e"),

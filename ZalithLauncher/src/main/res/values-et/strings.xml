@@ -24,4 +24,5 @@
     <string name="guide_editor_save">Kui redigeerimine on lõpetatud, ära unusta juhtimispaigutust salvestada!</string>
     <string name="guide_tip_blank">Puuduta mõnda tühja kohta, et liikuda järgmisele sammule</string>
     <string name="guide_tip_finish">Puuduta mõnda tühja kohta, et lõpetada juhend</string>
+    <string name="about_acknowledgements_modrinth_text">%s portis Modrinthist mängijamudeli animatsiooni eelseadistused</string>
 </resources>

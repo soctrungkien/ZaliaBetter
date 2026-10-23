@@ -43,6 +43,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -77,7 +78,8 @@ import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.SimpleEditDialog
 import com.movtery.zalithlauncher.ui.components.SimpleListDialog
 import com.movtery.zalithlauncher.ui.components.SimpleListItem
-import com.movtery.zalithlauncher.ui.components.SkinPreview3D
+import com.movtery.zalithlauncher.ui.components.PetModelView
+import com.movtery.zalithlauncher.game.account.wardrobe.toArmModel
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountItem
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountOperation
@@ -285,20 +287,27 @@ private fun ActionsLayout(
     ) {
         //玩家模型预览
         val refreshWardrobe by AccountsManager.refreshWardrobe.collectAsStateWithLifecycle()
-        val skinFile = remember(currentAccount, refreshWardrobe) {
-            currentAccount?.getSkinFile()?.takeIf { it.exists() }
+        val armModel = currentAccount?.skinModelType?.toArmModel()
+        val skinStamp = currentAccount?.getSkinFile()?.lastModified()
+        val capeStamp = currentAccount?.getCapeFile()?.lastModified()
+        val skinBytes by produceState<ByteArray?>(
+            null, currentAccount, refreshWardrobe, skinStamp, armModel
+        ) {
+            value = currentAccount?.getSkinFile()?.takeIf { it.exists() }
+                ?.inputStream()?.use { it.readBytes() }
         }
-        val capeFile = remember(currentAccount, refreshWardrobe) {
-            currentAccount?.getCapeFile()?.takeIf { it.exists() }
+        val capeBytes by produceState<ByteArray?>(null, currentAccount, refreshWardrobe, capeStamp) {
+            value = currentAccount?.getCapeFile()?.takeIf { it.exists() }
+                ?.inputStream()?.use { it.readBytes() }
         }
-        SkinPreview3D(
+        PetModelView(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            skinFile = skinFile,
-            capeFile = capeFile,
-            modelType = currentAccount?.skinModelType,
-            refreshKey = listOf(currentAccount?.uniqueUUID, refreshWardrobe, skinFile?.lastModified() ?: 0L, capeFile?.lastModified() ?: 0L)
+            skin = skinBytes,
+            cape = capeBytes,
+            arm = armModel,
+            yaw = Math.toRadians(35.0).toFloat()
         )
 
         //添加账号

@@ -46,7 +46,6 @@ import com.movtery.zalithlauncher.game.download.assets.platform.navigatePage
 import com.movtery.zalithlauncher.game.download.assets.platform.nextPage
 import com.movtery.zalithlauncher.game.download.assets.platform.previousPage
 import com.movtery.zalithlauncher.game.download.assets.platform.searchAssets
-import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.download.assets.utils.searchMcMods
 import com.movtery.zalithlauncher.game.version.mod.InstalledMod
 import com.movtery.zalithlauncher.game.versioninfo.MinecraftVersion
@@ -69,6 +68,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jackhuang.hmcl.addon.AddonProjectInfo
 
 private const val TAG = "SearchAssetsScreen"
 
@@ -87,7 +87,7 @@ private class SearchScreenViewModel(
     var searchPlatform by mutableStateOf(initialPlatform)
     var searchFilter by mutableStateOf(PlatformSearchFilter())
 
-    private val _searchedMcMods = MutableStateFlow<List<ModTranslations.McMod>>(emptyList())
+    private val _searchedMcMods = MutableStateFlow<List<AddonProjectInfo>>(emptyList())
     /** 搜索得到的所有 MCMOD 项目 */
     val searchedMcMods = _searchedMcMods.asStateFlow()
     private val _searchedVersions = MutableStateFlow<List<String>>(emptyList())

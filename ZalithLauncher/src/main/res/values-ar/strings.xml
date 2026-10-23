@@ -573,4 +573,5 @@
     <string name="download_assets_id_holder">معرّف المشروع</string>
     <string name="download_assets_id_not_found">لم يتم العثور على المشروع!</string>
     <string name="download_assets_id_unsupported">هذا المشروع غير مدعوم !</string>
+    <string name="about_acknowledgements_modrinth_text">%s ينقل الإعدادات المسبقة لرسوم نموذج اللاعب المتحركة من Modrinth</string>
 </resources>

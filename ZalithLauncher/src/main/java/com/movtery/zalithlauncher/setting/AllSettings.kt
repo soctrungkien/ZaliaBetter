@@ -89,11 +89,6 @@ object AllSettings : SettingsRegistry() {
     val gameFullScreen = boolSetting("gameFullScreen", true)
 
     /**
-     * 使用 SurfaceView 渲染
-     */
-    val useSurfaceView = boolSetting("useSurfaceView", false)
-
-    /**
      * 持续性能模式
      */
     val sustainedPerformance = boolSetting("sustainedPerformance", false)

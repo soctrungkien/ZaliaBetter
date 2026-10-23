@@ -69,10 +69,8 @@ import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
 import com.movtery.zalithlauncher.game.download.assets.platform.UnsupportedClassesException
 import com.movtery.zalithlauncher.game.download.assets.platform.getProjectByVersion
 import com.movtery.zalithlauncher.game.download.assets.platform.isAllNull
-import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcMod
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcmodTitle
-import com.movtery.zalithlauncher.game.download.assets.utils.getTranslations
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
@@ -96,6 +94,7 @@ import io.ktor.server.plugins.NotFoundException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.jackhuang.hmcl.addon.AddonProjectInfo
 
 private const val TAG = "SearchIdScreen"
 
@@ -106,8 +105,7 @@ private sealed interface SearchIdOperation {
     /** 已获得搜索结果 */
     data class Result(
         val project: PlatformProject,
-        val mcMod: ModTranslations.McMod?,
-        val mod: ModTranslations,
+        val mcMod: AddonProjectInfo?,
     ) : SearchIdOperation
 
     /** 未找到该项目 */
@@ -146,11 +144,9 @@ private class SearchIdViewModel: ViewModel() {
                 )
                 project.checkClasses()
                 val classes = project.platformClasses(defaultClasses)
-                val translations = classes.getTranslations()
                 operation = SearchIdOperation.Result(
                     project = project,
-                    mcMod = project.getMcMod(translations),
-                    mod = translations,
+                    mcMod = project.getMcMod(classes),
                 )
             }.onFailure { e ->
                 operation = when (e) {
@@ -303,7 +299,6 @@ private fun ContentResult(
                 ResultLayout(
                     project = operation.project,
                     mcmod = operation.mcMod,
-                    mod = operation.mod,
                     defaultClasses = defaultClasses,
                     onView = onView,
                     openLink = openLink,
@@ -362,8 +357,7 @@ private fun IconTip(
 
 @Composable
 private fun ResultLayout(
-    mcmod: ModTranslations.McMod?,
-    mod: ModTranslations,
+    mcmod: AddonProjectInfo?,
     project: PlatformProject,
     defaultClasses: PlatformClasses,
     onView: (Platform, PlatformClasses, id: String, iconUrl: String?) -> Unit,
@@ -445,7 +439,6 @@ private fun ResultLayout(
                                 platform = platform,
                                 urls = urls,
                                 mcmod = mcmod,
-                                mod = mod,
                                 openLink = openLink,
                             )
                         }

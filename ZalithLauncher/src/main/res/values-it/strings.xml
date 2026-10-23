@@ -203,4 +203,5 @@
     <string name="guide_editor_save">Quando hai finito di modificare, non dimenticare di salvare il layout di controlli!</string>
     <string name="guide_tip_blank">Tocca un punto vuoto per passare al passaggio successivo</string>
     <string name="guide_tip_finish">Tocca un punto vuoto per terminare la guida</string>
+    <string name="about_acknowledgements_modrinth_text">%s porta le preimpostazioni di animazione del modello del giocatore da Modrinth</string>
 </resources>

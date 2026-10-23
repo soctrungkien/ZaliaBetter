@@ -822,6 +822,7 @@
     <string name="about_sponsor">Спонсорская поддержка</string>
     <string name="about_acknowledgements_title">Благодарности</string>
     <string name="about_acknowledgements_pojav_text">%s использует бэкенд запуска из PojavLauncher</string>
+    <string name="about_acknowledgements_modrinth_text">%s портирует предустановки анимации модели игрока из Modrinth</string>
     <string name="about_acknowledgements_pcl_text">%s использует отдельные реализации из PCL2</string>
     <string name="about_acknowledgements_fcl_text">%s включает код из FCL и использует отдельные его реализации</string>
     <string name="about_acknowledgements_hmcl_text">%s включает код из HMCL и использует отдельные его реализации</string>
@@ -1139,8 +1140,6 @@
     <string name="servers_list_undefined">Не определено</string>
     <string name="servers_list_players_full">Заполнен</string>
     <string name="servers_list_add_server">Добавить сервер</string>
-    <string name="settings_renderer_surface_title">Использовать SurfaceView для рендеринга</string>
-    <string name="settings_renderer_surface_summary">Отрисовка происходит на отдельном слое за пределами UI</string>
     <string name="settings_game_native_lib_plugin_title">Нативные библиотеки</string>
     <string name="settings_game_native_lib_plugin_summary">Отображает все установленные нативные библиотеки. Вы можете включать или отключать их в списке.</string>
     <string name="settings_game_graphics_api_title">Графический API</string>

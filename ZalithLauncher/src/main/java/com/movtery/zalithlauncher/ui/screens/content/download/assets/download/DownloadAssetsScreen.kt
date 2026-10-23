@@ -72,7 +72,6 @@ import com.movtery.zalithlauncher.game.download.assets.platform.getProject
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersionById
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersions
 import com.movtery.zalithlauncher.game.download.assets.platform.isAllNull
-import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcmodTitle
 import com.movtery.zalithlauncher.game.download.assets.utils.getTranslations
 import com.movtery.zalithlauncher.game.version.mod.InstalledMod
@@ -113,6 +112,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlin.time.Duration.Companion.milliseconds
+import org.jackhuang.hmcl.addon.AddonProjectInfo
 
 private class DownloadScreenViewModel(
     private val platform: Platform,
@@ -218,7 +218,7 @@ private class DownloadScreenViewModel(
     }
 
     //项目信息
-    var projectResult by mutableStateOf<DownloadAssetsState<Triple<PlatformProject, ModTranslations, ModTranslations.McMod?>>>(DownloadAssetsState.Getting())
+    var projectResult by mutableStateOf<DownloadAssetsState<Pair<PlatformProject, AddonProjectInfo?>>>(DownloadAssetsState.Getting())
 
     fun getProject() {
         viewModelScope.launch {
@@ -233,9 +233,8 @@ private class DownloadScreenViewModel(
                         classes = accurateClasses
                         remapVersions()
                     }
-                    val mod = classes.getTranslations()
-                    val mcmod = mod.getModBySlugId(result.platformSlug())
-                    projectResult = DownloadAssetsState.Success(Triple(result, mod, mcmod))
+                    val mcmod = classes.getTranslations()?.getInfoByCurseForgeId(result.platformSlug())
+                    projectResult = DownloadAssetsState.Success(Pair(result, mcmod))
                 },
                 onError = { state, _ ->
                     projectResult = state
@@ -569,7 +568,7 @@ private fun Versions(
 @Composable
 private fun ProjectInfo(
     modifier: Modifier = Modifier,
-    projectResult: DownloadAssetsState<Triple<PlatformProject, ModTranslations, ModTranslations.McMod?>>,
+    projectResult: DownloadAssetsState<Pair<PlatformProject, AddonProjectInfo?>>,
     platform: Platform,
     projectId: String,
     classes: PlatformClasses,
@@ -627,7 +626,7 @@ private fun ProjectInfo(
                     }
                 }
                 is DownloadAssetsState.Success -> {
-                    val (project, mod, mcmod) = projectResult.result
+                    val (project, mcmod) = projectResult.result
                     //项目基本信息
                     val platform = remember { project.platform() }
                     val iconUrl = remember { project.platformIconUrl() }
@@ -692,7 +691,6 @@ private fun ProjectInfo(
                                         platform = platform,
                                         urls = urls,
                                         mcmod = mcmod,
-                                        mod = mod,
                                         openLink = openLink,
                                     )
                                 }

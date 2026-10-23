@@ -835,8 +835,6 @@
     <string name="settings_renderer_zink_driver_adreno">啟動器偵測到您的裝置為 Adreno GPU，開啟此選項可能會導致 Zink 渲染器無法正常運作，您確定要開啟此選項嗎？</string>
     <string name="settings_renderer_vsync_in_zink_title">啟用 Zink 垂直同步</string>
     <string name="settings_renderer_vsync_in_zink_summary">透過系統介面為 Zink 渲染器啟用垂直同步</string>
-    <string name="settings_renderer_surface_title">使用 SurfaceView 渲染</string>
-    <string name="settings_renderer_surface_summary">使用獨立於介面之外的圖層進行渲染</string>
     <string name="settings_game_version_isolation_title">全域版本隔離</string>
     <string name="settings_game_version_isolation_summary">預設隔離所有版本，使版本之間的資料互不干擾</string>
     <string name="settings_game_skip_game_integrity_check_title">不檢查遊戲完整性</string>
@@ -1000,6 +998,7 @@
     <string name="about_sponsor">贊助支持</string>
     <string name="about_acknowledgements_title">鳴謝</string>
     <string name="about_acknowledgements_pojav_text">%s 使用了 PojavLauncher 的啟動後端</string>
+    <string name="about_acknowledgements_modrinth_text">%s 移植了 Modrinth 的玩家模型動畫預設</string>
     <string name="about_acknowledgements_pcl_text">%s 參考了 PCL2 的部分程式碼實作</string>
     <string name="about_acknowledgements_fcl_text">%s 引用了 FCL 的部分程式碼，並參考其部分實作</string>
     <string name="about_acknowledgements_hmcl_text">%s 引用了 HMCL 的部分程式碼，並參考其部分實作</string>

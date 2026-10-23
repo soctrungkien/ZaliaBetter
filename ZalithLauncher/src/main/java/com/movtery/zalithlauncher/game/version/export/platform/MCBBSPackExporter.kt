@@ -88,7 +88,6 @@ class MCBBSPackExporter: AbstractExporter(
                         ModLoader.FABRIC -> "fabric"
                         ModLoader.QUILT -> "quilt"
                         ModLoader.LITE_LOADER -> "liteloader"
-                        ModLoader.CLEANROOM -> "cleanroom"
                         else -> null
                     } ?: return@let
                     add(MCBBSManifest.Addon(id = patchId, version = loader.version))

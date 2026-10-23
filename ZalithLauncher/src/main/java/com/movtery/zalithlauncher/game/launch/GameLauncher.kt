@@ -58,7 +58,6 @@ import com.movtery.zalithlauncher.utils.device.Architecture
 import com.movtery.zalithlauncher.utils.file.child
 import com.movtery.zalithlauncher.utils.file.ensureDirectorySilently
 import com.movtery.zalithlauncher.utils.logging.Logger
-import com.movtery.zalithlauncher.utils.string.isBiggerTo
 import com.movtery.zalithlauncher.utils.string.isEqualTo
 import kotlinx.parcelize.Parcelize
 import org.lwjgl.glfw.CallbackBridge
@@ -132,12 +131,6 @@ class GameLauncher(
         }?.takeIf { it.exists() }
 
         CallbackBridge.nativeSetUseInputStackQueue(gameManifest.arguments != null)
-        //Cleanroom 的 LWJGLXX 桥需要字符事件补全暂存的按键事件，见 CallbackBridge.setControlKeyCharPairing
-        CallbackBridge.setControlKeyCharPairing(
-            version.getVersionInfo()?.loaderInfos?.any { info ->
-                info.loader == ModLoader.CLEANROOM
-            } == true
-        )
 
         val customArgs = version.getJvmArgs().takeIf { it.isNotBlank() } ?: AllSettings.jvmArgs.getValue()
         val javaRuntime = getRuntime()
@@ -337,13 +330,6 @@ class GameLauncher(
             //开启了自动选择，根据游戏需求的版本做选择
             val targetJavaVersion = when (loaderInfo?.loader) {
                 ModLoader.BABRIC -> 17 //Babric 推荐使用 17
-                ModLoader.CLEANROOM -> {
-                    if (loaderInfo.version.isBiggerTo("0.4.4-alpha")) {
-                        25 //0.5.0-alpha 及以上要求使用 25
-                    } else {
-                        21 //0.4.4-alpha 及以下要求使用 21
-                    }
-                }
                 else -> gameManifest.javaVersion?.majorVersion ?: 8
             }
             if (pickedRuntime.javaVersion == 0 || pickedRuntime.javaVersion < targetJavaVersion) {

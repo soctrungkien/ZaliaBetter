@@ -30,7 +30,6 @@ import com.movtery.zalithlauncher.game.download.assets.platform.getProjectByVers
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersionByLocalFile
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.ModrinthModLoaderCategory
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.ModrinthVersion
-import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcMod
 import com.movtery.zalithlauncher.game.download.assets.utils.getTranslations
 import com.movtery.zalithlauncher.utils.file.calculateFileSha1
@@ -40,6 +39,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import org.jackhuang.hmcl.addon.AddonProjectInfo
 
 private const val TAG = "RemoteMod"
 
@@ -67,7 +67,7 @@ class RemoteMod(
     /**
      * 项目翻译信息
      */
-    var mcMod: ModTranslations.McMod? by mutableStateOf(null)
+    var mcMod: AddonProjectInfo? by mutableStateOf(null)
         private set
 
     /**
@@ -127,7 +127,7 @@ class RemoteMod(
 
                     if (loadFromCache && cachedProject != null) {
                         projectInfo = cachedProject
-                        mcMod = PlatformClasses.MOD.getTranslations().getModBySlugId(cachedProject.slug)
+                        mcMod = PlatformClasses.MOD.getTranslations()?.getInfoByCurseForgeId(cachedProject.slug)
                     } else {
                         ensureActive()
                         remoteFile?.let { modFile ->

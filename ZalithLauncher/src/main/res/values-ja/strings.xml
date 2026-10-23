@@ -243,6 +243,7 @@
     <string name="url_wiki_minecraft_game_snapshot">https://minecraft.wiki/w/Java_Edition_%s</string>
     <string name="url_wiki_minecraft_game_release">https://minecraft.wiki/w/Java_Edition_%s</string>
     <string name="about_acknowledgements_pojav_text">%s はPojavLauncherの起動バックエンドを使用しています</string>
+    <string name="about_acknowledgements_modrinth_text">%s はModrinthのプレイヤーモデルアニメーションプリセットを移植しています</string>
     <string name="about_acknowledgements_pcl_text">%s はPCL2のコードの一部を参照しています</string>
     <string name="settings_launcher_full_screen_title">全画面モード</string>
     <string name="settings_control_gesture_trigger_mouse_left">左クリック</string>
@@ -1124,8 +1125,6 @@
     <string name="screenshots_manage_export_failed">エクスポート失敗</string>
     <string name="screenshots_manage_export_all_message">全てのスクリーンショットをシステムの画像フォルダにエクスポートしますか？</string>
     <string name="screenshots_manage_export_selected_message">選択した %1$d 枚のスクリーンショットをシステムの画像フォルダにエクスポートしますか？</string>
-    <string name="settings_renderer_surface_title">SurfaceView レンダリングを使用</string>
-    <string name="settings_renderer_surface_summary">UIを独立した別のレイヤーで描画します</string>
     <string name="settings_game_native_lib_plugin_title">ネイティブライブラリプラグイン</string>
     <string name="settings_game_native_lib_plugin_summary">読み込まれた全てのネイティブライブラリプラグインを表示します。一覧からプラグインを有効または無効にできます。</string>
     <string name="settings_game_graphics_api_title">グラフィックス API</string>

@@ -91,6 +91,10 @@ android {
         }
     }
 
+    lint {
+        checkReleaseBuilds = false
+    }
+
     splits {
         val arch = projectArch.takeIf { it != "all" } ?: return@splits
         abi {
@@ -264,9 +268,11 @@ dependencies {
     implementation(project(":Terracotta"))
     implementation(project(":InputMap"))
     implementation(project(":Guide"))
+    implementation(project(":PetLib"))
     //Utils
     implementation(libs.bytehook)
     implementation(libs.gson)
+    implementation(libs.jetbrains.annotations)
     implementation(libs.commons.io)
     implementation(libs.commons.codec)
     implementation(libs.commons.compress)

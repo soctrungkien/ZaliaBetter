@@ -665,6 +665,7 @@
     <string name="about_sponsor">Sponsorluk Desteği</string>
     <string name="about_acknowledgements_title">Teşekkür ve Atıflar</string>
     <string name="about_acknowledgements_pojav_text">%s PojavLauncherdan başlatma backend kodu kullanır</string>
+    <string name="about_acknowledgements_modrinth_text">%s Modrinthdan oyuncu modeli animasyon ön ayarlarını aktarır</string>
     <string name="about_acknowledgements_pcl_text">%s uygulamasının bazı kısımlarına PCL2den atıfta bulunur</string>
     <string name="about_acknowledgements_fcl_text">%s FCLden kod barındırır ve uygulamasının bazı kısımlarına atıfta bulunur</string>
     <string name="about_acknowledgements_hmcl_text">%s HMCLden kod barındırır ve uygulamasının bazı kısımlarına atıfta bulunur</string>
@@ -1117,8 +1118,6 @@
     <string name="account_change_skin_arm_slim">İnce Kollar</string>
     <string name="versions_config_vibrate_kind_title">Titreşim Türü</string>
     <string name="versions_config_vibrate_kind_summary">Dokunmatik Kontrol modülü titreşimi tetiklediğinde titreşim türünü ayarlayın</string>
-    <string name="settings_renderer_surface_title">SurfaceView Oluşturma Kullanımı</string>
-    <string name="settings_renderer_surface_summary">Kullanıcı arayüzünün dışında ayrı bir katman kullanarak render işlemleri gerçekleştirir.</string>
     <string name="settings_game_graphics_api_title">Grafikler API</string>
     <string name="settings_game_graphics_api_summary">Minecraft 26.2 ve üzeri sürümlerde kullanılan grafik API\'sini ayarlayın.</string>
     <string name="settings_game_graphics_api_default">Oyun ayarlarını takip et</string>

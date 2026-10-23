@@ -191,16 +191,6 @@ public class CallbackBridge {
         SDLActivity.onNativeMouse(0, MotionEvent.ACTION_MOVE, x, y, true);
     }
 
-    /**
-     * lwjglx 系桥会暂存可打印按键的按下事件，等待字符事件合并后才投给游戏。
-     * 启用后为无字符的控制按键补发 ASCII 控制码字符事件，使按键即时交付；控制码不会注入文本。
-     */
-    private static volatile boolean sControlKeyCharPairing = false;
-
-    public static void setControlKeyCharPairing(boolean enabled) {
-        sControlKeyCharPairing = enabled;
-    }
-
     public static void sendKeycode(int keycode, char keychar, int scancode, int modifiers, boolean isDown) {
         if (keycode > LwjglGlfwKeycode.GLFW_KEY_UNKNOWN && keycode <= LwjglGlfwKeycode.GLFW_KEY_LAST) {
             nativeSendKey(keycode, scancode, isDown ? 1 : 0, modifiers);
@@ -208,13 +198,6 @@ public class CallbackBridge {
         if (isDown && !Character.isISOControl(keychar)) {
             nativeSendCharMods(keychar, modifiers);
             nativeSendChar(keychar);
-        } else if (isDown && sControlKeyCharPairing && keychar == '\u0000'
-                && keycode > LwjglGlfwKeycode.GLFW_KEY_SPACE && keycode <= LwjglGlfwKeycode.GLFW_KEY_GRAVE_ACCENT) {
-            //用 ASCII 控制码补全暂存的按键事件，控制码不通过 ChatAllowedCharacters 校验，不会注入文本
-            char escapeCode = (char) (keycode & 0x1f);
-            if (escapeCode == '\u0000') escapeCode = '\u001f';
-            nativeSendCharMods(escapeCode, modifiers);
-            nativeSendChar(escapeCode);
         }
         if (!SdlBridge.getSdlEnabled()) return;
         int androidKeycode = EfficientAndroidLWJGLKeycode.getSdlAndroidKeycode(keycode);

@@ -627,6 +627,7 @@
     <string name="settings_launcher_mirror_official">De fontes oficiais</string>
     <string name="settings_launcher_mirror_mirror">Do espelho</string>
     <string name="about_acknowledgements_pojav_text">%s utiliza o backend do PojavLauncher</string>
+    <string name="about_acknowledgements_modrinth_text">%s porta as predefinições de animação do modelo de jogador do Modrinth</string>
     <string name="about_acknowledgements_bangbang93_text">%s utiliza a API BMCL da fonte mirror</string>
     <string name="about_acknowledgements_title">Agradecimentos</string>
     <string name="about_acknowledgements_pcl_text">%s retribui parte da implementação do PCL2</string>
@@ -1019,8 +1020,6 @@
     <string name="servers_list_edit_server">Editar servidor</string>
     <string name="servers_list_copy_server_address">Copiar endereço</string>
     <string name="settings_title_blur">Efeito de Desfoque</string>
-    <string name="settings_renderer_surface_title">Usar renderização SurfaceView</string>
-    <string name="settings_renderer_surface_summary">Renderiza usando uma camada separada fora da interface do utilizador</string>
     <string name="settings_game_java_memory_used_text">Usando: %1$dMB | Total do dispositivo: %2$dMB</string>
     <string name="settings_game_native_lib_plugin_title">Plugins da Biblioteca Nativa</string>
     <string name="settings_game_graphics_api_summary">Defina a API gráfica usada pelo Minecraft 26.2+</string>

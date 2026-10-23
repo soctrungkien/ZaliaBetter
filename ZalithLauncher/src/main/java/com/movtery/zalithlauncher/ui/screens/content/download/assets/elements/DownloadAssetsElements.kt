@@ -75,7 +75,6 @@ import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDisplayLabel
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
-import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.game.version.mod.InstalledMod
@@ -93,6 +92,7 @@ import com.movtery.zalithlauncher.utils.formatNumberByLocale
 import com.movtery.zalithlauncher.utils.getTimeAgo
 import com.movtery.zalithlauncher.utils.isChinese
 import com.movtery.zalithlauncher.utils.string.isNotEmptyOrBlank
+import org.jackhuang.hmcl.addon.AddonProjectInfo
 import org.jackhuang.hmcl.util.versioning.GameVersionNumber
 
 sealed interface DownloadAssetsState<T> {
@@ -477,8 +477,7 @@ private fun AssetsVersionListItem(
 fun ProjectUrlsContent(
     platform: Platform,
     urls: PlatformProject.Urls,
-    mcmod: ModTranslations.McMod?,
-    mod: ModTranslations,
+    mcmod: AddonProjectInfo?,
     openLink: (String) -> Unit,
 ) {
     urls.projectUrl?.takeIf { it.isNotEmptyOrBlank() }?.let { url ->
@@ -519,9 +518,7 @@ fun ProjectUrlsContent(
     val context = LocalContext.current
     mcmod?.takeIf {
         isChinese(context)
-    }?.let {
-        mod.getMcmodUrl(it)
-    }?.takeIf {
+    }?.mcmodUrl()?.takeIf {
         it.isNotEmptyOrBlank()
     }?.let { url ->
         IconTextButton(

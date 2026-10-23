@@ -32,7 +32,6 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.addons.modloader.AddonVersion
 import com.movtery.zalithlauncher.game.addons.modloader.ModLoader
 import com.movtery.zalithlauncher.game.addons.modloader.ResponseTooShortException
-import com.movtery.zalithlauncher.game.addons.modloader.cleanroom.CleanroomVersion
 import com.movtery.zalithlauncher.game.addons.modloader.fabriclike.fabric.FabricVersion
 import com.movtery.zalithlauncher.game.addons.modloader.fabriclike.legacyfabric.LegacyFabricVersion
 import com.movtery.zalithlauncher.game.addons.modloader.fabriclike.quilt.QuiltVersion
@@ -64,7 +63,6 @@ class AddonList {
     var legacyFabricAPIList by mutableStateOf<List<ModVersion>?>(null)
     var quiltList by mutableStateOf<List<QuiltVersion>?>(null)
     var quiltAPIList by mutableStateOf<List<ModVersion>?>(null)
-    var cleanroomList by mutableStateOf<List<CleanroomVersion>?>(null)
 }
 
 class CurrentAddon {
@@ -78,7 +76,6 @@ class CurrentAddon {
     var legacyFabricAPIVersion = mutableStateOf<ModVersion?>(null)
     var quiltVersion = mutableStateOf<QuiltVersion?>(null)
     var quiltAPIVersion = mutableStateOf<ModVersion?>(null)
-    var cleanroomVersion = mutableStateOf<CleanroomVersion?>(null)
 
     //加载状态
     var optifineState by mutableStateOf<AddonState>(AddonState.None)
@@ -90,7 +87,6 @@ class CurrentAddon {
     var legacyFabricAPIState by mutableStateOf<AddonState>(AddonState.None)
     var quiltState by mutableStateOf<AddonState>(AddonState.None)
     var quiltAPIState by mutableStateOf<AddonState>(AddonState.None)
-    var cleanroomState by mutableStateOf<AddonState>(AddonState.None)
 
     //不兼容列表 利用Set集合不可重复
     var incompatibleWithOptiFine = mutableStateOf<Set<ModLoader>>(emptySet())
@@ -102,7 +98,6 @@ class CurrentAddon {
     var incompatibleWithLegacyFabricAPI = mutableStateOf<Set<ModLoader>>(emptySet())
     var incompatibleWithQuilt = mutableStateOf<Set<ModLoader>>(emptySet())
     var incompatibleWithQuiltAPI = mutableStateOf<Set<ModLoader>>(emptySet())
-    var incompatibleWithCleanroom = mutableStateOf<Set<ModLoader>>(emptySet())
 
 
 
@@ -122,7 +117,6 @@ class CurrentAddon {
         ModLoader.NEOFORGE,
         ModLoader.FABRIC,
         ModLoader.QUILT,
-        ModLoader.CLEANROOM,
         ModLoader.LEGACY_FABRIC
     )
 
@@ -141,8 +135,7 @@ class CurrentAddon {
         LoaderState(ModLoader.LEGACY_FABRIC, legacyFabricVersion, incompatibleWithLegacyFabric),
         LoaderState(ModLoader.LEGACY_FABRIC_API, legacyFabricAPIVersion, incompatibleWithLegacyFabricAPI),
         LoaderState(ModLoader.QUILT, quiltVersion, incompatibleWithQuilt),
-        LoaderState(ModLoader.QUILT_API, quiltAPIVersion, incompatibleWithQuiltAPI),
-        LoaderState(ModLoader.CLEANROOM, cleanroomVersion, incompatibleWithCleanroom)
+        LoaderState(ModLoader.QUILT_API, quiltAPIVersion, incompatibleWithQuiltAPI)
     )
 
     private val loaderMap = allLoaders.associateBy { it.loader }
@@ -276,7 +269,6 @@ data class LoaderVerSupports(
     val isNeoForgeSupports: Boolean,
     val isFabricSupports: Boolean,
     val isQuiltSupports: Boolean,
-    val isCleanroomSupports: Boolean,
     val isLegacyFabricSupports: Boolean,
 )
 
@@ -287,7 +279,6 @@ fun rememberLoaderVerSupports(mcVer: String) = remember(mcVer) {
         isNeoForgeSupports = mcVer.isBiggerVer("1.20"),
         isFabricSupports = fabricLike,
         isQuiltSupports = fabricLike,
-        isCleanroomSupports = mcVer == "1.12.2",
         isLegacyFabricSupports = !fabricLike
     )
 }
@@ -688,40 +679,6 @@ fun QuiltAPIList(
         onValueChange =  { version0 ->
             version = version0
             onValueChanged()
-        },
-        onReload = onReload
-    )
-}
-
-@Composable
-fun CleanroomList(
-    modifier: Modifier = Modifier,
-    currentAddon: CurrentAddon,
-    addonList: AddonList,
-    error: String? = null,
-    onValueChanged: (CleanroomVersion?) -> Unit = {},
-    onReload: () -> Unit = {}
-) {
-    var version by currentAddon.cleanroomVersion
-    val incompatibleSet by currentAddon.incompatibleWithCleanroom
-
-    AddonListLayout(
-        modifier = modifier,
-        state = currentAddon.cleanroomState,
-        title = ModLoader.CLEANROOM.displayName,
-        error = error,
-        iconPainter = painterResource(R.drawable.img_loader_cleanroom),
-        items = addonList.cleanroomList,
-        current = version,
-        incompatibleSet = incompatibleSet,
-        checkIncompatible = {
-            currentAddon.updateIncompatibleState(ModLoader.CLEANROOM, addonList)
-        },
-        getItemText = { it.version },
-        summary = { CleanroomSummary(it) },
-        onValueChange =  { version0 ->
-            version = version0
-            onValueChanged(version0)
         },
         onReload = onReload
     )

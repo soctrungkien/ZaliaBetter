@@ -240,6 +240,7 @@
     <string name="settings_launcher_log_share_packing">Đang nén log</string>
     <string name="about_acknowledgements_title">Lời cảm ơn</string>
     <string name="about_acknowledgements_pojav_text">%s dùng backend từ PojavLauncher</string>
+    <string name="about_acknowledgements_modrinth_text">%s dùng các mẫu hoạt ảnh mô hình người chơi từ Modrinth</string>
     <string name="about_acknowledgements_pcl_text">%s tham khảo code PCL2</string>
     <string name="about_acknowledgements_fcl_text">%s dùng và tham khảo code từ FCL</string>
     <string name="about_acknowledgements_hmcl_text">%s dùng và tham khảo code từ HMCL</string>
@@ -1161,9 +1162,7 @@
     <string name="servers_list_edit_server">Chỉnh sửa máy chủ</string>
     <string name="servers_list_copy_server_address">Sao chép địa chỉ máy chủ</string>
     <string name="settings_title_blur">Hiệu ứng làm mờ (Blur Effect)</string>
-    <string name="settings_renderer_surface_title">Sử dụng kết xuất SurfaceView (Use SurfaceView Rendering)</string>
     <string name="servers_list_undefined">Không xác định</string>
-    <string name="settings_renderer_surface_summary">Kết xuất bằng lớp bên ngoài giao diện</string>
     <string name="settings_game_native_lib_plugin_title">Plugin thư viện gốc</string>
     <string name="settings_game_native_lib_plugin_summary">Liệt kê tất cả plugin thư viện gốc đã tải. Bạn có thể bật hoặc tắt chúng trong danh sách.</string>
     <string name="settings_game_graphics_api_title">API đồ hoạ</string>

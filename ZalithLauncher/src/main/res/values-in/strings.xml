@@ -729,6 +729,7 @@
     <string name="about_sponsor">Dukung Dengan Sponsor</string>
     <string name="about_acknowledgements_title">Ucapan Terima Kasih Kepada</string>
     <string name="about_acknowledgements_pojav_text">%s menggunakan backend peluncur dari PojavLauncher</string>
+    <string name="about_acknowledgements_modrinth_text">%s memport preset animasi model pemain dari Modrinth</string>
     <string name="about_acknowledgements_pcl_text">%s merujuk bagian implementasi dari PCL2</string>
     <string name="about_acknowledgements_fcl_text">%s menggabungkan kode dari FCL dan merujuk bagian implementasinya</string>
     <string name="about_acknowledgements_hmcl_text">%s menggabungkan kode dari HMCL dan merujuk bagian implementasinya</string>
@@ -1133,8 +1134,6 @@
     <string name="settings_game_graphics_api_title">API Grafis</string>
     <string name="settings_game_graphics_api_summary">Atur API grafis yang digunakan oleh Minecraft 26.2+</string>
     <string name="settings_game_graphics_api_default">Ikuti pengaturan game</string>
-    <string name="settings_renderer_surface_title">Gunakan Rendering SurfaceView</string>
-    <string name="settings_renderer_surface_summary">Menggunakan layer terpisah di luar UI untuk rendering</string>
     <string name="plugin_download_title">Unduh Plugin</string>
     <string name="plugin_download_summary">Unduh plugin dan instal sebagai aplikasi. Cukup buka kembali launcher, dan plugin akan dimuat otomatis!</string>
     <string name="settings_game_graphics_api_default_opengl">Hanya atur ke OpenGL saat peluncuran pertama</string>

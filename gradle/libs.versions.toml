@@ -17,6 +17,7 @@ desugarJdkLibs = "2.1.5"
 editorBom = "0.24.6"
 fishnet = "1.1.0"
 gson = "2.14.0"
+jetbrainsAnnotations = "26.1.0"
 kotlin = "2.4.20"
 kspPlugin = "2.3.12"
 coreKtx = "1.19.1"
@@ -100,6 +101,7 @@ commons-compress = { module = "org.apache.commons:commons-compress", version.ref
 commons-codec = { module = "commons-codec:commons-codec", version.ref = "commonsCodec" }
 commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrainsAnnotations" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesAndroid" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }

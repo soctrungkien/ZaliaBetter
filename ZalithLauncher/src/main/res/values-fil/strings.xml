@@ -280,4 +280,5 @@
     <string name="guide_editor_save">Kapag tapos nang mag-edit, huwag kalimutang i-save ang control layout!</string>
     <string name="guide_tip_blank">I-tap ang anumang walang lamang bahagi para tumuloy sa susunod na hakbang</string>
     <string name="guide_tip_finish">I-tap ang anumang walang lamang bahagi para matapos ang gabay</string>
+    <string name="about_acknowledgements_modrinth_text">%s nag-port ng mga preset ng animation ng player model mula sa Modrinth</string>
 </resources>

@@ -46,7 +46,7 @@ class CurseForgeSearchResult(
     override fun getAssetsPage(classes: PlatformClasses): AssetsPage {
         val mcmodData = data.mapNotNull { data0 ->
             if (!data0.isApproved()) return@mapNotNull null
-            data0 to classes.getTranslations().getModBySlugId(data0.slug)
+            data0 to classes.getTranslations()?.getInfoByCurseForgeId(data0.slug)
         }
         val pageSize = pagination.pageSize
         val isLastPage = pagination.resultCount < pageSize ||

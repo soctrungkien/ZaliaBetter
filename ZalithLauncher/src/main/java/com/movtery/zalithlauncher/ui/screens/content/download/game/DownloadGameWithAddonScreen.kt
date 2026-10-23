@@ -57,7 +57,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.addons.modloader.ModLoader
-import com.movtery.zalithlauncher.game.addons.modloader.cleanroom.CleanroomVersions
 import com.movtery.zalithlauncher.game.addons.modloader.fabriclike.fabric.FabricAPIVersions
 import com.movtery.zalithlauncher.game.addons.modloader.fabriclike.fabric.FabricVersions
 import com.movtery.zalithlauncher.game.addons.modloader.fabriclike.legacyfabric.LegacyFabricAPIVersions
@@ -174,12 +173,6 @@ private class AddonsViewModel(
         }
     )
 
-    fun reloadCleanroom() = launchAddonReload(
-        { currentAddon.cleanroomState = it },
-        { CleanroomVersions.fetchLoaderList(gameVersion) },
-        { addonList.cleanroomList = it }
-    )
-
     private fun <T> launchAddonReload(
         updateState: (AddonState) -> Unit,
         fetch: suspend () -> T?,
@@ -207,9 +200,6 @@ private class AddonsViewModel(
         if (loaderSupports.isQuiltSupports) {
             reloadQuilt()
             reloadQuiltAPI()
-        }
-        if (loaderSupports.isCleanroomSupports) {
-            reloadCleanroom()
         }
     }
 
@@ -286,9 +276,7 @@ fun DownloadGameWithAddonScreen(
                             quilt = viewModel.currentAddon.quiltVersion.value
                                 .takeIf { loaderSupports.isQuiltSupports },
                             quiltAPI = viewModel.currentAddon.quiltAPIVersion.value
-                                .takeIf { loaderSupports.isQuiltSupports },
-                            cleanroom = viewModel.currentAddon.cleanroomVersion.value
-                                .takeIf { loaderSupports.isCleanroomSupports }
+                                .takeIf { loaderSupports.isQuiltSupports }
                         )
                     )
                 }
@@ -333,22 +321,6 @@ fun DownloadGameWithAddonScreen(
                             onValueChanged = { viewModel.refreshIcon() },
                             addonList = viewModel.addonList
                         ) { viewModel.reloadNeoForge() }
-                    }
-                }
-
-                if (loaderSupports.isCleanroomSupports) {
-                    AnimatedItem(scope) { yOffset ->
-                        CleanroomList(
-                            modifier = Modifier.offset {
-                                IntOffset(
-                                    x = 0,
-                                    y = yOffset.roundToPx()
-                                )
-                            },
-                            currentAddon = viewModel.currentAddon,
-                            onValueChanged = { viewModel.refreshIcon() },
-                            addonList = viewModel.addonList
-                        ) { viewModel.reloadCleanroom() }
                     }
                 }
 
@@ -663,7 +635,6 @@ private fun VersionIconPreview(
             currentAddon.fabricVersion.value != null -> R.drawable.img_loader_fabric
             currentAddon.legacyFabricVersion.value != null -> R.drawable.img_loader_legacy_fabric
             currentAddon.quiltVersion.value != null -> R.drawable.img_loader_quilt
-            currentAddon.cleanroomVersion.value != null -> R.drawable.img_loader_cleanroom
             else -> R.drawable.img_minecraft
         }
     }
@@ -693,7 +664,6 @@ private fun AutoChangeVersionName(
         currentAddon.fabricVersion.value,
         currentAddon.legacyFabricVersion.value,
         currentAddon.quiltVersion.value,
-        currentAddon.cleanroomVersion.value,
     ) {
         if (editedByUser) return@LaunchedEffect
 
@@ -715,7 +685,6 @@ private fun AutoChangeVersionName(
                     fabricVersion.value != null -> append(formatModloader(ModLoader.FABRIC.displayName, fabricVersion.value!!.version))
                     legacyFabricVersion.value != null -> append(formatModloader(ModLoader.LEGACY_FABRIC.displayName, legacyFabricVersion.value!!.version))
                     quiltVersion.value != null -> append(formatModloader(ModLoader.QUILT.displayName, quiltVersion.value!!.version))
-                    cleanroomVersion.value != null -> append(formatModloader(ModLoader.CLEANROOM.displayName, cleanroomVersion.value!!.version))
                     else -> {
                         changeValue(gameVersion)
                         return@LaunchedEffect

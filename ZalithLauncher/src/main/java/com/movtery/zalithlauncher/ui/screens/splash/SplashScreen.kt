@@ -35,9 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.ui.NavDisplay
 import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.components.InstallableItem
+import com.movtery.zalithlauncher.ui.screens.NavStateHost
+import com.movtery.zalithlauncher.ui.screens.NestedNavDisplay
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.rememberTransitionSpec
 import com.movtery.zalithlauncher.ui.theme.onBackgroundColor
@@ -64,14 +65,16 @@ fun SplashScreen(
             contentColor = onBackgroundColor()
         )
 
-        NavigationUI(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            startAllTask = startAllTask,
-            unpackItems = unpackItems,
-            screenViewModel = screenViewModel
-        )
+        NavStateHost(rootKey = screenViewModel.splashScreen) {
+            NavigationUI(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                startAllTask = startAllTask,
+                unpackItems = unpackItems,
+                screenViewModel = screenViewModel
+            )
+        }
     }
 }
 
@@ -110,7 +113,8 @@ private fun NavigationUI(
     }
 
     if (backStack.isNotEmpty()) {
-        NavDisplay(
+        NestedNavDisplay(
+            ownerKey = screenViewModel.splashScreen,
             backStack = backStack,
             modifier = modifier,
             transitionSpec = rememberTransitionSpec(),

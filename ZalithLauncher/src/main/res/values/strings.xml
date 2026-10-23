@@ -930,8 +930,6 @@
     <string name="settings_renderer_zink_driver_adreno">The launcher detected your device has an Adreno GPU. Enabling this option may cause the Zink renderer to malfunction. Are you sure you want to enable it?</string>
     <string name="settings_renderer_vsync_in_zink_title">Zink Vsync</string>
     <string name="settings_renderer_vsync_in_zink_summary">Enable vertical sync for the Zink renderer via the system interface</string>
-    <string name="settings_renderer_surface_title">Use SurfaceView Rendering</string>
-    <string name="settings_renderer_surface_summary">Renders using a separate layer outside the UI</string>
     <string name="settings_game_version_isolation_title">Global Version Isolation</string>
     <string name="settings_game_version_isolation_summary">Isolates all versions so that their data does not interfere with each other</string>
     <string name="settings_game_skip_game_integrity_check_title">Skip Integrity Check</string>
@@ -1278,6 +1276,7 @@
     <string name="about_sponsor">Sponsorship Support</string>
     <string name="about_acknowledgements_title">Acknowledgements</string>
     <string name="about_acknowledgements_pojav_text">%s uses the launch backend from PojavLauncher</string>
+    <string name="about_acknowledgements_modrinth_text">%s ports the player model animation presets from Modrinth</string>
     <string name="about_acknowledgements_pcl_text">%s references parts of the implementation from PCL2</string>
     <string name="about_acknowledgements_fcl_text">%s incorporates code from FCL and references parts of its implementation</string>
     <string name="about_acknowledgements_hmcl_text">%s incorporates code from HMCL and references parts of its implementation</string>

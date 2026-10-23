@@ -19,7 +19,7 @@
 package com.movtery.zalithlauncher.ui.screens.content.download.assets.elements
 
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchData
-import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
+import org.jackhuang.hmcl.addon.AddonProjectInfo
 
 /**
  * 资源搜索结果页面信息
@@ -34,5 +34,5 @@ data class AssetsPage(
     val pageIndex: Int,
     val totalPage: Int,
     val isLastPage: Boolean,
-    val data: List<Pair<PlatformSearchData, ModTranslations.McMod?>>
+    val data: List<Pair<PlatformSearchData, AddonProjectInfo?>>
 )

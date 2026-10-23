@@ -18,28 +18,13 @@
 
 package com.movtery.zalithlauncher.game.launch
 
-import com.movtery.zalithlauncher.game.addons.modloader.ModLoader
-import com.movtery.zalithlauncher.game.version.installed.VersionInfo
 import com.movtery.zalithlauncher.game.versioninfo.models.GameManifest
 
 /**
  * 依赖库加载顺序修复 & 依赖库检查
  * 为以后方便扩展考虑诞生的东西（
  */
-class LibSortFix(
-    versionInfo: VersionInfo?
-) {
-    val isCleanroom = versionInfo?.hasLoader(ModLoader.CLEANROOM) == true
-
-    private val icu4jLib = "com.ibm.icu:icu4j:"
-    private val mojangICU4jLib = "com.ibm.icu:icu4j-core-mojang:"
-    private val cleanroomOshiLibPrefix = "com.github.oshi:"
-    private val vanillaOshiLib = "oshi-project:oshi-core:"
-    private val cleanroomJnaPlatformLib = "net.java.dev.jna:jna-platform:"
-    private val vanillaJnaPlatformLib = "net.java.dev.jna:platform:"
-    private val cleanroomNettyLibPrefix = "io.netty:netty-"
-    private val vanillaNettyAllLib = "io.netty:netty-all:"
-
+class LibSortFix {
     /**
      * 检查并插入依赖库
      */
@@ -48,41 +33,6 @@ class LibSortFix(
         path: String
     ) {
         val name = libItem.name
-        if (isCleanroom) {
-            when {
-                name.startsWith(icu4jLib) -> {
-                    insertBefore(libItem, path) { (key, _) ->
-                        key.name.startsWith(mojangICU4jLib)
-                    }
-                    return
-                }
-                name.startsWith(mojangICU4jLib) -> {
-                    insertAfter(libItem, path) { (key, _) ->
-                        key.name.startsWith(icu4jLib)
-                    }
-                    return
-                }
-                name.startsWith(cleanroomOshiLibPrefix) -> {
-                    insertBefore(libItem, path) { (key, _) ->
-                        key.name.startsWith(vanillaOshiLib)
-                    }
-                    return
-                }
-                name.startsWith(cleanroomJnaPlatformLib) -> {
-                    insertBefore(libItem, path) { (key, _) ->
-                        key.name.startsWith(vanillaJnaPlatformLib)
-                    }
-                    return
-                }
-                name.startsWith(cleanroomNettyLibPrefix) -> {
-                    insertBefore(libItem, path) { (key, _) ->
-                        key.name.startsWith(vanillaNettyAllLib)
-                    }
-                    return
-                }
-            }
-        }
-
         if (name.startsWith("org.ow2.asm:asm:")) {
             removeIf { (key, _) ->
                 key.name.startsWith("org.ow2.asm:asm-all:")
@@ -99,54 +49,5 @@ class LibSortFix(
                 iterator.remove()
             }
         }
-    }
-
-    private fun <K, V> LinkedHashMap<K, V>.insertBefore(
-        key: K,
-        value: V,
-        find: (Map.Entry<K, V>) -> Boolean
-    ) {
-        val newMap = LinkedHashMap<K, V>()
-        var inserted = false
-
-        for (entry in this) {
-            if (!inserted && find(entry)) {
-                newMap[key] = value
-                inserted = true
-            }
-            newMap[entry.key] = entry.value
-        }
-
-        if (!inserted) {
-            newMap[key] = value
-        }
-
-        clear()
-        putAll(newMap)
-    }
-
-    private fun <K, V> LinkedHashMap<K, V>.insertAfter(
-        key: K,
-        value: V,
-        find: (Map.Entry<K, V>) -> Boolean
-    ) {
-        val newMap = LinkedHashMap<K, V>()
-        var inserted = false
-
-        for (entry in this) {
-            newMap[entry.key] = entry.value
-
-            if (!inserted && find(entry)) {
-                newMap[key] = value
-                inserted = true
-            }
-        }
-
-        if (!inserted) {
-            newMap[key] = value
-        }
-
-        clear()
-        putAll(newMap)
     }
 }

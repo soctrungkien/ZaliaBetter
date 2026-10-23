@@ -118,4 +118,5 @@
     <string name="guide_editor_save">تەھرىرلەش تاماملانغاندىن كېيىن، كونترول ئورۇنلاشتۇرۇشىنى ساقلاشنى ئۇنتۇڭ!</string>
     <string name="guide_tip_blank">بوش ئورۇننى چېكىپ كېيىنكى قەدەمگە ئۆتۈڭ</string>
     <string name="guide_tip_finish">بوش ئورۇننى چېكىپ يېتەكچىلىكنى تاماملاڭ</string>
+    <string name="about_acknowledgements_modrinth_text">%s Modrinthدىن ئويۇنچى مودېلى ھەرىكەت ئۈلگىلىرىنى كۆچۈرۈپ ئىشلەتكەن</string>
 </resources>

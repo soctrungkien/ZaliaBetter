@@ -61,7 +61,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.addons.modloader.AddonVersion
 import com.movtery.zalithlauncher.game.addons.modloader.ModLoader
-import com.movtery.zalithlauncher.game.addons.modloader.cleanroom.CleanroomVersions
 import com.movtery.zalithlauncher.game.addons.modloader.fabriclike.fabric.FabricVersions
 import com.movtery.zalithlauncher.game.addons.modloader.fabriclike.legacyfabric.LegacyFabricVersions
 import com.movtery.zalithlauncher.game.addons.modloader.fabriclike.quilt.QuiltVersions
@@ -82,7 +81,6 @@ import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.content.download.game.AddonList
 import com.movtery.zalithlauncher.ui.screens.content.download.game.AddonState
-import com.movtery.zalithlauncher.ui.screens.content.download.game.CleanroomList
 import com.movtery.zalithlauncher.ui.screens.content.download.game.CurrentAddon
 import com.movtery.zalithlauncher.ui.screens.content.download.game.FabricList
 import com.movtery.zalithlauncher.ui.screens.content.download.game.ForgeList
@@ -288,18 +286,6 @@ private fun ModifyVersionContent(
                 }
             }
     
-            if (loaderSupports.isCleanroomSupports) {
-                animatedItem(scope) { yOffset ->
-                    CleanroomList(
-                        modifier = Modifier.offset { IntOffset(x = 0, y = yOffset.roundToPx()) },
-                        currentAddon = addonsVM.currentAddon,
-                        addonList = addonsVM.addonList,
-                        onValueChanged = { addonsVM.updateDiffs() },
-                        onReload = { addonsVM.reloadCleanroom() }
-                    )
-                }
-            }
-    
             if (loaderSupports.isFabricSupports) {
                 animatedItem(scope) { yOffset ->
                     FabricList(
@@ -361,9 +347,7 @@ private fun ModifyVersionContent(
                                         legacyFabric = addonsVM.currentAddon.legacyFabricVersion.value
                                             .takeIf { loaderSupports.isLegacyFabricSupports },
                                         quilt = addonsVM.currentAddon.quiltVersion.value
-                                            .takeIf { loaderSupports.isQuiltSupports },
-                                        cleanroom = addonsVM.currentAddon.cleanroomVersion.value
-                                            .takeIf { loaderSupports.isCleanroomSupports }
+                                            .takeIf { loaderSupports.isQuiltSupports }
                                     ),
                                     currentVersion = version,
                                     diffs = diffs
@@ -417,7 +401,6 @@ private class ModifyAddonsViewModel(
         if (loaderSupports.isFabricSupports) add(ModLoader.FABRIC)
         if (loaderSupports.isLegacyFabricSupports) add(ModLoader.LEGACY_FABRIC)
         if (loaderSupports.isQuiltSupports) add(ModLoader.QUILT)
-        if (loaderSupports.isCleanroomSupports) add(ModLoader.CLEANROOM)
     }
 
     private fun findInstalled(loader: ModLoader): VersionInfo.LoaderInfo? {
@@ -431,7 +414,6 @@ private class ModifyAddonsViewModel(
         ModLoader.FABRIC -> currentAddon.fabricVersion.value?.getAddonVersion()
         ModLoader.LEGACY_FABRIC -> currentAddon.legacyFabricVersion.value?.getAddonVersion()
         ModLoader.QUILT -> currentAddon.quiltVersion.value?.getAddonVersion()
-        ModLoader.CLEANROOM -> currentAddon.cleanroomVersion.value?.getAddonVersion()
         else -> null
     }
 
@@ -478,7 +460,7 @@ private class ModifyAddonsViewModel(
             //新安装的加载器
             listOf(
                 ModLoader.OPTIFINE, ModLoader.FORGE, ModLoader.NEOFORGE,
-                ModLoader.FABRIC, ModLoader.LEGACY_FABRIC, ModLoader.QUILT, ModLoader.CLEANROOM
+                ModLoader.FABRIC, ModLoader.LEGACY_FABRIC, ModLoader.QUILT
             ).forEach { loader ->
                 if (installedLoaders.none { it.loader == loader }) {
                     selectedVersionOf(loader)?.let { version ->
@@ -692,20 +674,6 @@ private class ModifyAddonsViewModel(
         }
     }
 
-    fun reloadCleanroom() {
-        launchAddonReload(
-            { currentAddon.cleanroomState = it },
-            { CleanroomVersions.fetchLoaderList(gameVersion) }
-        ) { versions ->
-            addonList.cleanroomList = versions
-            enqueuePreselect(ModLoader.CLEANROOM) {
-                findInstalled(ModLoader.CLEANROOM)?.let { installed ->
-                    preselectInstalled(currentAddon.cleanroomVersion, ModLoader.CLEANROOM, versions, installed.version)
-                }
-            }
-        }
-    }
-
     init {
         //不会被加载版本列表的已安装加载器，直接标记为未识别，避免阻塞其他加载器的预选
         installedLoaders.forEach { installed ->
@@ -727,9 +695,6 @@ private class ModifyAddonsViewModel(
         }
         if (loaderSupports.isQuiltSupports) {
             reloadQuilt()
-        }
-        if (loaderSupports.isCleanroomSupports) {
-            reloadCleanroom()
         }
     }
 
