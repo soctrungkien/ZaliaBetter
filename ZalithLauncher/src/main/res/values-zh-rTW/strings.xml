@@ -7,6 +7,7 @@
     <string name="generic_warning">警告</string>
     <string name="generic_back">返回</string>
     <string name="generic_refresh">重新整理</string>
+    <string name="generic_retry">重試</string>
     <string name="generic_reset">重設</string>
     <string name="generic_delete">刪除</string>
     <string name="generic_rename">重新命名</string>
@@ -24,6 +25,8 @@
     <string name="generic_import">匯入</string>
     <string name="generic_enable">啟用</string>
     <string name="generic_disable">停用</string>
+    <string name="generic_move_up">上移</string>
+    <string name="generic_move_down">下移</string>
     <string name="generic_open_link">在瀏覽器中開啟</string>
     <string name="generic_cannot_empty">內容不能為空！</string>
     <string name="generic_input_invalid_character">名稱內包含無效字元：「%s」</string>
@@ -820,6 +823,8 @@
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan 驅動程式</string>
     <string name="settings_renderer_config_title">渲染器設定</string>
     <string name="settings_renderer_config_reset_message">要將 %s 的所有設定還原為預設值嗎？</string>
+    <string name="renderer_config_mg_sfpew_title">SFPEW 相容層</string>
+    <string name="renderer_config_mg_sfpew_desc">讓渲染器的 EGL 與 OpenGL 呼叫經過 SimpleFPEWrapper 相容層包裝，遊戲出現渲染問題時可嘗試關閉。偵測到部分 FPE 模擬模組時會自動停用</string>
     <string name="renderer_config_mg_count_launch_title">啟動工作階段統計</string>
     <string name="renderer_config_mg_count_launch_desc">僅統計經啟動器啟動的遊戲工作階段，基準測試與工具不計入</string>
     <string name="renderer_config_mg_angle_title">ANGLE 後端</string>
@@ -834,6 +839,13 @@
     <string name="renderer_config_mg_noerror_off">不忽略錯誤</string>
     <string name="renderer_config_mg_noerror_shader">忽略著色器與程式錯誤</string>
     <string name="renderer_config_mg_noerror_framebuffer">同時忽略幀緩衝區錯誤</string>
+    <string name="renderer_config_mg_multidraw_order_title">MultiDraw 方案排序</string>
+    <string name="renderer_config_mg_multidraw_order_desc">越靠前越優先；執行中某方案失效時會按此順序向後回退</string>
+    <string name="renderer_config_mg_multidraw_exception_desc">啟用後為此函式使用獨立方案排序，不再跟隨全域排序</string>
+    <string name="renderer_config_mg_multidraw_native">原生 / 原生 EXT</string>
+    <string name="renderer_config_mg_multidraw_native_desc">自動比對 GLES 核心或擴充中同形的函式（若存在）</string>
+    <string name="renderer_config_mg_multidraw_unroll">逐條繪製</string>
+    <string name="renderer_config_mg_multidraw_compute">運算著色器</string>
     <string name="renderer_config_mg_depthfix_title">ANGLE 深度清除修復</string>
     <string name="renderer_config_mg_depthfix_desc">ANGLE 後端下深度清除異常的修復；若世界渲染穿透可嘗試開啟</string>
     <string name="renderer_config_mg_glversion_title">回報的 OpenGL 版本</string>
@@ -853,8 +865,11 @@
     <string name="renderer_config_mg_fsr1_quality">品質優先</string>
     <string name="renderer_config_mg_fsr1_balanced">均衡</string>
     <string name="renderer_config_mg_fsr1_performance">效能優先</string>
+    <string name="settings_renderer_sfpew_plugin_layer_title">SFPEW 相容層（渲染器外掛程式）</string>
+    <string name="settings_renderer_sfpew_plugin_layer_summary">為沒有固定管線能力的外部渲染器外掛程式疊加 SimpleFPEWrapper OpenGL 相容層，用於採用舊式 OpenGL 1.x/2.1 渲染的程式</string>
+    <string name="renderer_version_all">全部版本</string>
     <string name="renderer_config_sfpew_relaxed_context_title">寬鬆上下文</string>
-    <string name="renderer_config_sfpew_relaxed_context_desc">假定遊戲每執行緒終生只用一個 GL 上下文，可顯著降低矩陣等呼叫的開銷；渲染異常時關閉</string>
+    <string name="renderer_config_sfpew_relaxed_context_desc">假定遊戲每個執行緒終生只使用一個 GL 上下文，跳過每次呼叫的上下文檢查，請確認遊戲的執行緒上下文使用方式，若出現渲染錯誤請關閉此項</string>
     <string name="settings_renderer_from_plugins">來自 %s 外掛程式</string>
     <string name="settings_renderer_resolution_scale_title">遊戲視窗解析度</string>
     <string name="settings_renderer_resolution_scale_summary">數值越低效能越高，數值越高畫質越清晰，請依實際需求調整</string>
@@ -1523,7 +1538,6 @@
     <string name="fm_trash_size">大小：%s</string>
     <string name="fm_trash_sort_deleted">刪除時間</string>
     <string name="fm_trash_title">資源回收筒</string>
-
     <string name="guide_main_welcome_title">歡迎使用 %s！</string>
     <string name="guide_main_welcome_text">我們來簡單看看主畫面的功能吧～</string>
     <string name="guide_main_account">點擊此處可進入帳號管理頁面，你可以新增或管理 Minecraft 帳號</string>
@@ -1551,4 +1565,7 @@
     <string name="guide_editor_save">編輯完成後，記得儲存控制佈局！</string>
     <string name="guide_tip_blank">點擊空白處以進入下一步</string>
     <string name="guide_tip_finish">點擊空白處以完成引導</string>
+    <string name="control_editor_menu_new_widget_joystick">新增搖桿</string>
+    <string name="festivals_halloween">萬聖節快樂！</string>
+    <string name="festivals_valentines">情人節快樂！</string>
 </resources>

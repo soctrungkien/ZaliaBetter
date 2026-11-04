@@ -55,6 +55,16 @@ object AllSettings : SettingsRegistry() {
     val renderer = stringSetting("renderer", "")
 
     /**
+     * 为渲染器插件叠加 SFPEW 兼容层
+     */
+    val sfpewPluginLayer = boolSetting("sfpewPluginLayer", false)
+
+    /**
+     * SFPEW 宽松上下文模式
+     */
+    val sfpewRelaxedContext = boolSetting("sfpewRelaxedContext", false)
+
+    /**
      * Vulkan 驱动器
      */
     val vulkanDriver = stringSetting("vulkanDriver", "default turnip")

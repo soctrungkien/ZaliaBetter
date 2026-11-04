@@ -27,6 +27,7 @@
     <string name="generic_warning">Warning</string>
     <string name="generic_back">Back</string>
     <string name="generic_refresh">Refresh</string>
+    <string name="generic_retry">Retry</string>
     <string name="generic_reset">Reset</string>
     <string name="generic_delete">Delete</string>
     <string name="generic_rename">Rename</string>
@@ -44,6 +45,8 @@
     <string name="generic_import">Import</string>
     <string name="generic_enable">Enable</string>
     <string name="generic_disable">Disable</string>
+    <string name="generic_move_up">Move up</string>
+    <string name="generic_move_down">Move down</string>
     <string name="generic_open_link">Open in Browser</string>
     <string name="generic_cannot_empty">Content cannot be empty!</string>
     <string name="generic_input_invalid_character">Invalid character in name: \"%s\"</string>
@@ -1734,6 +1737,10 @@
     <string name="settings_renderer_config_title">Renderer Configuration</string>
     <!-- Confirmation text for resetting all settings of one renderer; %s is the renderer name -->
     <string name="settings_renderer_config_reset_message">Reset all %s settings to their default values?</string>
+    <!-- Title of the SFPEW compatibility layer switch in MobileGlues renderer settings -->
+    <string name="renderer_config_mg_sfpew_title">SFPEW Compatibility Layer</string>
+    <!-- Description of the SFPEW compatibility layer switch in MobileGlues renderer settings -->
+    <string name="renderer_config_mg_sfpew_desc">Route the renderer\'s EGL and OpenGL calls through the SimpleFPEWrapper layer, and try turning this off if the game has rendering issues. It is disabled automatically when certain FPE emulator mods are detected</string>
     <!-- Title of the launch session reporting switch in MobileGlues renderer settings -->
     <string name="renderer_config_mg_count_launch_title">Launch Session Reporting</string>
     <!-- Description of the launch session reporting switch in MobileGlues renderer settings -->
@@ -1762,6 +1769,20 @@
     <string name="renderer_config_mg_noerror_shader">Ignore Shader and Program Errors</string>
     <!-- GL error handling option that also ignores framebuffer errors -->
     <string name="renderer_config_mg_noerror_framebuffer">Also Ignore Framebuffer Errors</string>
+    <!-- Title of the global MultiDraw backend order in MobileGlues renderer settings -->
+    <string name="renderer_config_mg_multidraw_order_title">MultiDraw Strategy Order</string>
+    <!-- Description explaining how MobileGlues uses the global MultiDraw backend order -->
+    <string name="renderer_config_mg_multidraw_order_desc">Higher strategies are preferred; failed strategies fall back in this order</string>
+    <!-- Description of the checkbox enabling a function-specific MultiDraw order -->
+    <string name="renderer_config_mg_multidraw_exception_desc">Enable to use an independent strategy order instead of the global order</string>
+    <!-- MultiDraw strategy matching a native GLES core or extension function -->
+    <string name="renderer_config_mg_multidraw_native">Native / Native EXT</string>
+    <!-- Description of the native MultiDraw strategy -->
+    <string name="renderer_config_mg_multidraw_native_desc">Matches the equivalent GLES core or extension function when available</string>
+    <!-- MultiDraw backend that submits every draw separately -->
+    <string name="renderer_config_mg_multidraw_unroll">Draw One by One</string>
+    <!-- MultiDraw backend using compute shaders -->
+    <string name="renderer_config_mg_multidraw_compute">Compute Shader</string>
     <!-- Title of the ANGLE depth clear fix in MobileGlues renderer settings -->
     <string name="renderer_config_mg_depthfix_title">ANGLE Depth Clear Fix</string>
     <!-- Description of the ANGLE depth clear fix in MobileGlues renderer settings -->
@@ -1800,10 +1821,16 @@
     <string name="renderer_config_mg_fsr1_balanced">Balanced</string>
     <!-- FSR1 option prioritizing frame rate -->
     <string name="renderer_config_mg_fsr1_performance">Performance</string>
-    <!-- Title of the relaxed context switch in SimpleFPEWrapper renderer settings -->
+    <!-- Title of the switch that enables SFPEW for renderer plugins -->
+    <string name="settings_renderer_sfpew_plugin_layer_title">SFPEW Compatibility Layer (Renderer Plugins)</string>
+    <!-- Summary of the renderer plugin SFPEW compatibility layer switch -->
+    <string name="settings_renderer_sfpew_plugin_layer_summary">Adds SimpleFPEWrapper to renderer plugins without fixed-function pipeline support for legacy OpenGL 1.x/2.1 rendering</string>
+    <!-- Label shown when a built-in renderer supports all Minecraft versions -->
+    <string name="renderer_version_all">All versions</string>
+    <!-- Title of the relaxed context switch in SFPEW compatibility layer settings -->
     <string name="renderer_config_sfpew_relaxed_context_title">Relaxed Context</string>
-    <!-- Description of the relaxed context switch in SimpleFPEWrapper renderer settings -->
-    <string name="renderer_config_sfpew_relaxed_context_desc">Optimization assuming the game keeps one GL context per thread for its whole lifetime; significantly cuts matrix-op overhead. Disable if rendering breaks</string>
+    <!-- Description of the relaxed context switch in SFPEW compatibility layer settings -->
+    <string name="renderer_config_sfpew_relaxed_context_desc">Assumes the game keeps one GL context per thread for its whole lifetime and skips per-call context checks. Confirm the game\'s thread/context usage; disable this if rendering errors occur</string>
     <!-- Summary marking a renderer, driver or native library entry as provided by a plugin; %s is the plugin name -->
     <string name="settings_renderer_from_plugins">From %s plugin</string>
     <!-- Title of the resolution scale slider and custom resolution card, in the Renderer tab and in-game menu -->
